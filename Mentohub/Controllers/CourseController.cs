@@ -31,31 +31,15 @@ namespace Mentohub.Controllers
 
         public IActionResult Index(int id)
         {
-            List<CourseElement>? elements = _courseService.GetCourseElements(id);
-            ViewBag.CourseId = id;           
-            
-            if(elements != null)
-            {
-                ViewBag.DefaultTypeId = elements[0].TypeId;
-                ViewBag.DefaultCourseItemId = elements[0].CourseItemId;
-            }
-
-            return View();
+            var course = _courseService.GetCourse(id);
+            return View(course);
         }
 
-        [Route("/Course/CreateCourse/{id}")]
-        public IActionResult CreateCourse(int id)
+        [Route("/Course/Edit/{id}")]
+        public IActionResult Edit(int id)
         {
-            ViewBag.Subjects = _context.CourseSubjects.ToList();
-            if (id == 0)
-            {
-                ViewBag.Course = _courseService.CreateNewCourse();
-            }
-            else
-            {
-                ViewBag.Course = _courseService.GetCourse(id);
-            }            
-            return View();
+            var course = _courseService.GetCourse(id);
+            return View(course);
         }
 
         [HttpGet]
@@ -185,7 +169,7 @@ namespace Mentohub.Controllers
             int itemId = Convert.ToInt32(courseItemId);
             int courseId = _courseItemService.GetCourseItem(itemId).CourseId;
 
-            Course c = _courseService.GetCourse(courseId);
+            CourseDTO c = _courseService.GetCourse(courseId);
             Lesson l = _lessonService.GetLessonByCourseItem(itemId);
 
             LessonDTO lessonPartial = new LessonDTO()

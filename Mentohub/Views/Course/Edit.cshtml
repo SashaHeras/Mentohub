@@ -1,4 +1,6 @@
-﻿@using Mentohub.Domain.Entities;
+﻿@using Mentohub.Domain.Data.DTO;
+@using Mentohub.Domain.Entities;
+@model CourseDTO;
 @{
     ViewData["Title"] = "Create Course Page";
 }
@@ -190,14 +192,14 @@
             <div class="field">
                 <text class="my-lable">Course name:</text>
                 @{
-                    string val = ViewBag.Course.Name == "" ? "" : ViewBag.Course.Name;
+                    string val = Model.Name == "" ? "" : Model.Name;
                     <input type="text" placeholder="Enter course name" id="courseName" value="@val" width="450px" />
                 }
             </div>
             <div class="field">
                 <text class="my-lable">Course price:</text>
                 @{
-                    decimal num = ViewBag.Course.Price == null ? 0 : ViewBag.Course.Price;
+                    decimal num = Model.Price == null ? 0 : Model.Price;
                     <input type="text" placeholder="Enter course price" id="coursePrice" value="@num" width="150px" />
                 }
             </div>
@@ -206,12 +208,10 @@
                 <div id="select">
                     <select class="custom-select" name="Subject" id="Subject">
                         @{
-                            int? selectedSubjectId = ViewBag.Course.CourseSubjectId;
-                            List<CourseSubject> subjects = ViewBag.Subjects;
+                            int? selectedSubjectId = Model.CourseSubjectId;
 
-                            foreach (CourseSubject cs in subjects)
+                            foreach (CourseSubjectDTO cs in Model.SubjectsList)
                             {
-                                string selected = "";
                                 if (selectedSubjectId != null && selectedSubjectId == cs.Id)
                                 {
                                     <option value="@cs.Id" selected>@cs.Name</option>
@@ -257,7 +257,7 @@
 </div>
 
 <script>
-    let courseId = @ViewBag.Course.Id;
+    let courseId = @Model.Id;
     let authorId = "{5cc5918d-81b7-4a84-bd64-e79fd914ebf7}";
 
     $(document).ready(function() {        
