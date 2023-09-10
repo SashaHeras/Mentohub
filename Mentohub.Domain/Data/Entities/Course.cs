@@ -1,4 +1,6 @@
-﻿namespace Mentohub.Domain.Entities
+﻿using Mentohub.Domain.Data.DTO;
+
+namespace Mentohub.Domain.Entities
 {
     public class Course
     {
@@ -21,5 +23,21 @@
         public int? CourseSubjectId { get; set; }
 
         public DateTime LastEdittingDate { get; set; }
+    
+        public CourseDTO ToDTO()
+        {
+            return new CourseDTO
+            {
+                Id = Id,
+                Name = Name,
+                PicturePath = PicturePath,
+                PreviewVideoPath = PreviewVideoPath,
+                AuthorId = AuthorId,
+                Checked = Checked,
+                Rating = Rating,
+                Price = Price,
+                LastEdittingDate = LastEdittingDate
+            };
+        }
     }
 }

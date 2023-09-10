@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Mentohub.Domain.Data.DTO;
+@model CourseDTO;
+@{
     ViewData["Title"] = "Index";
 }
 
@@ -316,12 +318,12 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
 <script>
-    let course = @ViewBag.CourseId;
+    let course = @Model.Id;
     let comments = "";
 
     $(document).ready(function () {
-        loadPartialPage(@ViewBag.DefaultTypeId,@ViewBag.DefaultCourseItemId);
-        GenerateItems(@ViewBag.CourseId);
+        loadPartialPage(@Model.DefaultTypeId, @Model.DefaultCourseItemId);
+        GenerateItems(@Model.Id);
     });
 
     function GenerateItems(courseId) {
@@ -363,7 +365,7 @@
         });
     }
 
-    function loadPartialPage(type,courseItemId) {
+    function loadPartialPage(type, courseItemId) {
         console.log("start loading");
 
         var url = '@Url.Action("LoadPartialPage", "Course")';  // Replace 'ControllerName' with your actual controller name
