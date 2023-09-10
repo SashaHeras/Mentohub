@@ -1,0 +1,202 @@
+﻿@{
+    ViewData["Title"] = "Pass test";
+}
+
+<style>
+
+    #answerBlock {
+        display: flex;
+        margin: 3px;
+    }
+
+    #nameTest, #tasks{
+        font: small-caps bold sans-serif;
+        border-radius: 8px;
+        padding: 10px;
+        background-color: #EEE8AA;
+        width: 60%;
+        margin-bottom: 12px;
+    }
+
+    #nameTest {
+        font-size: 32px;
+    }
+
+    #answerBlock{
+        margin-bottom: 12px;
+    }
+
+    .checkBox{
+        accent-color: green;
+        margin-right: 3px;
+    }
+
+    .body {
+        margin-left: 40px;
+        margin-right: 40px;
+    }
+
+    .grid-item {
+    }
+
+    .grid-body-splitter {
+        display: grid;
+        grid-template-columns: 70% 30%;
+        grid-gap: 10px;
+    }
+
+    .list {
+        margin-top: 70px;
+    }
+</style>
+
+@{
+    int id = ViewBag.CourseId;
+}
+
+<partial name="/Views/Partial/Header.cshtml" />
+<div class="body">
+    <div class="grid-body-splitter">
+        <div class="grid-item">
+            <div id="nameTest">
+                @ViewBag.Test.Name
+            </div>
+            <div id="tasks">
+
+            </div>
+            <button class="btn btn-primary" onclick="SaveAnswers()">Submit</button>
+        </div>
+        <div class="grid-item">
+            <div id="list">
+                @await Html.PartialAsync("../Partial/ItemsList", id)
+            </div>
+        </div>
+    </div>
+   
+</div>
+
+<script>
+    let testId = @ViewBag.Test.Id;
+    let tasks = [];
+    let checkedAnswers = [];
+    let userid = 1;
+
+    $(document).ready(function () {
+        GetTasks();        
+    });
+
+    // Function of reading answers on test and sending on  checking
+    function SaveAnswers()
+    {
+        checkedAnswers = [];
+
+        for (let i = 0; i < tasks.length; i++)
+        {
+            let task = document.getElementById("task" + tasks[i].id);
+            let answers = task.querySelectorAll(".checkBox");
+            for (let j = 0; j < answers.length;j++)
+            {
+                let ans = answers[j];
+                if (ans.checked == true){
+                    checkedAnswers.push(ans.value + "_" + true);
+                }
+            }
+        }
+
+        let formData = new FormData();
+
+        formData.append("test", testId);
+        formData.append("userid", userid);
+        formData.append("answers", checkedAnswers);        
+
+        $.ajax({
+            url: "/Test/GetMark",
+            type: "POST",
+            data: formData,
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                console.log(result);
+            }
+        });
+    }
+
+    // Function of getting all tasks of test
+    function GetTasks()
+    {
+        let formData = new FormData();
+
+        formData.append("test", testId);
+
+        $.ajax({
+            url: "/Test/GetTasks",
+            type: "POST",
+            data: formData,
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result != null) {
+                    tasks = result;
+                    GenerateAnswers();
+                }
+            }
+        });
+    }
+
+    // Function of generation blocks of tasks with answers on it
+    function GenerateAnswers() {
+        let tasksDiv = document.getElementById("tasks");
+
+        for (let i = 0; i < tasks.length; i++) {
+            let div = document.createElement("div");
+            div.id = "task" + tasks[i].id;
+            let questionDiv = document.createElement("div");
+            questionDiv.id = "taskQuestion";
+            questionDiv.textContent = tasks[i].name+" (";
+            if(tasks[i].mark == 1){
+                questionDiv.textContent += tasks[i].mark + " point)";
+            }else{
+                questionDiv.textContent += tasks[i].mark + " points)";
+            }
+            div.appendChild(questionDiv);
+
+            let formData = new FormData();
+
+            formData.append("task", tasks[i].id);
+
+            $.ajax({
+                url: "/Test/GetAnswers",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    let res = result;
+                    for (let j = 0; j < res.length; j++) {
+                        let ansDiv = document.createElement("div");
+                        ansDiv.id = "answerBlock";
+                        ansDiv.setAttribute("name", "answerBlock");
+
+                        let checkBox = document.createElement("input");
+                        checkBox.setAttribute("class", "checkBox");
+                        checkBox.setAttribute("type", "checkbox");
+                        checkBox.setAttribute("value", tasks[i].id + "_" + res[j].id);
+
+                        let text = document.createElement("div");
+                        text.setAttribute("class", "answerText");
+                        text.textContent = res[j].name;
+
+                        ansDiv.appendChild(checkBox);
+                        ansDiv.appendChild(text);
+                        div.appendChild(ansDiv);
+                    }
+                }
+            });
+            tasksDiv.appendChild(div);
+        }
+    }
+</script>
+

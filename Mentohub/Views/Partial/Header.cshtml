@@ -1,0 +1,71 @@
+﻿<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+
+<style>
+    .leftUl{
+        text-align: right;
+    }
+
+    img {
+        border-radius: 50%;
+        height: 40px;
+    }
+</style>
+
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">H&P Study</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1" style="width: 66%;">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/Lesson/EditLesson/5">Edit lesson</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/Lesson/Lesson/c56caeea-dc8e-469c-a27e-5d20cc3e2696">Lesson</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/Home/CreateLesson/0">Create lesson</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/Test/PassTest/30">Pass test</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/Course/CreateCourse/5">Create course</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav flex-grow-1 leftUl" style="width: 11%;">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/Author/Index/5cc5918d-81b7-4a84-bd64-e79fd914ebf7">Author</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Learning">My learning</a>
+                    </li>
+                    
+                </ul>
+                <ul class="navbar-nav flex-grow-1" style="width: 6%;">
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Basket">
+                            <i style="font-size: 1.3em" class="bi bi-cart4"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Notification">
+                            <i style="font-size: 1.3em" class="bi bi-bell"></i>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav flex-grow-1" style="width: 13%;"> 
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Profile">
+                            <img src="/Pictures/img_avatar.png" alt="Avatar">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

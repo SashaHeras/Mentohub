@@ -1,0 +1,540 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<style>
+    a {
+        text-decoration: none;
+        color: black;
+    }
+
+        a:visited {
+            color: black; /* Цвет посещенной ссылки */
+        }
+
+        a:hover {
+            color: black; /* Цвет посещенной ссылки */
+        }
+
+    .listA {
+        margin-left: 5px;
+        text-align: left;
+    }
+
+    .listElement {
+        vertical-align: middle;
+        display: flex;
+        text-align: left;
+        height: 42px;
+        font-size: 18px;
+        margin-top: 15px;
+        width: 450px;
+        border-radius: 5px;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        padding-left: 10px;
+        padding-right: 10px;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        align-items: center;
+    }
+
+    .body {
+        margin-top: 20px;
+        margin-left: 40px;
+        margin-right: 40px;
+    }
+
+    #content {
+        margin-top: 15px;
+    }
+
+    /* Style the tab */
+    .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+    }
+
+        /* Style the buttons inside the tab */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+        }
+
+            /* Change background color of buttons on hover */
+            .tab button:hover {
+                background-color: #ddd;
+            }
+
+            /* Create an active/current tablink class */
+            .tab button.active {
+                background-color: #ccc;
+            }
+
+    /* Style the tab content */
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
+
+    body {
+        min-width: 660px; /* Suppose you want minimum width of 1000px */
+        width: auto !important; /* Firefox will set width as auto */
+        width: 1000px; /* As IE6 ignores !important it will set width as 1000px; */
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 70% 30%;
+        grid-gap: 10px;
+    }
+
+    .grid-item {
+    }
+
+    .grid-body-splitter {
+        display: grid;
+        grid-template-columns: 70% 30%;
+        grid-gap: 10px;
+    }
+
+    .two-parts {
+        display: flex;
+        margin-bottom: 5%;
+    }
+
+    .description {
+        padding: 15px 5% 0;
+    }
+
+    .golden-text {
+        color: #FFD700;
+        font-size: 48px;
+    }
+
+    .description-lable {
+        width: 30%;
+        padding: 15px 5% 0;
+    }
+
+    .list {
+        margin-top: 30px;
+    }
+
+    .video {
+        margin-top: 35px;
+    }
+
+    .vl {
+        border-left: 3px solid black;
+        height: 100%;
+    }
+
+    .list-lable {
+        font-family: Verdana;
+        font-size: 28px;
+    }
+
+    .reviews-block {
+        text-align: center;
+    }
+
+    .course-comments {
+        margin-top: 20px;
+    }
+
+    .comment-creation {
+        width: 80%;
+        margin-left: 10%;
+        text-align: center;
+    }
+
+    .user-rating {
+        display: flex;
+        margin: auto;
+        width: 50%;
+    }
+
+    .star-rating s:hover,
+    .star-rating s.active {
+        color: gold;
+    }
+
+    .star-rating-rtl s:hover,
+    .star-rating-rtl s.active {
+        color: gold;
+    }
+
+    .star-rating s,
+    .star-rating-rtl s {
+        color: black;
+        font-size: 40px;
+        cursor: default;
+        text-decoration: none;
+        line-height: 40px;
+    }
+
+    .star-rating {
+        padding: 2px;
+    }
+
+    .star-rating-rtl {
+        background: #555;
+        display: inline-block;
+        border: 1px solid #444;
+    }
+
+        .star-rating-rtl s {
+            color: yellow;
+        }
+
+    .star-rating s:hover:before,
+    .star-rating s.rated:before,
+    .star-rating s.active:before {
+        content: "\2605";
+    }
+
+    .star-rating s:before {
+        content: "\2606";
+    }
+
+    .star-rating-rtl s:hover:after,
+    .star-rating-rtl s.rated:after,
+    .star-rating-rtl s.active:after {
+        content: "\2605";
+    }
+
+    .star-rating-rtl s:after {
+        content: "\2606";
+    }
+
+    .user-details {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .comment-text {
+        margin-top: 5px;
+    }
+
+    .user-comment {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .user-info {
+        margin-left: 10%;
+        display: flex;
+        padding: 1em 3em 1em;
+        width: 80%;
+        text-align: left;
+        margin-bottom: 1rem;
+    }
+
+    .hr-80 {
+        margin-left: 10%;
+        width: 80%;
+    }
+
+    .user-picture {
+        flex: 0 0 30%;
+        max-width: 8%;
+        margin-right: 1rem;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+        .user-picture img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .user-name {
+        font-weight: bold;
+    }
+
+    .user-metadata {
+        width: 200px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .comment-user-rating {
+        color: gold;
+        display: flex;
+    }
+
+    .star-icon {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        background-image: url(star-icon.svg);
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+
+    .comment-time {
+        font-size: 0.8rem;
+        color: #666;
+    }
+</style>
+
+<partial name="/Views/Partial/Header.cshtml" />
+<div class="body">
+    <div class="grid-body-splitter">
+        <div class="grid-item" id="partialPageContainer">
+            
+        </div>
+        <div class="grid-item">
+            <div class="list-lable">
+                Course content
+            </div>
+            <div id="list" class="list">  
+                <div id="items-list">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<script>
+    let course = @ViewBag.CourseId;
+    let comments = "";
+
+    $(document).ready(function () {
+        loadPartialPage(@ViewBag.DefaultTypeId,@ViewBag.DefaultCourseItemId);
+        GenerateItems(@ViewBag.CourseId);
+    });
+
+    function GenerateItems(courseId) {
+        let formdata = new FormData();
+        formdata.append("course", courseId);
+
+        $.ajax({
+            url: "/Course/GetCourseElements",
+            type: "POST",
+            data: formdata,
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                let res = result;
+                let list = document.getElementById("items-list");
+
+                console.log(res);
+
+                for (let i = 0; i < res.length; i++) {
+                    let div = document.createElement("div");
+                    div.className = "listElement";
+
+                    let iconClass = res[i].typeId == 2 ? "bi bi-file-text" : "bi bi-list-check";
+                    let icon = document.createElement("i");
+                    icon.className = iconClass;
+                    div.appendChild(icon);
+
+                    let a = document.createElement("a");
+                    a.className = "listA";
+                    a.href = "#";
+                    a.setAttribute("onclick", `loadPartialPage(${res[i].typeId},${res[i].courseItemId})`);
+                    a.textContent = res[i].elementName;
+                    div.appendChild(a);
+
+                    list.appendChild(div);
+                }
+            }
+        });
+    }
+
+    function loadPartialPage(type,courseItemId) {
+        console.log("start loading");
+
+        var url = '@Url.Action("LoadPartialPage", "Course")';  // Replace 'ControllerName' with your actual controller name
+
+        var formData = new FormData();
+        formData.append('type', type);
+        formData.append('courseItemId', courseItemId);
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                $('#partialPageContainer').html(data);
+                executeScriptsInDiv(document.getElementById('partialPageContainer'));
+            },
+            error: function (error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function executeScriptsInDiv(div) {
+        console.log("script execution");
+        var scripts = div.getElementsByTagName('script');
+        for (var i = 0; i < scripts.length; i++) {
+            console.log(scripts[i]);
+            eval(scripts[i].innerHTML);
+        }
+    }    
+
+    let commentsCount = 15;
+
+    $(document.getElementById("partialPageContainer")).ready(function () {
+        GetUsersComments();        
+    });
+
+    function SendReview() {
+
+    }
+
+    function GenerateUsersComments() {
+        let commentsList = document.getElementById("comments-list");
+
+        const hr = document.createElement('hr');
+        hr.className = 'hr-80';
+
+        // loop through the comments data and create the HTML elements for each comment
+        comments.forEach(comment => {
+            // create the comment HTML elements
+            const commentElem = document.createElement("div");
+            commentElem.classList.add("user-comment");
+
+            const userInfoElem = document.createElement("div");
+            userInfoElem.classList.add("user-info");
+
+            const userPictureElem = document.createElement("div");
+            userPictureElem.classList.add("user-picture");
+
+            const img = document.createElement('img');
+            let src = "/Pictures/img_avatar.png";
+            if (comment.profileImagePath != null) {
+                src = 'https://mystudystorage.blob.core.windows.net/test/' + comment.profileImagePath;
+            }
+            img.src = src;
+            img.alt = 'Avatar';
+
+            const userDetailsElem = document.createElement("div");
+            userDetailsElem.classList.add("user-details");
+
+            const userNameElem = document.createElement("div");
+            userNameElem.classList.add("user-name");
+            userNameElem.textContent = comment.userName;
+
+            const userMetadataElem = document.createElement("div");
+            userMetadataElem.classList.add("user-metadata");
+
+            const userRatingElem = document.createElement("div");
+            userRatingElem.classList.add("comment-user-rating");
+            let rating = 5;
+            for (let j = 0; j < comment.rating; j++) {
+                let fillStar = document.createElement("i");
+                fillStar.className = "bi bi-star-fill";
+                userRatingElem.appendChild(fillStar);
+            }
+            rating = rating - comment.rating;
+            for (let j = 0; j < rating; j++) {
+                let star = document.createElement("i");
+                star.className = "bi bi-star";
+                userRatingElem.appendChild(star);
+            }
+            userMetadataElem.appendChild(userRatingElem);
+
+            const commentTimeElem = document.createElement("div");
+            commentTimeElem.classList.add("comment-time");
+            commentTimeElem.textContent = comment.dateAgo;
+            userMetadataElem.appendChild(commentTimeElem);
+
+            const commentTextElem = document.createElement("div");
+            commentTextElem.classList.add("comment-text");
+            commentTextElem.textContent = comment.text;
+
+            // append the comment HTML elements to the comments list element
+            userPictureElem.appendChild(img);
+            userInfoElem.appendChild(userPictureElem);
+            userDetailsElem.appendChild(userNameElem);
+            userDetailsElem.appendChild(userMetadataElem);
+            userDetailsElem.appendChild(commentTextElem);
+            userInfoElem.appendChild(userDetailsElem);
+            commentElem.appendChild(userInfoElem);
+            commentsList.appendChild(commentElem);
+
+            commentsList.appendChild(hr);
+        });
+    }
+
+    async function GetUsersComments() {
+        const response = await fetch('/Course/Comments/' + course + '/' + commentsCount, {
+            method: 'GET'
+        });
+        comments = await response.json();
+    }
+
+    function checkTab()
+    {
+        if (document.getElementById("tab4") == null) {
+            console.log("tab4 is null");
+            setTimeout(checkTab, 50);
+        } else {
+            GenerateUsersComments();
+        }
+    }
+
+    $(document.getElementById("tab4")).ready(function () {
+        checkTab();
+    });   
+
+    $("div.star-rating > s, div.star-rating-rtl > s").on("click", function (e) {
+
+        // remove all active classes first, needed if user clicks multiple times
+        $(this).closest('div').find('.active').removeClass('active');
+
+        $(e.target).parentsUntil("div").addClass('active'); // all elements up from the clicked one excluding self
+        $(e.target).addClass('active');  // the element user has clicked on
+
+
+        var numStars = $(e.target).parentsUntil("div").length + 1;
+        alert(numStars);
+    });
+
+    function openTab(evt, tabName) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script>
+

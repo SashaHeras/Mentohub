@@ -1,0 +1,250 @@
+﻿@{
+    ViewData["Title"] = "Create test Page";
+}
+
+<style>
+    .goBack{
+        text-decoration: none;
+        color: black;
+    }
+
+        .goBack:hover{
+            color: black;
+        }
+
+        .goBack:visited{
+            color: black;
+        }
+
+    #testMain{
+        display:flex;
+    }
+
+    #answerBlock{
+        display: flex;
+        margin: 3px;
+    }
+
+    .body {
+        margin-left: 40px;
+        margin-right: 40px;
+    }
+</style>
+
+<partial name="/Views/Partial/Header.cshtml" />
+<div class="body">
+    <div>
+        <a href="/Course/CreateCourse/@ViewBag.CourseId">Return to course</a>
+    </div>
+    <table>
+        <tr style="margin-bottom: 2px">
+            <td style="padding-right: 6px">
+                <label>Test name:</label>
+            </td>
+            <td>
+                <input id="testname" placeholder="Enter name of test" width="250px" />
+            </td>
+        </tr>
+        <tr style="margin-bottom: 2px">
+            <td style="padding-right: 6px">
+            </td>
+            <td style="text-align: right">
+                <button id="SaveTest" onclick="SaveTest()">Submit</button>
+            </td>
+        </tr>
+        <tr style="margin-bottom: 2px">
+            <td style="padding-right: 6px">
+                <label>Task name:</label>
+            </td>
+            <td>
+                <input id="taskname" type="text" placeholder="Enter name of task" width="250px" readonly />
+            </td>
+        </tr>
+        <tr style="margin-bottom: 2px">
+            <td style="padding-right: 6px">
+                <label>Task mark:</label>
+            </td>
+            <td>
+                <input id="taskmark" type="number" placeholder="Enter mark" width="25px" readonly />
+            </td>
+        </tr>
+        <tr style="margin-bottom: 2px">
+            <td style="padding-right: 6px">
+                <label>Answers count:</label>
+            </td>
+            <td>
+                <input id="ansCnt" type="number" placeholder="Enter answers number" width="25px" readonly />
+            </td>
+        </tr>
+        <tr style="margin-bottom: 2px">
+            <td style="padding-right: 6px">
+            </td>
+            <td style="text-align: right">
+                <button id="SaveTaskBtn" onclick="SaveCount()">Submit</button>
+            </td>
+        </tr>
+    </table>
+
+    <div id="testAnswers">
+        
+    </div>    
+</div>
+
+<script>
+    let answerCnt = 0;
+    let testId = 0;
+    let courseId = @ViewBag.CourseId;
+
+    let taskName = "";
+    let taskMark = 0;
+    let orderNumber = 0;
+
+    $(document).ready(function () {
+        document.getElementById("SaveTaskBtn").disabled = true;
+    });
+
+    // Function for saving and creation test
+    function SaveTest() {
+        let name = document.getElementById("testname").value;
+
+        let formData = new FormData();
+
+        formData.append("test", name);
+        formData.append("courseId", courseId);
+
+        $.ajax({
+            url: "/Test/SaveTest",
+            type: "POST",
+            data: formData,
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result != 0) {
+                    testId = result;
+                    alert("Test created!");
+
+                    document.getElementById("taskname").readOnly = false;
+                    document.getElementById("taskmark").readOnly = false;
+                    document.getElementById("ansCnt").readOnly = false;
+                    document.getElementById("SaveTaskBtn").disabled = false;
+                    document.getElementById("SaveTest").disabled = true;
+                    document.getElementById("testname").readOnly = true;
+                }
+            }
+        });
+    }
+
+    /*
+        Function saving count of needed field for answers
+        and calling their generation
+    */
+    function SaveCount() {
+        taskMark = document.getElementById("taskmark").value;
+        taskName = document.getElementById("taskname").value;
+        answerCnt = document.getElementById("ansCnt").value;
+
+        GenerateAnswers();
+    }
+
+    // Function for saving task and it`s answers
+    function SaveAnswers() {
+        let allAnswers = [];
+        let allChecked = [];
+
+        // Reading all entered answers
+        let answers = document.getElementsByName("answerBlock");
+        for (let i = 0; i < answerCnt; i++) {
+            let c = 0;
+            for (const child of answers[i].children) {
+                if (c == 0) {
+                    allChecked.push(child.checked);
+                }
+                else if (c == 1) {
+                    allAnswers.push(child.value.replace(',', '|'));
+                }
+                c++;
+            }
+        }
+
+        // Checking is a correct answers
+        if (allChecked.find(function (e) { return e == true }) == undefined) {
+            alert("Select true variant!");
+        }
+        else {
+            let formData = new FormData();
+
+            orderNumber++;
+
+            formData.append("answers", allAnswers);
+            formData.append("checked", allChecked);
+            formData.append("taskName", taskName);
+            formData.append("orderNumber", orderNumber);
+            formData.append("taskMark", taskMark);
+            formData.append("testId", testId);
+
+            $.ajax({
+                url: "/Test/SaveAnswers",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    Cleaning();
+                }
+            });
+        }
+    }
+
+    // Function for cleaning place for new task
+    function Cleaning() {
+        let block = document.getElementById("testAnswers");
+
+        while (block.firstChild) {
+            block.removeChild(block.lastChild);
+        }
+
+        document.getElementById("taskmark").value = "";
+        document.getElementById("taskname").value = "";
+        document.getElementById("ansCnt").value = "";
+    }
+
+    // Function to generation of answers fields
+    function GenerateAnswers() {
+        let block = document.getElementById("testAnswers");
+
+        while (block.firstChild) {
+            block.removeChild(block.lastChild);
+        }
+
+        for (let i = 0; i < answerCnt; i++) {
+            let div = document.createElement("div");
+            div.setAttribute("name", "answerBlock");
+            div.id = "answerBlock";
+
+            let cor = document.createElement("input");
+            cor.setAttribute("type", "checkbox");
+            cor.id = "correct" + (i + 1);
+
+            div.appendChild(cor);
+
+            let ans = document.createElement("input");
+            ans.setAttribute("type", "text");
+            ans.setAttribute("placeholder", "Enter answer");
+            ans.setAttribute("width", "250px");
+            ans.id = "answer" + 1;
+
+            div.appendChild(ans);
+
+            block.appendChild(div);
+        }
+
+        let btn = document.createElement("button");
+        btn.setAttribute("onclick", "SaveAnswers()");
+        btn.textContent = "Submit";
+
+        block.appendChild(btn);
+    }
+</script>
+

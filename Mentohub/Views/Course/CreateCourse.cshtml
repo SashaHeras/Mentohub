@@ -1,0 +1,403 @@
+﻿@using Mentohub.Domain.Entities;
+@{
+    ViewData["Title"] = "Create Course Page";
+}
+
+<style>
+    /* The container must be positioned relative: */
+    .custom-select {
+        position: relative;
+        font-family: Arial;
+    }
+
+        .custom-select select {
+            display: none; /*hide original SELECT element: */
+        }
+
+    .select-selected {
+        background-color: DodgerBlue;
+    }
+
+        /* Style the arrow inside the select element: */
+        .select-selected:after {
+            position: absolute;
+            content: "";
+            top: 14px;
+            right: 10px;
+            width: 0;
+            height: 0;
+            border: 6px solid transparent;
+            border-color: #fff transparent transparent transparent;
+        }
+
+        /* Point the arrow upwards when the select box is open (active): */
+        .select-selected.select-arrow-active:after {
+            border-color: transparent transparent #fff transparent;
+            top: 7px;
+        }
+
+    /* style the items (options), including the selected item: */
+    .select-items div, .select-selected {
+        color: #ffffff;
+        padding: 8px 16px;
+        border: 1px solid transparent;
+        border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+        cursor: pointer;
+    }
+
+    /* Style items (options): */
+    .select-items {
+        position: absolute;
+        background-color: DodgerBlue;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 99;
+    }
+
+    /* Hide the items when the select box is closed: */
+    .select-hide {
+        display: none;
+    }
+
+    .select-items div:hover, .same-as-selected {
+        background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    a{
+        text-decoration: none;
+        color: black;
+    }
+
+    a:visited {
+        color: black; /* Цвет посещенной ссылки */
+    }
+
+        a:hover {
+            color: black; /* Цвет посещенной ссылки */
+        }
+
+    .listA{
+        margin-left: 5px;
+        
+    }
+
+    .listElement{        
+        vertical-align: middle;
+        display: flex;
+        height: 42px;
+        font-size: 18px;
+        margin-top: 15px;
+        width: 450px;
+        border-radius: 5px;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        padding-left: 10px;
+        padding-right: 10px;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .dropbtn {
+        background-color: white;
+        color: black;
+        padding: 8px;
+        font-size: 16px;
+        border: none;
+    }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #f1f1f1;
+        min-width: 160px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+            .dropdown-content a:hover {
+                background-color: #ddd;
+            }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+    .dropdown:hover .dropbtn {
+        background-color: white;
+    }
+
+    .body {
+        margin-left: 40px;
+        margin-right: 40px;
+    }
+
+    .marginDiv{
+        margin-left: 300px;
+    }
+
+    .deleteIcon{
+        margin-left: auto;
+        color: red;
+        visibility: hidden;
+        cursor: pointer;
+    }
+
+    .field {
+        margin-bottom: 10px;
+        margin-right: 25px;
+        display: flex;
+    }
+
+    .my-lable{
+        margin-right: 5px;
+    }
+
+    .fields-block{
+        display: flex;
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 10px;
+    }
+
+    .grid-item {
+        padding: 20px;
+        text-align: center;
+    }
+</style>
+
+<partial name="/Views/Partial/Header.cshtml" />
+
+<div class="body">
+    <div class="mainInfo">
+        <div class="grid-container">
+            <div class="field">
+                <text class="my-lable">Course name:</text>
+                @{
+                    string val = ViewBag.Course.Name == "" ? "" : ViewBag.Course.Name;
+                    <input type="text" placeholder="Enter course name" id="courseName" value="@val" width="450px" />
+                }
+            </div>
+            <div class="field">
+                <text class="my-lable">Course price:</text>
+                @{
+                    decimal num = ViewBag.Course.Price == null ? 0 : ViewBag.Course.Price;
+                    <input type="text" placeholder="Enter course price" id="coursePrice" value="@num" width="150px" />
+                }
+            </div>
+            <div class="field">
+                <text class="my-lable">Course subject:</text>
+                <div id="select">
+                    <select class="custom-select" name="Subject" id="Subject">
+                        @{
+                            int? selectedSubjectId = ViewBag.Course.CourseSubjectId;
+                            List<CourseSubject> subjects = ViewBag.Subjects;
+
+                            foreach (CourseSubject cs in subjects)
+                            {
+                                string selected = "";
+                                if (selectedSubjectId != null && selectedSubjectId == cs.Id)
+                                {
+                                    <option value="@cs.Id" selected>@cs.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@cs.Id">@cs.Name</option>
+                                }
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="field">
+                <text class="my-lable">Course picture:</text>
+                <input type="file" name="picture" id="picture" />
+            </div>
+            <div class="field">
+                <text class="my-lable">Course preview video:</text>
+                <input type="file" name="video" id="video" />
+            </div>
+        </div>
+        
+        <div class="field">
+            <input type="button" onclick="SaveCourse()" class="btn btn-success" value="Save" />
+            <div class="marginDiv">
+                <div class="dropdown">
+                    <button id="elementsTypes" class="dropbtn">Create new...</button>
+                    <div class="dropdown-content">
+                        <a id="createLesson">Lesson</a>
+                        <a id="createTest">Test</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+    
+    <div id="elementsList">
+
+    </div>
+</div>
+
+<script>
+    let courseId = @ViewBag.Course.Id;
+    let authorId = "{5cc5918d-81b7-4a84-bd64-e79fd914ebf7}";
+
+    $(document).ready(function() {        
+        if (courseId != 0) {
+            let lesson = document.getElementById("createLesson");
+            lesson.href = "/Lesson/CreateLesson/" + courseId;
+
+            let test = document.getElementById("createTest");
+            test.href = "/Test/CreateTest/" + courseId;
+
+            GenerateItems(courseId);
+        }
+        else{
+            let lesson = document.getElementById("createLesson");
+            lesson.href = "javascript:void(0)";
+
+            let test = document.getElementById("createTest");
+            test.href = "javascript:void(0)";
+        }
+    });
+
+    function CleanItemsList()
+    {
+        let block = document.getElementById("elementsList");
+        removeAllChildElements(block);
+    }
+
+    function GenerateItems(courseId)
+    {
+        let formdata = new FormData();
+        formdata.append("course", courseId);
+
+        $.ajax({
+            url: "/Course/GetCourseElements",
+            type: "POST",
+            data: formdata,
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                var res = result;
+                let list = document.getElementById("elementsList");
+
+                console.log(res);
+
+                for (let i = 0; i < res.length; i++) {
+                    let div = document.createElement("div");
+                    div.className = "listElement";
+
+                    let iconClass = res[i].typeId == 2 ? "bi bi-file-text" : "bi bi-list-check";
+                    let icon = document.createElement("i");
+                    icon.className = iconClass;
+                    div.appendChild(icon);
+
+                    let a = document.createElement("a");
+                    a.className = "listA";
+                    a.href = res[i].typeId == 2 ? "/Lesson/EditLesson/" + res[i].courseItemId : "/Test/EditTest/" + res[i].courseItemId;
+                    a.textContent = res[i].elementName;
+                    div.appendChild(a);
+
+                    let deleteIcon = document.createElement("i");
+                    deleteIcon.className = "bi bi-trash deleteIcon";
+
+                    deleteIcon.onclick = function () {
+                        DeleteItemById(res[i].courseItemId, res[i].typeId);
+                    };
+                    div.appendChild(deleteIcon);
+
+                    div.addEventListener("mouseenter", function () {
+                        deleteIcon.style.visibility = "visible";
+                    });
+
+                    div.addEventListener("mouseleave", function () {
+                        deleteIcon.style.visibility = "hidden";
+                    });
+
+                    list.appendChild(div);
+                }
+            }
+        });
+    }
+
+    function SaveCourse(){
+        var formdata = new FormData();
+        
+        formdata.append("courseId", courseId);
+        formdata.append("authorId", authorId);
+        formdata.append("subject", document.getElementById("Subject").value);
+        formdata.append("name", document.getElementById("courseName").value);
+        formdata.append("price", document.getElementById("coursePrice").value);
+        formdata.append("picture", $("#picture").get(0).files[0]);
+        formdata.append("video", $("#video").get(0).files[0]);
+
+        $.ajax({
+            url: "/Course/SaveCource",
+            type: "POST",
+            data: formdata,
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                if (result != null) {
+                    if (courseId == 'undefinded') {
+                        alert("Course created!");
+                    }
+                    else{
+                        alert("Course editted!");
+                    }                    
+
+                    courseId = parseInt(result);                    
+
+                    let lesson = document.getElementById("createLesson");
+                    lesson.href = "/Lesson/CreateLesson/" + courseId;
+
+                    let test = document.getElementById("createTest");
+                    test.href = "/Test/CreateTest/" + courseId;
+                }
+            }
+        });   
+    }
+
+    function removeAllChildElements(block) {
+        while (block.firstChild) {
+            block.removeChild(block.lastChild);
+        }
+    }
+
+    function DeleteItemById(courseItemId, typeId){
+        fetch('/Course/DeleteCourseItem/' + courseItemId + '/' + typeId, {
+            method: 'DELETE',
+        })
+        .then(res => res.json()) 
+        .then(
+            res => {
+                console.log(res);
+                if(res == true){
+                    CleanItemsList();
+                    GenerateItems(courseId);
+                }
+            }
+        )  
+    }
+</script>

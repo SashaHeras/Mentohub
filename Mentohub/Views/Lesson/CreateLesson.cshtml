@@ -1,0 +1,60 @@
+﻿@model Mentohub.Domain.Data.DTO.LessonDTO;
+@{
+    ViewData["Title"] = "Create lesson Page";
+}
+
+<style>
+    .body {
+        margin-left: 40px;
+        margin-right: 40px;
+    }
+
+    #summernote{
+        height: 350px;
+    }
+
+    .field{
+        margin-bottom: 5px;
+    }
+</style>
+
+<partial name="/Views/Partial/Header.cshtml" />
+<div class="body">
+    <form method="post" enctype="multipart/form-data" asp-action="Create" asp-controller="Lesson">
+        <div class="field">
+            <label asp-for="Theme">Theme</label>
+            <input asp-for="Theme" />
+        </div>
+        <br />
+        <div class="field">
+            <label asp-for="Description">Description</label>
+            <input asp-for="Description" />
+        </div>
+        <br />
+        <div class="field">
+            <label asp-for="VideoPath">Video</label>
+            <input asp-for="VideoPath" type="file" />
+        </div>
+        <br />        
+        <div class="form-group">
+            <label asp-for="Body">Body</label>
+            <div class="col-md-10">
+                <textarea id="summernote" asp-for="Body"></textarea>
+            </div>
+        </div>
+        <br />
+        <input asp-for="CourseID" type="hidden" value="@ViewBag.CourseID" />
+        <input type="submit" value="Submit" />
+        <br />
+    </form>   
+</div>
+
+@section Scripts {
+    <script src="~/js/summernote/summernote-bs5.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#summernote').summernote();
+        });
+    </script>
+}

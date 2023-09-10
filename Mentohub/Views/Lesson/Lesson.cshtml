@@ -1,0 +1,482 @@
+﻿@model Mentohub.Domain.Data.DTO.LessonDTO;
+@{
+    ViewData["Title"] = "Lesson Page";
+}
+
+<style>
+    .body {
+        margin-top: 20px;
+        margin-left: 40px;
+        margin-right: 40px;
+    }
+
+    #content {
+        margin-top: 15px;
+    }
+
+    /* Style the tab */
+    .tab {
+        overflow: hidden;
+        border: 1px solid #ccc;
+        background-color: #f1f1f1;
+    }
+
+        /* Style the buttons inside the tab */
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 17px;
+        }
+
+            /* Change background color of buttons on hover */
+            .tab button:hover {
+                background-color: #ddd;
+            }
+
+            /* Create an active/current tablink class */
+            .tab button.active {
+                background-color: #ccc;
+            }
+
+    /* Style the tab content */
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-top: none;
+    }
+
+    body {
+        min-width: 660px; /* Suppose you want minimum width of 1000px */
+        width: auto !important; /* Firefox will set width as auto */
+        width: 1000px; /* As IE6 ignores !important it will set width as 1000px; */
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 70% 30%;
+        grid-gap: 10px;
+    }
+
+    .grid-item {
+    }
+
+    .grid-body-splitter {
+        display: grid;
+        grid-template-columns: 70% 30%;
+        grid-gap: 10px;
+    }
+
+    .two-parts {
+        display: flex;
+        margin-bottom: 5%;
+    }
+
+    .description {
+        padding: 15px 5% 0;
+    }
+
+    .golden-text {
+        color: #FFD700;
+        font-size: 48px;
+    }
+
+    .description-lable {
+        width: 30%;
+        padding: 15px 5% 0;
+    }
+
+    .list {
+        margin-top: 30px;
+    }
+
+    .video {
+        margin-top: 35px;
+    }
+
+    .vl {
+        border-left: 3px solid black;
+        height: 100%;
+    }
+
+    .list-lable {
+        font-family: Verdana;
+        font-size: 28px;
+    }
+
+    .reviews-block {
+        text-align: center;
+    }
+
+    .course-comments {
+        margin-top: 20px;
+    }
+
+    .comment-creation {
+        width: 80%;
+        margin-left: 10%;
+        text-align: center;
+    }
+
+    .user-rating {
+        display: flex;
+        margin: auto;
+        width: 50%;
+    }
+
+    .star-rating s:hover,
+    .star-rating s.active {
+        color: gold;
+    }
+
+    .star-rating-rtl s:hover,
+    .star-rating-rtl s.active {
+        color: gold;
+    }
+
+    .star-rating s,
+    .star-rating-rtl s {
+        color: black;
+        font-size: 40px;
+        cursor: default;
+        text-decoration: none;
+        line-height: 40px;
+    }
+
+    .star-rating {
+        padding: 2px;
+    }
+
+    .star-rating-rtl {
+        background: #555;
+        display: inline-block;
+        border: 1px solid #444;
+    }
+
+        .star-rating-rtl s {
+            color: yellow;
+        }
+
+    .star-rating s:hover:before,
+    .star-rating s.rated:before,
+    .star-rating s.active:before {
+        content: "\2605";
+    }
+
+    .star-rating s:before {
+        content: "\2606";
+    }
+
+    .star-rating-rtl s:hover:after,
+    .star-rating-rtl s.rated:after,
+    .star-rating-rtl s.active:after {
+        content: "\2605";
+    }
+
+    .star-rating-rtl s:after {
+        content: "\2606";
+    }
+
+    .user-details {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .comment-text {
+        margin-top: 5px;
+    }
+
+    .user-comment {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .user-info {
+        margin-left: 10%;
+        display: flex;
+        padding: 1em 3em 1em;
+        width: 80%;
+        text-align: left;
+        margin-bottom: 1rem;
+    }
+
+    .hr-80 {
+        margin-left: 10%;
+        width: 80%;
+    }
+
+    .user-picture {
+        flex: 0 0 30%;
+        max-width: 8%;
+        margin-right: 1rem;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+        .user-picture img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .user-name {
+        font-weight: bold;
+    }
+
+    .user-metadata {
+        width: 200px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .comment-user-rating {
+        color: gold;
+        display: flex;
+    }
+
+    .star-icon {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        background-image: url(star-icon.svg);
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+
+    .comment-time {
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+</style>
+
+@{
+    int id = Model.CourseID;
+}
+
+<partial name="/Views/Partial/Header.cshtml" />
+<div class="body">
+    @Html.HiddenFor(x => x.CourseID)
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.AuthorID)
+    <div class="grid-body-splitter">
+        <div class="grid-item">
+            <div id="discription">
+                <h2 style="font: small-caps bold sans-serif;">Theme: @Model.Theme</h2>
+            </div>
+
+            <div id="video" class="video">
+                <video controls width="100%" height="50%" loop>
+                    <source src="@Url.Content(
+                        "https://mystudystorage.blob.core.windows.net/test/" + Model.VideoPath)" 
+                        type="video/mp4">
+                </video>
+            </div>
+
+            <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'tab1')">Description</button>
+                <button class="tablinks" onclick="openTab(event, 'tab2')">Notes</button>
+                <button class="tablinks" onclick="openTab(event, 'tab3')">Author</button>
+                <button class="tablinks" onclick="openTab(event, 'tab4')">Reviews</button>
+            </div>
+
+            <div id="tab1" class="tabcontent">
+                <div class="two-parts">
+                    <div class="description-lable">
+                        Discription:
+                    </div>
+                    <div class="description">
+                        @Model.Description
+                    </div>
+                </div>
+                <div class="two-parts">
+                    <div class="description-lable">
+                        Last editted date:
+                    </div>
+                    <div class="description">
+                        @Model.DateCreation
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab2" class="tabcontent">
+                @Html.Raw(Model.Body)
+            </div>
+
+            <div id="tab3" class="tabcontent">
+                <h3>Tab 3 content</h3>
+                <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+            </div>
+
+            <div id="tab4" class="tabcontent">
+                <div class="reviews-block">
+                    <h3 class="golden-text">Course rating: @Model.CourseRating</h3>
+                    <div class="comment-creation">
+                        <input type="text" class="form-control" placeholder="Give your review" id="userreview"/>
+                        <div class="user-rating">
+                            <div class="stars">                                
+                                <div class="star-rating"><s><s><s><s><s></s></s></s></s></s></div>
+                            </div>
+                            <div>
+                                <button class="btn btn-success" onclick="SendReview()" height="20%">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="course-comments" class="course-comments">
+                        <div id="comments-list">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-item">
+            <div class="list-lable">
+                Course content
+            </div>
+            <div id="list" class="list">
+                @await Html.PartialAsync("../Partial/ItemsList", Model.CourseID)
+            </div>
+        </div>
+    </div>    
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+    let lessonCourse = @Model.CourseID;
+    let commentsCount = 15;
+
+    $(document).ready(function(){
+        GenerateUsersComments();
+    });
+
+    function SendReview()
+    {
+
+    }
+
+    async function GenerateUsersComments(){
+        const response = await fetch('/Course/Comments/' + lessonCourse + '/' + commentsCount, {
+            method: 'GET'
+        });
+        const result = await response.json();
+
+        let commentsList = document.getElementById("comments-list");
+
+        const hr = document.createElement('hr');
+        hr.className = 'hr-80';
+
+        // loop through the comments data and create the HTML elements for each comment
+        result.forEach(comment => {
+            // create the comment HTML elements
+            const commentElem = document.createElement("div");
+            commentElem.classList.add("user-comment");
+
+            const userInfoElem = document.createElement("div");
+            userInfoElem.classList.add("user-info");
+
+            const userPictureElem = document.createElement("div");
+            userPictureElem.classList.add("user-picture");
+
+            const img = document.createElement('img');
+            let src = "/Pictures/img_avatar.png";
+            if (comment.profileImagePath != null) {
+                src = 'https://mystudystorage.blob.core.windows.net/test/' + comment.profileImagePath;
+            }
+            img.src = src;
+            img.alt = 'Avatar';
+
+            const userDetailsElem = document.createElement("div");
+            userDetailsElem.classList.add("user-details");
+
+            const userNameElem = document.createElement("div");
+            userNameElem.classList.add("user-name");
+            userNameElem.textContent = comment.userName;
+
+            const userMetadataElem = document.createElement("div");
+            userMetadataElem.classList.add("user-metadata");
+
+            const userRatingElem = document.createElement("div");
+            userRatingElem.classList.add("comment-user-rating");
+            let rating = 5;
+            for (let j = 0; j < comment.rating; j++) {
+                let fillStar = document.createElement("i");
+                fillStar.className = "bi bi-star-fill";
+                userRatingElem.appendChild(fillStar);
+            }
+            rating = rating - comment.rating;
+            for (let j = 0; j < rating; j++) {
+                let star = document.createElement("i");
+                star.className = "bi bi-star";
+                userRatingElem.appendChild(star);
+            }
+            userMetadataElem.appendChild(userRatingElem);
+
+            const commentTimeElem = document.createElement("div");
+            commentTimeElem.classList.add("comment-time");
+            commentTimeElem.textContent = comment.dateAgo;
+            userMetadataElem.appendChild(commentTimeElem);
+
+            const commentTextElem = document.createElement("div");
+            commentTextElem.classList.add("comment-text");
+            commentTextElem.textContent = comment.text;
+
+            // append the comment HTML elements to the comments list element
+            userPictureElem.appendChild(img);
+            userInfoElem.appendChild(userPictureElem);
+            userDetailsElem.appendChild(userNameElem);
+            userDetailsElem.appendChild(userMetadataElem);
+            userDetailsElem.appendChild(commentTextElem);
+            userInfoElem.appendChild(userDetailsElem);
+            commentElem.appendChild(userInfoElem);
+            commentsList.appendChild(commentElem);
+
+            commentsList.appendChild(hr);
+        });
+    }
+
+    $("div.star-rating > s, div.star-rating-rtl > s").on("click", function (e) {
+
+        // remove all active classes first, needed if user clicks multiple times
+        $(this).closest('div').find('.active').removeClass('active');
+
+        $(e.target).parentsUntil("div").addClass('active'); // all elements up from the clicked one excluding self
+        $(e.target).addClass('active');  // the element user has clicked on
+
+
+        var numStars = $(e.target).parentsUntil("div").length + 1;
+        alert(numStars);
+    });
+
+    function openTab(evt, tabName) {
+        // Declare all variables
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script>

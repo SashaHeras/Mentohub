@@ -1,0 +1,58 @@
+﻿@model Mentohub.Domain.Entities.Lesson;
+@{
+    ViewData["Title"] = "Edit lesson";
+}
+
+<style>
+    .body {
+        margin-left: 40px;
+        margin-right: 40px;
+    }
+
+    .field{
+        margin-bottom: 10px;
+    }
+</style>
+
+<partial name="/Views/Partial/Header.cshtml" />
+<div class="body">
+    <form method="post" enctype="multipart/form-data" asp-action="Edit" asp-controller="Lesson">
+        <div class="field">
+            <label asp-for="Theme">Theme</label>
+            <input asp-for="Theme" value="@ViewBag.Lesson.Theme" />
+        </div>
+        <br />
+        <div class="field">
+            <label asp-for="Description">Description</label>
+            <input asp-for="Description" width="550px" value="@ViewBag.Lesson.Description" />
+        </div>
+        <br />
+        <div class="field">
+            <label asp-for="VideoPath">Video</label>
+            <input asp-for="VideoPath" type="file" value="@ViewBag.Lesson.VideoPath" />
+        </div>
+        <br />
+        <div class="form-group">
+            <label asp-for="Body">Body</label>
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.Body, new { id = "summernote" })
+            </div>
+        </div>
+        <br />
+        <input asp-for="Id" type="hidden" value="@ViewBag.Lesson.Id" />
+        <input asp-for="CourseItemId" type="hidden" value="@ViewBag.Lesson.CourseItemId" />
+        <input asp-for="VideoPath" type="hidden" value="@ViewBag.Lesson.VideoPath" />
+        <input type="submit" value="Submit" />
+        <br />
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/summernote/summernote-bs5.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#summernote').summernote();
+        });
+    </script>
+}

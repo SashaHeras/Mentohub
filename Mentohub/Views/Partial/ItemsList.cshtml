@@ -1,0 +1,87 @@
+﻿@model int
+
+<style>
+    a {
+        text-decoration: none;
+        color: black;
+    }
+
+        a:visited {
+            color: black; /* Цвет посещенной ссылки */
+        }
+
+        a:hover {
+            color: black; /* Цвет посещенной ссылки */
+        }
+
+    .listA {
+        margin-left: 5px;
+        text-align: left;
+    }
+
+    .listElement {
+        vertical-align: middle;
+        display: flex;
+        text-align: left;
+        height: 42px;
+        font-size: 18px;
+        margin-top: 15px;
+        width: 450px;
+        border-radius: 5px;
+        padding-top: 3px;
+        padding-bottom: 3px;
+        padding-left: 10px;
+        padding-right: 10px;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        align-items: center;
+    }
+</style>
+
+<div id="items-list">
+
+</div>
+
+<script>
+    let courseId = @Model;
+
+    $(document).ready(function(){
+        GenerateItems(courseId);
+    });
+
+    function GenerateItems(courseId) {
+        let formdata = new FormData();
+        formdata.append("course", courseId);
+
+        $.ajax({
+            url: "/Course/GetCourseElements",
+            type: "POST",
+            data: formdata,
+            dataType: "json",
+            contentType: false,
+            processData: false,
+            success: function (result) {
+                let list = document.getElementById("items-list");
+
+                console.log(result);
+
+                for (let i = 0; i < result.length; i++) {
+                    let div = document.createElement("div");
+                    div.className = "listElement";
+
+                    let iconClass = result[i].typeId == 2 ? "bi bi-file-text" : "bi bi-list-check";
+                    let icon = document.createElement("i");
+                    icon.className = iconClass;
+                    div.appendChild(icon);
+
+                    let a = document.createElement("a");
+                    a.className = "listA";
+                    a.href = result[i].typeId == 2 ? "/Lesson/GoToLesson/" + result[i].courseItemId : "/Test/GoToTest/" + result[i].courseItemId;
+                    a.textContent = result[i].elementName;
+                    div.appendChild(a);
+
+                    list.appendChild(div);
+                }
+            }
+        });
+    }
+</script>
