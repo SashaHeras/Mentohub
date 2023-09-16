@@ -1,9 +1,14 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel;
+using System.Text.Json;
+using System.Threading;
+using Azure.Core;
 using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Mentohub.Core.Services.Services
 {
@@ -11,12 +16,13 @@ namespace Mentohub.Core.Services.Services
     {
         private readonly ProjectContext _context;
 
-        public CourseRepository _courseRepository;
-        public CourseItemRepository _courseItemRepository;
-        public CourseTypeRepository _courseTypeRepository;
-        public LessonRepository _lessonRepository;
+        private readonly CourseRepository _courseRepository;
+        private readonly CourseItemRepository _courseItemRepository;
+        private readonly CourseTypeRepository _courseTypeRepository;
+        private readonly LessonRepository _lessonRepository;
+        private readonly MediaService _mediaService;
 
-        private CourseItemService _courseItemService;
+        private readonly CourseItemService _courseItemService;
 
         public CourseService(
             ProjectContext context,
@@ -24,7 +30,8 @@ namespace Mentohub.Core.Services.Services
             CourseItemRepository courseItemRepository, 
             CourseTypeRepository courseTypeRepository, 
             LessonRepository lessonRepository,
-            CourseItemService courseItemService)
+            CourseItemService courseItemService,
+            MediaService mediaService)
         {
             this._context = context;
             _courseRepository = courseRepository;
@@ -32,6 +39,7 @@ namespace Mentohub.Core.Services.Services
             _courseTypeRepository = courseTypeRepository;
             _lessonRepository = lessonRepository;
             _courseItemService = courseItemService;
+            _mediaService = mediaService;
         }
 
         public IQueryable<Course> GetAuthorsCourses(Guid userId)
@@ -109,6 +117,37 @@ namespace Mentohub.Core.Services.Services
             return result;
         }
 
+        public async Task<int> SaveCource(IFormCollection form)
+        {
+            int courseId = Convert.ToInt32(form["courseId"]);
+            FilesHandler handler = new FilesHandler(form.Files, courseId);
+            handler.SaveFiles(_mediaService);
+
+            Course newCourse = new Course()
+            {
+                Name = form["name"].ToString(),
+                AuthorId = Guid.Parse(form["authorId"].ToString()),
+                Checked = false,
+                Price = Convert.ToDecimal(form["price"].ToString()),
+                CourseSubjectId = Convert.ToInt32(form["subject"]),
+                LastEdittingDate = DateTime.Now,
+                PicturePath = handler.PictureName,
+                PreviewVideoPath = handler.VideoName
+            };            
+
+            if (courseId == 0)
+            {
+                await AddCourse(newCourse);
+            }
+            else
+            {
+                newCourse.Id = courseId;
+                await UpdateCourse(newCourse);
+            }
+
+            return newCourse.Id;
+        }
+
         /// <summary>
         /// Create new empty course
         /// </summary>
@@ -141,6 +180,35 @@ namespace Mentohub.Core.Services.Services
             res.Price = 0;
 
             return res;
+        }
+
+        public class FilesHandler
+        {
+            public string VideoName { get; set; }
+
+            public string PictureName { get; set; }
+
+            public IFormFile Video { get; set; }
+
+            public IFormFile Picture { get; set; }
+
+            public int CourseID { get; set; }
+
+            public FilesHandler(IFormFileCollection formFiles, int courseID)
+            {
+                if(formFiles.Count > 0)
+                {
+                    Video = formFiles["video"];
+                    Picture = formFiles["picture"];
+                }
+                CourseID = courseID;
+            }
+
+            public async void SaveFiles(MediaService service)
+            {
+                PictureName = await service.SaveMedia(Picture, CourseID);
+                VideoName = await service.SaveMedia(Video, CourseID);
+            }
         }
     }
 }
