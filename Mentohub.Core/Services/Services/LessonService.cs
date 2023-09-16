@@ -100,9 +100,20 @@ namespace Mentohub.Core.Services.Services
             await _lessonRepository.UpdateAsync(currentLesson);
         }       
 
-        public Lesson GetLessonByCourseItem(int courseItemId)
+        public LessonDTO GetLessonByCourseItem(int courseItemId)
         {
-            return _lessonRepository.GetLessonByCourseItemId(courseItemId);
+            var data = _lessonRepository.GetLessonByCourseItemId(courseItemId);
+
+            return new LessonDTO()
+            {
+                Id = data.Id,
+                Theme = data.Theme,
+                Description = data.Description,
+                Body = data.Body,
+                VideoPath = data.VideoPath,
+                CourseItemId = data.CourseItemId,
+                DateCreation = data.DateCreation
+            };
         }
     }
 }

@@ -92,10 +92,8 @@ namespace Mentohub.Controllers
         [Route("/Lesson/EditLesson/{id}")]
         public IActionResult EditLesson(int id)
         {
-            Lesson l = _lessonService.GetLessonByCourseItem(id);
-            ViewBag.Lesson = l;
-
-            return View(l);  
+            var data = _lessonService.GetLessonByCourseItem(id);
+            return View(data);  
         }
 
         [Route("/Lesson/Edit")]
