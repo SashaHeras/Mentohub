@@ -9,6 +9,7 @@ using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Mentohub.Core.Services.Services
 {
@@ -26,9 +27,9 @@ namespace Mentohub.Core.Services.Services
 
         public CourseService(
             ProjectContext context,
-            CourseRepository courseRepository, 
-            CourseItemRepository courseItemRepository, 
-            CourseTypeRepository courseTypeRepository, 
+            CourseRepository courseRepository,
+            CourseItemRepository courseItemRepository,
+            CourseTypeRepository courseTypeRepository,
             LessonRepository lessonRepository,
             CourseItemService courseItemService,
             MediaService mediaService)
@@ -44,7 +45,7 @@ namespace Mentohub.Core.Services.Services
 
         public IQueryable<Course> GetAuthorsCourses(Guid userId)
         {
-            return _courseRepository.GetAllAuthorsCourses(userId); 
+            return _courseRepository.GetAllAuthorsCourses(userId);
         }
 
         public async Task<Course> AddCourse(Course course)
@@ -98,7 +99,7 @@ namespace Mentohub.Core.Services.Services
             var elementsJson = _courseRepository.GetCourseElementsList(id.ToString());
             var entityList = JsonSerializer.Deserialize<List<CourseElement>>(elementsJson);
             var result = new List<CourseElementDTO>();
-            if(entityList != null)
+            if (entityList != null)
             {
                 foreach (var e in entityList)
                 {
@@ -112,9 +113,39 @@ namespace Mentohub.Core.Services.Services
                         ElementName = e.ElementName
                     });
                 }
-            }            
+            }
 
             return result;
+        }
+
+        public List<CommentDTO> GetCourseComments(int courseID, int count = 10)
+        {
+            List<CommentDTO> commentsList = new List<CommentDTO>();
+            commentsList = _context.Comments.Where(c => c.CourseId == courseID).
+                Select(x=> new CommentDTO()
+                {
+                    Id = x.Id,
+                    Text = x.Text,
+                    Rating = x.Rating,
+                    DateAgo = GetTimeSinceDate(x.DateCreation),
+                    UserName = "",             
+                    ProfileImagePath = ""       
+                }).ToList();
+
+            if (commentsList.Count == 0)
+            {
+                commentsList.Add(new CommentDTO()
+                {
+                    Id = 5,
+                    Text = "Hello",
+                    Rating = 4,
+                    DateAgo = "4 month ago",
+                    UserName = "Heras A.",              // Add user name Heras O.
+                    ProfileImagePath = ""     // Add user profile image name
+                });
+            }
+
+            return commentsList;
         }
 
         public async Task<int> SaveCource(IFormCollection form)
@@ -208,6 +239,29 @@ namespace Mentohub.Core.Services.Services
             {
                 PictureName = await service.SaveMedia(Picture, CourseID);
                 VideoName = await service.SaveMedia(Video, CourseID);
+            }
+        }
+
+        private static string GetTimeSinceDate(DateTime date)
+        {
+            TimeSpan timeSpan = DateTime.Now - date;
+
+            int totalDays = (int)timeSpan.TotalDays;
+            int totalWeeks = totalDays / 7;
+            int totalMonths = totalDays / 30;
+            int totalYears = totalDays / 365;
+
+            if (totalWeeks < 4)
+            {
+                return $"{totalWeeks} week{(totalWeeks == 1 ? "" : "s")} ago";
+            }
+            else if (totalMonths < 12)
+            {
+                return $"{totalMonths} month{(totalMonths == 1 ? "" : "s")} ago";
+            }
+            else
+            {
+                return $"{totalYears} year{(totalYears == 1 ? "" : "s")} ago";
             }
         }
     }
