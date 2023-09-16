@@ -79,20 +79,16 @@ namespace Mentohub.Controllers
         [HttpDelete]
         [Route("/Course/DeleteCourseItem/{courseItemId}/{typeId}")]
         public async Task<JsonResult> DeleteCourseItem(int courseItemId, int typeId)
-        {
-            var item = _courseItemService.GetCourseItem(courseItemId);
-
+        {          
             try
             {
-                item.StatusId = _context.ItemsStatuses.Where(i => i.Name == "Deleted").FirstOrDefault().Id;
-                await _courseItemService.UpdateCourseItem(item);
+                var data = await _courseItemService.DeleteCourseItem(courseItemId, typeId);
+                return Json(new { IsError = false, Data = data, Message = "" });
             }
             catch(Exception ex)
             {
-                return Json(ex.Message);
+                return Json(new { IsError = true, Message = ex.Message });
             }
-
-            return Json(true);
         }
 
         [HttpGet]

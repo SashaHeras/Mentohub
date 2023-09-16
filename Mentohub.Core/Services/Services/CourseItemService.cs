@@ -1,17 +1,25 @@
-﻿using Mentohub.Core.Repositories.Repositories;
+﻿using Mentohub.Core.Context;
+using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mentohub.Core.Services.Services
 {
     public class CourseItemService
     {
-        private CourseTypeRepository _courseItemTypeRepository;
-        private CourseItemRepository _courseItemRepository;
+        private ProjectContext _projectContext;
+        private readonly CourseTypeRepository _courseItemTypeRepository;
+        private readonly CourseItemRepository _courseItemRepository;
 
-        public CourseItemService(CourseItemRepository courseItemRepository, CourseTypeRepository courseTypeRepository) {
+        public CourseItemService(
+            CourseItemRepository courseItemRepository, 
+            CourseTypeRepository courseTypeRepository,
+            ProjectContext projectContext
+            ) {
             _courseItemTypeRepository = courseTypeRepository;
             _courseItemRepository = courseItemRepository;
+            _projectContext = projectContext;
         }
 
         public CourseItem GetCourseItem(int id)
@@ -59,6 +67,15 @@ namespace Mentohub.Core.Services.Services
             return await _courseItemRepository.UpdateAsync(courseItem);
         }
 
+        public async Task<CourseItem> DeleteCourseItem(int courseItemId, int typeId)
+        {
+            var item = GetCourseItem(courseItemId);
+            item.StatusId = GetStatusID("Deleted");
+
+            await UpdateCourseItem(item);
+            return item;
+        }
+
         /// <summary>
         /// Return IQuerable of course items
         /// </summary>
@@ -67,6 +84,17 @@ namespace Mentohub.Core.Services.Services
         public IQueryable<CourseItem> GetElementsByCourseId(int courseId)
         {
             return (IQueryable<CourseItem>)_courseItemRepository.GetCourseItemsByCourseId(courseId);
+        }
+
+        private int GetStatusID(string name)
+        {
+            var status = _projectContext.ItemsStatuses.Where(i => i.Name == name).FirstOrDefault();
+            if(status == null)
+            {
+                return -1;
+            }
+
+            return status.Id;
         }
     }
 }
