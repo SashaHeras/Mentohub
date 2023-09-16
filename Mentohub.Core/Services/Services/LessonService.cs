@@ -29,20 +29,25 @@ namespace Mentohub.Core.Services.Services
             _courseItemService = courseItemService;
         }     
 
-        public void CreateLesson(CourseItem courseItem, LessonDTO lesson, string fileName)
+        public async Task<int> Create(IFormCollection form, LessonDTO createLessonModel)
         {
+            string videoName = await _azureService.SaveInAsync(createLessonModel.VideoFile);
+            CourseItem newCourceItem = await _courseItemService.Create(createLessonModel);
+
             Lesson newLesson = new Lesson()
             {
                 Id = Guid.NewGuid(),
-                Theme = lesson.Theme,
-                Description = lesson.Description,
-                Body = lesson.Body,
-                VideoPath = fileName,
-                CourseItemId = courseItem.Id,
+                Theme = createLessonModel.Theme,
+                Description = createLessonModel.Description,
+                Body = createLessonModel.Body,
+                VideoPath = videoName,
+                CourseItemId = newCourceItem.Id,
                 DateCreation = DateTime.Now.ToShortDateString()
             };
 
-            _lessonRepository.AddAsync(newLesson);
+            await _lessonRepository.AddAsync(newLesson);
+
+            return newCourceItem.CourseId;
         }
 
         public async Task<int> Edit(IFormCollection form, Lesson lesson)
