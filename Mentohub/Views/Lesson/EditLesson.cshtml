@@ -1,4 +1,4 @@
-﻿@model Mentohub.Domain.Entities.Lesson;
+﻿@model Mentohub.Domain.Data.DTO.LessonDTO;
 @{
     ViewData["Title"] = "Edit lesson";
 }
@@ -19,17 +19,17 @@
     <form method="post" enctype="multipart/form-data" asp-action="Edit" asp-controller="Lesson">
         <div class="field">
             <label asp-for="Theme">Theme</label>
-            <input asp-for="Theme" value="@ViewBag.Lesson.Theme" />
+            <input asp-for="Theme" value="@Model.Theme" />
         </div>
         <br />
         <div class="field">
             <label asp-for="Description">Description</label>
-            <input asp-for="Description" width="550px" value="@ViewBag.Lesson.Description" />
+            <input asp-for="Description" width="550px" value="@Model.Description" />
         </div>
         <br />
         <div class="field">
             <label asp-for="VideoPath">Video</label>
-            <input asp-for="VideoPath" type="file" value="@ViewBag.Lesson.VideoPath" />
+            <input asp-for="VideoPath" type="file" value="@Model.VideoPath" />
         </div>
         <br />
         <div class="form-group">
@@ -39,9 +39,9 @@
             </div>
         </div>
         <br />
-        <input asp-for="Id" type="hidden" value="@ViewBag.Lesson.Id" />
-        <input asp-for="CourseItemId" type="hidden" value="@ViewBag.Lesson.CourseItemId" />
-        <input asp-for="VideoPath" type="hidden" value="@ViewBag.Lesson.VideoPath" />
+        <input asp-for="Id" type="hidden" value="@Model.Id" />
+        <input asp-for="CourseItemId" type="hidden" value="@Model.CourseItemId" />
+        <input asp-for="VideoPath" type="hidden" value="@Model.VideoPath" />
         <input type="submit" value="Submit" />
         <br />
     </form>
