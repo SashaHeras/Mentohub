@@ -27,7 +27,7 @@ namespace Mentohub.Core.Services.Services
             return _courseItemRepository.GetCourseItemById(id);
         }
 
-        public async Task<CourseItem> CreateNewCourseItem(LessonDTO lesson)
+        public async Task<CourseItem> Create(LessonDTO lesson)
         {
             var courseId = lesson.CourseID;
             var sameCourseItems = _courseItemRepository.GetCourseItemsByCourseId(courseId);
