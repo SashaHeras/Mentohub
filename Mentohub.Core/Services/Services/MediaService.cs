@@ -21,15 +21,15 @@ namespace Mentohub.Core.Services.Services
         /// <param name="file"></param>
         /// <param name="courseId"></param>
         /// <returns></returns>
-        public async Task<string?> SaveMedia(IFormFile? file, int courseId)
+        public async Task<string> SaveMedia(IFormFile? file, int courseId)
         {
-            string? resPath = String.Empty;
-            string? oldName = String.Empty;
+            string resPath = String.Empty;
+            string oldName = String.Empty;
 
             if (file != null)
             {
                 var course = _courseService.GetCourse(courseId);
-                oldName = (file.ContentType == "video/mp4") ? course.PreviewVideoPath : course.PicturePath;
+                oldName = (file.ContentType == "video/mp4") ? (course.PreviewVideoPath ?? string.Empty) : course.PicturePath;
 
                 if (oldName != null)
                 {
@@ -41,7 +41,7 @@ namespace Mentohub.Core.Services.Services
             else if (courseId != 0)
             {
                 var course = _courseService.GetCourse(courseId);
-                resPath = (file.ContentType == "video/mp4") ? course.PreviewVideoPath : course.PicturePath;
+                resPath = (file.ContentType == "video/mp4") ? (course.PreviewVideoPath ?? string.Empty) : course.PicturePath;
             }
 
             return resPath;
