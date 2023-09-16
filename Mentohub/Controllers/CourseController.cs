@@ -72,39 +72,8 @@ namespace Mentohub.Controllers
         [HttpPost]
         public async Task<JsonResult> SaveCource()
         {
-            var form = Request.Form;
-            IFormFile? picture = null;
-            IFormFile? video = null;
-            if (form.Files.Count != 0)
-            {
-                video = form.Files["video"];
-                picture = form.Files["picture"];
-            }
-
-            int courseId = Convert.ToInt32(form["courseId"]);
-            Course newCourse = new Course();
-
-            newCourse.Name = form["name"].ToString();
-            newCourse.AuthorId = Guid.Parse(form["authorId"].ToString());
-            newCourse.Checked = false;
-            newCourse.Price = Convert.ToDecimal(form["price"].ToString());
-            newCourse.CourseSubjectId = Convert.ToInt32(form["subject"]);
-            newCourse.LastEdittingDate = DateTime.Now;
-
-            newCourse.PicturePath = await _mediaService.SaveMedia(picture, courseId);
-            newCourse.PreviewVideoPath = await _mediaService.SaveMedia(video, courseId);
-            
-            if (courseId == 0)
-            {
-                await _courseService.AddCourse(newCourse);
-            }
-            else
-            {
-                newCourse.Id = courseId;
-                await _courseService.UpdateCourse(newCourse);
-            }
-
-            return Json(newCourse.Id);
+            int courseID = await _courseService.SaveCource(Request.Form);
+            return Json(courseID);
         }
 
         [HttpDelete]
