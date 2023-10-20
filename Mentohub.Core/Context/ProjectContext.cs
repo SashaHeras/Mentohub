@@ -9,7 +9,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Mentohub.Core.Context
 {
-    public class ProjectContext : DbContext
+    public class ProjectContext : IdentityDbContext<CurrentUser>
     {
         public DbSet<Lesson> Lessons { get; set; }
 
@@ -49,13 +49,14 @@ namespace Mentohub.Core.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Lesson>().HasKey(x => x.Id);
-            modelBuilder.Entity<Course>().HasKey(c => c.Id);
+           base.OnModelCreating(modelBuilder);
+            //modelBuilder.Entity<Lesson>().HasKey(x => x.Id);
+            //modelBuilder.Entity<Course>().HasKey(c => c.Id);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=StudyDB;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;Trusted_Connection=True", builder =>
+            optionsBuilder.UseSqlServer("Server=ALLA2021\\SQLEXPRESS01;Initial Catalog=StudyDB;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;Trusted_Connection=True", builder =>
             {
                 builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
             });
