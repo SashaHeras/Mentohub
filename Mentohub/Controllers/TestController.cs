@@ -1,5 +1,4 @@
-﻿using Mentohub.Core.Context;
-using Mentohub.Core.Services.Services;
+﻿using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -68,14 +67,19 @@ namespace Mentohub.Controllers
             double total = 0;
             double mark = 0;
 
+#pragma warning disable CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
             int testId = int.Parse(Request.Form["test"]);
+#pragma warning restore CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
+#pragma warning disable CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
             int userId = int.Parse(Request.Form["userid"]);
+#pragma warning restore CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
             List<TaskHistory> taskHistories = new List<TaskHistory>();
             List<AnswerHistory> answerHistories = new List<AnswerHistory>();
 
             var tasks = _taskService.GetTasks(testId);
             var taskAnswers = Request.Form["answers"].ToString().Split(',')
-                                .Select(a => new AnswerDTO {
+                                .Select(a => new AnswerDTO
+                                {
                                     TaskId = int.Parse(a.Split('_')[0]),
                                     AnswerId = int.Parse(a.Split('_')[1]),
                                     IsChecked = bool.Parse(a.Split('_')[2])
@@ -88,17 +92,20 @@ namespace Mentohub.Controllers
                 var corectAnswersCount = _answerService.PopulateAnswerHistories(taskAnswerIds, task, answerHistories);
                 int corAnsCnt = _answerService.GetCountOfCorrectAnswers(task.Id);
 
-                if (corAnsCnt == corectAnswersCount) {
+                if (corAnsCnt == corectAnswersCount)
+                {
                     markForTask = task.Mark;
                 }
-                else if (corAnsCnt > corectAnswersCount) {
+                else if (corAnsCnt > corectAnswersCount)
+                {
                     double perOne = task.Mark / corAnsCnt;
                     markForTask = task.Mark / (perOne * corectAnswersCount);
                 }
 
                 mark += markForTask;
                 total += task.Mark;
-                taskHistories.Add(new TaskHistory {
+                taskHistories.Add(new TaskHistory
+                {
                     TaskId = task.Id,
                     UserMark = markForTask
                 });
@@ -144,11 +151,17 @@ namespace Mentohub.Controllers
         }
 
         [HttpPost]
+#pragma warning disable CS1998 // В асинхронном методе отсутствуют операторы await, будет выполнен синхронный метод
         public async Task<JsonResult> SaveAnswers()
+#pragma warning restore CS1998 // В асинхронном методе отсутствуют операторы await, будет выполнен синхронный метод
         {
             var allAnsws = Request.Form["answers"];
             var allChecked = Request.Form["checked"];
+#pragma warning disable CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
+#pragma warning disable CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
             Dictionary<string, bool> answers = _answerService.AnswersSpliter(allAnsws, allChecked);
+#pragma warning restore CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
+#pragma warning restore CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
 
             //
             TestTask tt = _taskService.CreateNewTask(
@@ -215,7 +228,11 @@ namespace Mentohub.Controllers
 
             var allAnsws = Request.Form["answers"];
             var allChecked = Request.Form["checked"];
+#pragma warning disable CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
+#pragma warning disable CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
             Dictionary<string, bool> answers = _answerService.AnswersSpliter(allAnsws, allChecked);
+#pragma warning restore CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
+#pragma warning restore CS8604 // Возможно, аргумент-ссылка, допускающий значение NULL.
             string[] ids = Request.Form["ids"].ToString().Split(',');
 
             await _answerService.SavingAnswers(editedTask, answers, ids);
@@ -229,7 +246,7 @@ namespace Mentohub.Controllers
         [Route("/Test/DeleteTask/{taskId}")]
         public JsonResult DeleteTask(int taskId)
         {
-            var task = _taskService.GetTask(taskId);            
+            var task = _taskService.GetTask(taskId);
             int orderNumber = task.OrderNumber;
             int testId = task.TestId;
             var allTasksAfter = _taskService.GetTasksAfter(testId, orderNumber);
@@ -252,7 +269,7 @@ namespace Mentohub.Controllers
         {
             var answerId = Convert.ToInt32(Request.Form["answerId"]);
             var answer = _answerService.GetAnswer(answerId);
-            var taskId = answer.TaskId; 
+            var taskId = answer.TaskId;
 
             if (answer != null)
             {

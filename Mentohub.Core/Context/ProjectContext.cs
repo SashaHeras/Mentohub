@@ -1,8 +1,9 @@
-using Mentohub.Domain.Data.Entities;
+﻿using Mentohub.Domain.Data.Entities;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+
 namespace Mentohub.Core.Context
 {
     public class ProjectContext : IdentityDbContext<CurrentUser>
@@ -45,7 +46,7 @@ namespace Mentohub.Core.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder);
             //modelBuilder.Entity<Lesson>().HasKey(x => x.Id);
             //modelBuilder.Entity<Course>().HasKey(c => c.Id);
         }

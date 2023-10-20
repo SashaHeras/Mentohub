@@ -21,7 +21,7 @@ namespace Mentohub.Core.Services.Services
         private readonly CourseItemRepository _courseItemRepository;
         private readonly CourseTypeRepository _courseTypeRepository;
         private readonly LessonRepository _lessonRepository;
-        private readonly MediaService _mediaService;
+        //private readonly MediaService _mediaService;
 
         private readonly CourseItemService _courseItemService;
 
@@ -31,8 +31,8 @@ namespace Mentohub.Core.Services.Services
             CourseItemRepository courseItemRepository,
             CourseTypeRepository courseTypeRepository,
             LessonRepository lessonRepository,
-            CourseItemService courseItemService,
-            MediaService mediaService)
+            CourseItemService courseItemService/*,*/
+            /*MediaService mediaService*/)
         {
             this._context = context;
             _courseRepository = courseRepository;
@@ -40,7 +40,7 @@ namespace Mentohub.Core.Services.Services
             _courseTypeRepository = courseTypeRepository;
             _lessonRepository = lessonRepository;
             _courseItemService = courseItemService;
-            _mediaService = mediaService;
+            //_mediaService = mediaService;
         }
 
         public IQueryable<Course> GetAuthorsCourses(Guid userId)
@@ -152,7 +152,7 @@ namespace Mentohub.Core.Services.Services
         {
             int courseId = Convert.ToInt32(form["courseId"]);
             FilesHandler handler = new FilesHandler(form.Files, courseId);
-            handler.SaveFiles(_mediaService);
+            //handler.SaveFiles(_mediaService);
 
             Course newCourse = new Course()
             {

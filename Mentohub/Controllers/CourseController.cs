@@ -1,8 +1,6 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
-using Mentohub.Domain.Entities;
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mentohub.Controllers
@@ -13,20 +11,20 @@ namespace Mentohub.Controllers
 
         private readonly CourseService _courseService;
         private readonly LessonService _lessonService;
-        private readonly MediaService _mediaService;
+        //private readonly MediaService _mediaService;
         private readonly CourseItemService _courseItemService;
 
-        public CourseController(ProjectContext projectContext, 
-            CourseService service, 
+        public CourseController(ProjectContext projectContext,
+            CourseService service,
             LessonService lessonService,
-            MediaService mediaService, 
+            //MediaService mediaService, 
             CourseItemService courseItemService)
         {
             _context = projectContext;
-            _courseService = service;  
+            _courseService = service;
             _courseItemService = courseItemService;
             _lessonService = lessonService;
-            _mediaService = mediaService;
+            //_mediaService = mediaService;
         }
 
         public IActionResult Index(int id)
@@ -79,13 +77,13 @@ namespace Mentohub.Controllers
         [HttpDelete]
         [Route("/Course/DeleteCourseItem/{courseItemId}/{typeId}")]
         public async Task<JsonResult> DeleteCourseItem(int courseItemId, int typeId)
-        {          
+        {
             try
             {
                 var data = await _courseItemService.DeleteCourseItem(courseItemId, typeId);
                 return Json(new { IsError = false, Data = data, Message = "" });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Json(new { IsError = true, Message = ex.Message });
             }
@@ -110,23 +108,23 @@ namespace Mentohub.Controllers
             int itemId = Convert.ToInt32(courseItemId);
             int courseId = _courseItemService.GetCourseItem(itemId).CourseId;
 
-            CourseDTO c = _courseService.GetCourse(courseId);
-            Lesson l = _lessonService.GetLessonByCourseItem(itemId);
+            //CourseDTO c = _courseService.GetCourse(courseId);
+            //Lesson l = _lessonService.GetLessonByCourseItem(itemId);
 
             LessonDTO lessonPartial = new LessonDTO()
             {
-                Id = l.Id,
-                Theme = l.Theme,
-                Description = l.Description,
-                VideoPath = l.VideoPath,
-                Body = l.Body,
-                DateCreation = l.DateCreation,
-                CourseItemId = l.CourseItemId,
-                CourseID = c.Id,
-                CourseRating = c.Rating
+                //Id = l.Id,
+                //Theme = l.Theme,
+                //Description = l.Description,
+                //VideoPath = l.VideoPath,
+                //Body = l.Body,
+                //DateCreation = l.DateCreation,
+                //CourseItemId = l.CourseItemId,
+                //CourseID = c.Id,
+                //CourseRating = c.Rating
             };
 
             return PartialView("~/Views/Partial/_LessonPartial.cshtml", lessonPartial);
-        }        
+        }
     }
 }

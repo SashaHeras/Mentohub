@@ -1,5 +1,4 @@
-﻿using Mentohub.Core.Context;
-using Mentohub.Core.Services.Services;
+﻿using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +13,7 @@ namespace Mentohub.Controllers
         private CourseItemService _courseItemService;
         private readonly CourseService _courseService;
 
-        public LessonController(LessonService lessonService, AzureService azureService, MediaService mediaService, 
+        public LessonController(LessonService lessonService, AzureService azureService, MediaService mediaService,
             CourseItemService courseItemService, CourseService courseService)
         {
             _lessonService = lessonService;
@@ -74,7 +73,7 @@ namespace Mentohub.Controllers
 
         [HttpPost]
         public JsonResult LessonJson(Guid id)
-        {            
+        {
             try
             {
                 var data = _lessonService.GetLesson(id);
@@ -91,11 +90,13 @@ namespace Mentohub.Controllers
         {
             var data = _lessonService.GetLessonByCourseItem(id);
 
-            return View(data);  
+            return View(data);
         }
 
         [Route("/Lesson/Edit")]
+#pragma warning disable CS1998 // В асинхронном методе отсутствуют операторы await, будет выполнен синхронный метод
         public async Task<IActionResult> Edit(IFormCollection form, Lesson lesson)
+#pragma warning restore CS1998 // В асинхронном методе отсутствуют операторы await, будет выполнен синхронный метод
         {
             var data = _lessonService.Edit(form, lesson);
             return RedirectToAction("CreateCourse", "Course", new { id = data });
