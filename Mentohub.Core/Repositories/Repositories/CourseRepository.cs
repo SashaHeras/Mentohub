@@ -40,10 +40,10 @@ namespace Mentohub.Core.Repositories.Repositories
         /// <param name="courseId"></param>
         /// <returns></returns>
         public string GetCourseElementsList(string courseId)
-{
-    //string query = "EXEC GetCourseElementsList @courseId = " + courseId;
-    //var result = _context.Database.FromSqlRaw(query).AsEnumerable().FirstOrDefault();
-    return string.Empty;
-}
+        {
+            //string query = "EXEC GetCourseElementsList @courseId = " + courseId;
+            //var result = _context.Database.FromSqlRaw(query).AsEnumerable().FirstOrDefault();
+            return string.Empty;
+        }
     }
 }
