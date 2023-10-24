@@ -6,8 +6,10 @@ using Mentohub.Domain.Data.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,30 +57,54 @@ builder.Services.AddSignalR();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Mentohub", Version = "v1" });
+
+    // теги і описи для контролерів і дій
+    c.TagActionsBy(api => new[] { api.GroupName });
+
+    //параметри дій (HTTP методи)
+    c.DocInclusionPredicate((docName, apiDesc) =>
+    {
+        if (!apiDesc.TryGetMethodInfo(out var methodInfo))
+            return false;
+
+        // Перевірити HTTP методи
+        if (docName == "v1" && methodInfo.CustomAttributes.Any(attr => attr.AttributeType == typeof(HttpGetAttribute)))
+            return true;
+        if (docName == "v1" && methodInfo.CustomAttributes.Any(attr => attr.AttributeType == typeof(HttpPostAttribute)))
+            return true;
+        if (docName == "v1" && methodInfo.CustomAttributes.Any(attr => attr.AttributeType == typeof(HttpPutAttribute)))
+            return true;
+        if (docName == "v1" && methodInfo.CustomAttributes.Any(attr => attr.AttributeType == typeof(HttpDeleteAttribute)))
+            return true;
+        return false;
+    });
 });
+
 var app = builder.Build();
-app.UseAuthentication();
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mentohub6" + " V1");
-});
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+    app.UseAuthentication();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mentohub6" + " V1");
+    });
+    // Configure the HTTP request pipeline.
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseExceptionHandler("/Home/Error");
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+    }
 
-app.UseStaticFiles();
-app.UseDeveloperExceptionPage();
-app.UseHttpsRedirection();
-app.UseRouting();
-app.UseAuthorization();
+    app.UseStaticFiles();
+    app.UseDeveloperExceptionPage();
+    app.UseHttpsRedirection();
+    app.UseRouting();
+    app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run();
+    app.Run();
+
+

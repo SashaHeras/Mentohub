@@ -173,8 +173,8 @@ namespace Mentohub.Core.Repositories.Repositories
         /// <returns></returns>
         public async Task<IItem> Register(IFormCollection form, RegisterDTO model)
         {
-            string[] l = form["Role"].ToString().Split(",");
-
+            //string[] l = form["Role"].ToString().Split(",");
+            string role = "Customer";
             CurrentUser user = new CurrentUser { Email = model.Email, UserName = model.Email,
                 FirstName=model.FirstName,LastName=model.LastName };
             // добавляем пользователя
@@ -182,10 +182,10 @@ namespace Mentohub.Core.Repositories.Repositories
 
             //получаем роль
             List<object> roles = new List<object>();
-            foreach (string role in l)
-            {
+            //foreach (string role in l)
+            //{
                 roles.Add(await _roleManager.FindByNameAsync(role));
-            }
+            //}
 
             if (result.Succeeded == true && roles.Capacity != 0)
             {

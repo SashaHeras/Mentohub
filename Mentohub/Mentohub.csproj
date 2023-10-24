@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Folder Include="Views\Account\" />
+    <Folder Include="Views\Admin\" />
     <Folder Include="wwwroot\Pictures\" />
     <Folder Include="wwwroot\Videos\" />
   </ItemGroup>

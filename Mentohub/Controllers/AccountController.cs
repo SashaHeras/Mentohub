@@ -37,6 +37,7 @@ namespace Mentohub.Core.Repositories.Repositories
             return View();
         }
         [HttpPost]
+        [Route("register")]
         [SwaggerOperation(Summary = "Реєстрація користувача", Tags = new[] { "Теги" })]
         public async Task<IActionResult> Register(IFormCollection form, RegisterDTO model)
         {
@@ -73,11 +74,11 @@ namespace Mentohub.Core.Repositories.Repositories
         /// <param name="credentials"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("signin")]
+        [Route("login")]
         [SwaggerOperation(Summary = "Sign in a user")]
         [SwaggerResponse(200, "User signed in successfully")]
         [SwaggerResponse(401, "Authentication failed")]
-        public JsonResult SignInUser([FromBody] LoginDTO credentials)
+        public JsonResult LoginAsync([FromBody] LoginDTO credentials)
         {
             // Логіка аутентифікації користувача
             var authenticatedUser = _userService.Login(credentials);
