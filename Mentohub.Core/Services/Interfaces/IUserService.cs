@@ -16,7 +16,7 @@ namespace Mentohub.Core.Services.Interfaces
         public Task<CurrentUser> GetUserById(string id);
         public Task<CurrentUser> GetUserByName(string name);
         public IAsyncEnumerable<CurrentUser> GetAllUsers();
-        public Task<IItem> CreateUser(IFormCollection form, RegisterDTO model);
+        public Task<IItem> CreateUser( RegisterDTO model);
         public Task<IItem> UpdateUser(IFormFile avatarFile, EditUserDTO model);
         public Task<bool> DeleteUser(string id);
         public Task<EditUserDTO> GetProfile(string id);

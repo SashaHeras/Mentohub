@@ -171,7 +171,7 @@ namespace Mentohub.Core.Repositories.Repositories
         /// <param name="form"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public async Task<IItem> Register(IFormCollection form, RegisterDTO model)
+        public async Task<IItem> Register( RegisterDTO model)
         {
             //string[] l = form["Role"].ToString().Split(",");
             string role = "Customer";
@@ -181,18 +181,17 @@ namespace Mentohub.Core.Repositories.Repositories
             var result = await _userManager.CreateAsync(user, model.Password);
 
             //получаем роль
-            List<object> roles = new List<object>();
+            //List<object> roles = new List<object>();
             //foreach (string role in l)
             //{
-                roles.Add(await _roleManager.FindByNameAsync(role));
+                //roles.Add(await _roleManager.FindByNameAsync(role));
             //}
 
-            if (result.Succeeded == true && roles.Capacity != 0)
+            if (result.Succeeded == true /*&& roles.Capacity != 0*/)
             {
-                foreach (var r in roles)
-                {
-                    await _userManager.AddToRoleAsync(user, r.ToString());
-                }
+               
+                    await _userManager.AddToRoleAsync(user, role);
+               
                 _logger.LogInformation("User created a new account with password.");
 
                 //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

@@ -30,9 +30,9 @@ namespace Mentohub.Core.Services.Services
         /// <param name="form"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public async Task<IItem> CreateUser(IFormCollection form, RegisterDTO model)
+        public async Task<IItem> CreateUser( RegisterDTO model)
         {
-          return  await _cRUD.Register(form, model);
+          return  await _cRUD.Register( model);
         }
         /// <summary>
         /// сервіс видалення проіфілю користувача

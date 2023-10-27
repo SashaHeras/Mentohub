@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -80,6 +81,9 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddControllers();
+
 var app = builder.Build();
     app.UseAuthentication();
     app.UseSwagger();
@@ -94,8 +98,9 @@ var app = builder.Build();
         // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
         app.UseHsts();
     }
-
+    app.UseCors();
     app.UseStaticFiles();
+    
     app.UseDeveloperExceptionPage();
     app.UseHttpsRedirection();
     app.UseRouting();

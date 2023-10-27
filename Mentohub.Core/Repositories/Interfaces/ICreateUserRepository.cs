@@ -12,6 +12,6 @@ namespace Mentohub.Core.Repositories.Interfaces
 {
     public interface ICreateUserRepository
     {
-        public Task<IItem> Register(IFormCollection form, RegisterDTO model);
+        public Task<IItem> Register( RegisterDTO model);
     }
 }
