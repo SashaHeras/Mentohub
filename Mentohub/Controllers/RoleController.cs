@@ -45,8 +45,12 @@ namespace Mentohub.Controllers
             }
             return View(name);
         }
+
         [Route("index")]
         public IActionResult Index() => View(_roleManager.Roles.ToList());
+        [HttpGet]
+        [Route("listRoles")]
+        public IActionResult ListOfRoles() => Json(_roleManager.Roles.ToList());
         [HttpDelete]
         public async Task<IActionResult> Delete(string id)
         {
@@ -57,8 +61,9 @@ namespace Mentohub.Controllers
             }
             return RedirectToAction("Index");
         }
+        [HttpGet]
         [Route("userlist")]
-        public IActionResult UserList() => View(_usermanager.Users.ToList());
+        public IActionResult UserList() => Json(_usermanager.Users.ToList());
 
         public async Task<IActionResult> Edit(string userId)
         {

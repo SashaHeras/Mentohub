@@ -23,19 +23,19 @@ namespace Mentohub.Controllers
         [HttpDelete]
         [Route("deleteUser")]
         [SwaggerOperation(Summary = "Delete a user by ID")]
-        [SwaggerResponse(204, "User deleted successfully")]
-        [SwaggerResponse(404, "User not found")]
-        public JsonResult DeleteUser([FromRoute] string userId)
+        
+        public async Task<IActionResult> DeleteUser([FromForm] string userId)
         {
             // Логіка видалення користувача
-            var deletedUser = _userService.DeleteUser(userId);
-
-            if (deletedUser != null)
+            try 
+            { 
+                var deletedUser =await _userService.DeleteUser(userId);
+            if (deletedUser)
             {
-                return new JsonResult(null)
-                {
+                  return new JsonResult("User deleted successfully ")
+                  {
                     StatusCode = 204 // Код статусу "No Content"
-                };
+                  };
             }
             else
             {
@@ -44,6 +44,18 @@ namespace Mentohub.Controllers
                     StatusCode = 404 // Код статусу "Not Found"
                 };
             }
+            }catch(Exception ex)
+            {
+                var errorResponse = new
+                {
+                    message = "Error when deleting a user",
+                    error = ex.Message // інформація про помилку
+                };
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = 500 // код статусу, що вказує на помилку
+                };
+            }   
         }
         [HttpPut]
         [Route("updateUser")]

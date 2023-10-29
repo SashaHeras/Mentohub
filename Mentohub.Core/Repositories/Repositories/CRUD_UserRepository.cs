@@ -15,6 +15,7 @@ using Mentohub.Core.AllExceptions;
 using Microsoft.AspNetCore.Routing;
 using Mentohub.Domain.Data.Entities.Interfaces;
 
+
 namespace Mentohub.Core.Repositories.Repositories
 {
     public class CRUD_UserRepository : ICRUD_UserRepository
@@ -35,34 +36,8 @@ namespace Mentohub.Core.Repositories.Repositories
             _signInManager = signInManager;
             _logger = logger;
             
-
         }
-        /// <summary>
-        /// Видалення користувача
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <returns></returns>
-        public async Task<bool> Delete(string userId)
-        {
-
-            CurrentUser user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return _exciption.RankException("User does not exist");
-            }
-            await _signInManager.SignOutAsync();
-            var result = await _userManager.DeleteAsync(user);
-            if (result.Succeeded)
-            {
-                // Успішно видалено
-                return true;
-            }
-            else
-            {
-                // Помилка при видаленні користувача
-                return false;
-            }
-        }
+        
         /// <summary>
         /// пошук користувача по name
         /// </summary>
@@ -73,7 +48,7 @@ namespace Mentohub.Core.Repositories.Repositories
             CurrentUser user = await _userManager.FindByNameAsync(name);
             if (user == null)
             {
-                return _exciption.NotFoundObjectResult("Customer is not found");
+                return _exciption.NotFoundObject("Customer is not found");
             }
             return user;
         }
@@ -87,7 +62,7 @@ namespace Mentohub.Core.Repositories.Repositories
             CurrentUser user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return _exciption.NotFoundObjectResult("Customer is not found");
+                return _exciption.NotFoundObject("Customer is not found");
             }
             return user;
         }
@@ -121,6 +96,7 @@ namespace Mentohub.Core.Repositories.Repositories
         //{
         //    return _userManager.Users as ICollection as Task<ICollection>;
         //}
+
         /// <summary>
         /// отримання форми для редагування профілю користувача
         /// </summary>
@@ -138,81 +114,7 @@ namespace Mentohub.Core.Repositories.Repositories
             model.Image = user.Image;
             return model;
         }
-        /// <summary>
-        /// Вхід в аккаунт
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public async Task<CurrentUser> LoginAsync(LoginDTO model)
-        {
-            var result =await _signInManager.PasswordSignInAsync(model.Email,
-                model.Password, model.RememberMe, false);
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("User logged in");
-                
-                return await FindCurrentUserByName(model.Email);
-            }
-            else
-            {
-                return null;
-            }
-        }
-        //Вихід з аккаунта 
-        public async Task<bool> LogOut()
-        {
-            await _signInManager.SignOutAsync();
-            return true;
-        }
-
-        /// <summary>
-        /// реєстрація користувача
-        /// </summary>
-        /// <param name="form"></param>
-        /// <param name="model"></param>
-        /// <returns></returns>
-        public async Task<IItem> Register( RegisterDTO model)
-        {
-            //string[] l = form["Role"].ToString().Split(",");
-            string role = "Customer";
-            CurrentUser user = new CurrentUser { Email = model.Email, UserName = model.Email,
-                FirstName=model.FirstName,LastName=model.LastName };
-            // добавляем пользователя
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            //получаем роль
-            //List<object> roles = new List<object>();
-            //foreach (string role in l)
-            //{
-                //roles.Add(await _roleManager.FindByNameAsync(role));
-            //}
-
-            if (result.Succeeded == true /*&& roles.Capacity != 0*/)
-            {
-               
-                    await _userManager.AddToRoleAsync(user, role);
-               
-                _logger.LogInformation("User created a new account with password.");
-
-                //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                //var routevalues=new { userId = user.Id, code = code };
-                //var host = new HostString("localhost");
-                //string?
-                //    callbackUrl = _linkGenerator.GetUriByAction(
-                //      action: "ConfirmEmail",controller: "Account",
-                //         values: routevalues, scheme: "https", host: host);
-
-                //await _emailSender.SendEmailAsync(user.Email, "Confirm your email",
-                //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
-                //установка куки
-                await _signInManager.SignInAsync(user, false);
-                return user;
-            }
-            else
-                return model;
-        }
-
+        
         public Task<ICollection> GetAllUsers()
         {
             throw new NotImplementedException();

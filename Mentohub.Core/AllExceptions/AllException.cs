@@ -1,4 +1,5 @@
 ﻿using Mentohub.Domain.Data.Entities;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,13 @@ namespace Mentohub.Core.AllExceptions
         /// <param name="v"></param>
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
-        public CurrentUser NotFoundObjectResult(string v)
+        public IActionResult NotFoundObjectResult(string v)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(v);
+        }
+        public CurrentUser NotFoundObject(string v)
+        {
+            throw new NotImplementedException(v);
         }
         /// <summary>
         /// 

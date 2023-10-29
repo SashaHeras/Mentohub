@@ -11,7 +11,7 @@ namespace Mentohub.Domain.Data.DTO
 {
     public class LoginDTO:IItem
     {
-        public string ReturnUrl { get; set; }
+        //public string ReturnUrl { get; set; }
 
         [Required]
         [Display(Name = "Email")]

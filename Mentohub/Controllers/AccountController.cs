@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-
+using Mentohub.Core.AllExceptions;
 
 namespace Mentohub.Core.Repositories.Repositories
 {
@@ -19,12 +19,12 @@ namespace Mentohub.Core.Repositories.Repositories
         //private readonly IUserStore<CurrentUser> _userStore;
         //private readonly IUserEmailStore<CurrentUser> _emailStore;
         private readonly ILogger<AccountController> _logger;
-        
+        private readonly AllException _exception;
         private readonly UserService _userService;
         public AccountController(SignInManager<CurrentUser> signInManager, UserService userService,
-           ILogger<AccountController> logger)
+           ILogger<AccountController> logger, AllException exception)
         {
-           
+            _exception = exception;
             _signInManager = signInManager;
             _logger = logger;
             _userService = userService;
@@ -41,42 +41,35 @@ namespace Mentohub.Core.Repositories.Repositories
         [SwaggerOperation(Summary = "Реєстрація користувача", Tags = new[] { "Теги" })]
         public async Task<IActionResult> Register([FromForm] RegisterDTO model)
         {
-
-            if (ModelState.IsValid && await _userService.CreateUser( model) != null)
+            try
             {
-                return RedirectToAction("Index", "Home");
+                var createdUser = await _userService.CreateUser(model);
+              if (ModelState.IsValid && createdUser != null)
+              {
+                //return RedirectToAction("Index", "Home");
+                return new JsonResult(createdUser)
+                {
+                    StatusCode=200
+                };
+              }
+
+            }            
+            catch (Exception ex) 
+            { // Обробка помилки та повернення JsonResult із відповідними даними про помилку
+                var errorResponse = new
+                {
+                    message = "Помилка при реєстрації користувача",
+                    error = ex.Message // інформація про помилку
+                };
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = 500 // код статусу, що вказує на помилку
+                };
 
             }
-            return View(model);
+            return _exception.NotFoundObjectResult("User was not created");
         }
-        /// <summary>
-        /// реєстрація користувача
-        /// </summary>
-        /// <param name="form"></param>
         
-        /// <returns></returns>
-        [HttpPost]
-        [Route("createUser")]
-        [SwaggerOperation(Summary = "Create a new user")]
-        [SwaggerResponse(201, "User created successfully")]
-        [SwaggerResponse(400, "Invalid input")]
-        public JsonResult CreateNewUser(IFormCollection form)
-        {
-            string contentType = Request.ContentType;
-
-            // Перевірка заголовка Content-Type
-            //if (!contentType.StartsWith("multipart/form-data"))
-            //{
-            //    // Обробка помилки 415, якщо Content-Type не відповідає очікуваному
-            //    return new JsonResult("Unsupported Media Type") { StatusCode = 415 };
-            //}
-            //var createdUser = _userService.CreateUser(form, model);
-            return new JsonResult(string.Empty);            
-            //return new JsonResult(createdUser)
-            //{
-            //    StatusCode = 201 // Код статусу "Created"
-            //};
-        }
         /// <summary>
         /// вхід в аккаунт
         /// </summary>
@@ -87,25 +80,39 @@ namespace Mentohub.Core.Repositories.Repositories
         [SwaggerOperation(Summary = "Sign in a user")]
         [SwaggerResponse(200, "User signed in successfully")]
         [SwaggerResponse(401, "Authentication failed")]
-        public JsonResult LoginAsync([FromBody] LoginDTO credentials)
+        public async Task<IActionResult> LoginAsync([FromForm] LoginDTO credentials)
         {
             // Логіка аутентифікації користувача
-            var authenticatedUser = _userService.Login(credentials);
+            try
+            {
+                var authenticatedUser =await _userService.Login(credentials);
 
-            if (authenticatedUser != null)
-            {
-                return new JsonResult(authenticatedUser)
-                {
+               if (ModelState.IsValid && authenticatedUser != null)
+               {
+                 return new JsonResult(authenticatedUser)
+                 {
                     StatusCode = 200
-                };
+                 };
+               }
+
             }
-            else
+            catch(Exception ex)
             {
+                var errorResponse = new
+                {
+                    message = "Error trying to log in user",
+                    error = ex.Message // інформація про помилку
+                };
                 return new JsonResult("Authentication failed")
                 {
                     StatusCode = 401 // Код статусу "Unauthorized"
                 };
             }
+            return _exception.NotFoundObjectResult("User is not found");
+        }
+        public JsonResult LogoutAsync()
+        {
+            return new JsonResult(_userService.LogOut());
         }
         
     }
