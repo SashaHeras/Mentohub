@@ -46,8 +46,8 @@ namespace Mentohub.Core.Repositories.Repositories
                 var createdUser = await _userService.CreateUser(model);
               if (ModelState.IsValid && createdUser != null)
               {
-                //return RedirectToAction("Index", "Home");
-                return new JsonResult(createdUser)
+                    _logger.LogInformation("User created successfully.");
+                    return new JsonResult(createdUser)
                 {
                     StatusCode=200
                 };
@@ -58,7 +58,7 @@ namespace Mentohub.Core.Repositories.Repositories
             { // Обробка помилки та повернення JsonResult із відповідними даними про помилку
                 var errorResponse = new
                 {
-                    message = "Помилка при реєстрації користувача",
+                    message = "Error during user registration",
                     error = ex.Message // інформація про помилку
                 };
                 return new JsonResult(errorResponse)

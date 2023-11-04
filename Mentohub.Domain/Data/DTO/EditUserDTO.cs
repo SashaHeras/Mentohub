@@ -9,11 +9,12 @@ namespace Mentohub.Domain.Data.DTO
 {
     public class EditUserDTO:IItem
     {
-        public string Id { get; set; }
-        public string Email { get; set; }
+        //public string? Id { get; set; }
+        //public string? Email { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public string? Image { get; set; }
         public string? AboutMe { get; set; }
+        //public DateTime DateOfBirth { get; set; }
+     
     }
 }

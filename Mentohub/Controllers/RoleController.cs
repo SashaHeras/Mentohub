@@ -1,4 +1,5 @@
-﻿using Mentohub.Core.Services.Services;
+﻿using Mentohub.Core.Repositories.Repositories;
+using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -15,17 +16,18 @@ namespace Mentohub.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<CurrentUser> _usermanager;
         private readonly UserService _userService;
-        public RoleController(RoleManager<IdentityRole> roleManager, UserService userService, UserManager<CurrentUser> usermanager)
+        private CRUD_UserRepository _cRUD;
+        public RoleController(CRUD_UserRepository cRUD,RoleManager<IdentityRole> roleManager, UserService userService, UserManager<CurrentUser> usermanager)
         {
             _roleManager = roleManager;
             _usermanager = usermanager;
             _userService = userService;
-
+            _cRUD= cRUD;
         }
         [Route("create")]
         public IActionResult Create() => View();
         [HttpPost]
-
+        [Route("create")]
         public async Task<IActionResult> Create(string name)
         {
             if (!string.IsNullOrEmpty(name))
@@ -46,8 +48,6 @@ namespace Mentohub.Controllers
             return View(name);
         }
 
-        [Route("index")]
-        public IActionResult Index() => View(_roleManager.Roles.ToList());
         [HttpGet]
         [Route("listRoles")]
         public IActionResult ListOfRoles() => Json(_roleManager.Roles.ToList());
@@ -59,11 +59,8 @@ namespace Mentohub.Controllers
             {
                 IdentityResult result = await _roleManager.DeleteAsync(role);
             }
-            return RedirectToAction("Index");
+            return Json("Role is deleted");
         }
-        [HttpGet]
-        [Route("userlist")]
-        public IActionResult UserList() => Json(_usermanager.Users.ToList());
 
         public async Task<IActionResult> Edit(string userId)
         {
@@ -81,9 +78,8 @@ namespace Mentohub.Controllers
                     UserRoles = userRoles,
                     AllRoles = allRoles,
                 };
-                return View(model);
+                return new JsonResult(model);
             }
-
             return NotFound();
         }
         [HttpPost]
@@ -91,7 +87,7 @@ namespace Mentohub.Controllers
         public async Task<IActionResult> Edit(string userId, List<string> roles)
         {
             // получаем пользователя
-            CurrentUser user = await _userService.GetUserById(userId);
+            CurrentUser user = await _cRUD.FindCurrentUserById(userId);
             if (user != null)
             {
                 // получем список ролей пользователя

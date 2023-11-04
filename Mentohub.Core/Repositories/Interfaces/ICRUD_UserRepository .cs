@@ -15,10 +15,11 @@ namespace Mentohub.Core.Repositories.Interfaces
         
     {
         
-        public Task<ICollection> GetAllUsers();
+        public Task<ICollection> GetAllUsers(string roleName);
         public Task<CurrentUser> FindCurrentUserByName(string name);
         public Task<CurrentUser> FindCurrentUserById(string id);   
-        public Task<EditUserDTO> GetUserProfile(string id);
+        public Task<CurrentUser> FindCurrentUserByEmail(string email);
+        public Task<List<string>> GetUserRoles(CurrentUser user);
        
     }
 }

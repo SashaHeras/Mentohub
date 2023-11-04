@@ -1,6 +1,7 @@
 using Mentohub.Core.AllExceptions;
 using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Repositories;
+using Mentohub.Core.Services;
 using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -105,7 +106,11 @@ var app = builder.Build();
     app.UseHttpsRedirection();
     app.UseRouting();
     app.UseAuthorization();
-
+app.UseEndpoints(endpoints =>
+{
+    
+    endpoints.MapHub<SignalRHub>("/signalRHub"); 
+});
     app.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");

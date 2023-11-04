@@ -13,15 +13,15 @@ namespace Mentohub.Core.Services.Interfaces
 {
     public interface IUserService
     {
-        public Task<CurrentUser> GetUserById(string id);
-        public Task<CurrentUser> GetUserByName(string name);
+       
         public IAsyncEnumerable<CurrentUser> GetAllUsers();
         public Task<CurrentUser> CreateUser( RegisterDTO model);
-        public Task<IItem> UpdateUser(IFormFile avatarFile, EditUserDTO model);
+        public Task<bool> UpdateUser( string id, EditUserDTO model);
         public Task<bool> DeleteUser(string id);
-        public Task<EditUserDTO> GetProfile(string id);
+        public Task<UserDTO> GetProfile(string id);
         public Task<CurrentUser> Login(LoginDTO model);
-       
+        public Task<UserDTO>GetUser(string userName);
         public Task<bool> LogOut();
+        public Task<CurrentUser> GetCurrentUser(string id);
     }
 }

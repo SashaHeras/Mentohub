@@ -67,57 +67,58 @@ namespace Mentohub.Core.Repositories.Repositories
             return user;
         }
         /// <summary>
-        /// редагування профілю користувача
+        /// оновлення інформації про аватарку користувача
         /// </summary>
-        /// <param name="avatarFile"></param>
-        /// <param name="model"></param>
+        /// <param name="userId"></param>
+        /// <param name="avatarUrl"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-
-        public async Task<IItem> Edit(IFormFile avatarFile, EditUserDTO model)
+        public async Task UpdateAvatarUrl(string userId, string avatarUrl)
         {
-            CurrentUser user = await FindCurrentUserById(model.Id);
+            var user = await _userManager.FindByIdAsync(userId);
+
             if (user != null)
             {
-                user.Id = model.Id;
-                user.Email = model.Email;
-                user.UserName = model.Email;
-                user.FirstName = model.FirstName;
-                user.LastName = model.LastName;
-                user.AboutMe = model.AboutMe;
-                //await UploadAvatar(avatarFile, model.Id);
+                user.Image = avatarUrl;
                 await _userManager.UpdateAsync(user);
-                return (IItem)user;
             }
-            return (IItem)model;
-        }
-        //отримання переліку всіх користувачів
-        //public Task<ICollection>? GetAllUsers()
-        //{
-        //    return _userManager.Users as ICollection as Task<ICollection>;
-        //}
-
-        /// <summary>
-        /// отримання форми для редагування профілю користувача
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public async Task<EditUserDTO> GetUserProfile(string id)
-        {
-            EditUserDTO model = new EditUserDTO();
-            CurrentUser user = await FindCurrentUserById(id);
-            model.Id = user.Id;
-            model.Email = user.Email;
-            model.LastName = user.LastName;
-            model.FirstName = user.FirstName;
-            model.AboutMe = user.AboutMe;
-            model.Image = user.Image;
-            return model;
         }
         
-        public Task<ICollection> GetAllUsers()
+        /// <summary>
+        /// отримання переліку користувачів по певній ролі
+        /// </summary>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
+        public async Task<List<CurrentUser>> GetAllUsers(string roleName)
+        {
+            return (List<CurrentUser>)await _userManager.GetUsersInRoleAsync(roleName);  
+        }
+        /// <summary>
+        /// пошук користувача по email
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public async Task<CurrentUser> FindCurrentUserByEmail(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
+        }
+
+        Task<ICollection> ICRUD_UserRepository.GetAllUsers(string roleName)
         {
             throw new NotImplementedException();
+        }
+        /// <summary>
+        /// повертає перелік ролей користувача
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        public async Task<List<string>> GetUserRoles(CurrentUser user)
+        {
+            if(user!=null)
+            {
+                var roles=await _userManager.GetRolesAsync(user);
+                return roles.ToList();
+            }
+           return new List<string>();
         }
     }
 }

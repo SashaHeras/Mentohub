@@ -1,4 +1,5 @@
-﻿using Mentohub.Domain.Data.Entities;
+﻿using Mentohub.Domain.Data.DTO;
+using Mentohub.Domain.Data.Entities;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,20 @@ namespace Mentohub.Core.AllExceptions
         {
             throw new NotImplementedException();
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="v"></param>
         public void NewException(string v) { }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public UserDTO NullException(string v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

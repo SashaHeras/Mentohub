@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace Mentohub.Domain.Data.DTO
 {
-    public class RegisterDTO:IItem
+    public class RegisterDTO
     {
         [Required]
         [EmailAddress]
