@@ -1,15 +1,35 @@
+using Mentohub.Core.AllExceptions;
 using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Services;
+using Mentohub.Domain.Data.Entities;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.Extensions.Configuration;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
+        options => builder.Configuration.Bind("JwtSettings", options))
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
+        options => builder.Configuration.Bind("CookieSettings", options));
+builder.Services.AddAuthorization();
+builder.Services.AddIdentity<CurrentUser, IdentityRole>()
+    .AddEntityFrameworkStores<ProjectContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddDbContext<ProjectContext>(options => options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
@@ -41,25 +61,61 @@ builder.Services.AddScoped<ITestService, TestService>();
 
 builder.Services.AddEndpointsApiExplorer();
 
+    // теги і описи для контролерів і дій
+    c.TagActionsBy(api => new[] { api.GroupName });
+
+    //параметри дій (HTTP методи)
+    c.DocInclusionPredicate((docName, apiDesc) =>
+    {
+        if (!apiDesc.TryGetMethodInfo(out var methodInfo))
+            return false;
+
+        // Перевірити HTTP методи
+        if (docName == "v1" && methodInfo.CustomAttributes.Any(attr => attr.AttributeType == typeof(HttpGetAttribute)))
+            return true;
+        if (docName == "v1" && methodInfo.CustomAttributes.Any(attr => attr.AttributeType == typeof(HttpPostAttribute)))
+            return true;
+        if (docName == "v1" && methodInfo.CustomAttributes.Any(attr => attr.AttributeType == typeof(HttpPutAttribute)))
+            return true;
+        if (docName == "v1" && methodInfo.CustomAttributes.Any(attr => attr.AttributeType == typeof(HttpDeleteAttribute)))
+            return true;
+        return false;
+    });
+});
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddControllers();
+
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+    app.UseAuthentication();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mentohub6" + " V1");
+    });
+    // Configure the HTTP request pipeline.
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseExceptionHandler("/Home/Error");
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+    }
+    app.UseCors();
+    app.UseStaticFiles();
+    
+    app.UseDeveloperExceptionPage();
+    app.UseHttpsRedirection();
+    app.UseRouting();
+    app.UseAuthorization();
+app.UseEndpoints(endpoints =>
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+    
+    endpoints.MapHub<SignalRHub>("/signalRHub"); 
+});
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.UseStaticFiles();
+    app.Run();
 
-app.UseDeveloperExceptionPage();
-app.UseHttpsRedirection();
-app.UseRouting();
-app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.Run();

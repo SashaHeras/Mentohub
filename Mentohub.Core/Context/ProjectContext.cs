@@ -1,15 +1,12 @@
-﻿using Mentohub.Domain.Entities;
+﻿using Mentohub.Domain.Data.Entities;
+using Mentohub.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Mentohub.Core.Context
 {
-    public class ProjectContext : DbContext
+    public class ProjectContext : IdentityDbContext<CurrentUser>
     {
         public DbSet<Lesson> Lessons { get; set; }
 

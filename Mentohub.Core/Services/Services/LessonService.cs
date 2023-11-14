@@ -15,6 +15,9 @@ namespace Mentohub.Core.Services.Services
         private readonly IMediaService _mediaService;
         private readonly IAzureService _azureService;
         private readonly ICourseItemService _courseItemService;
+        private readonly AzureService _azureService;
+        private readonly MediaService _mediaService;
+        private readonly CourseItemService _courseItemService;
 
         private readonly ICourseRepository _courseRepository;
         private readonly ICourseItemRepository _courseItemRepository;
@@ -67,6 +70,19 @@ namespace Mentohub.Core.Services.Services
                 await _azureService.DeleteFromAzure(lesson.VideoPath);
                 lesson.VideoPath = await _azureService.SaveInAsync(form.Files[0]);
             }
+
+            CourseItem currentCourseItem = _courseItemService.GetCourseItem(lesson.CourseItemId);
+            currentCourseItem.DateCreation = DateTime.Now;
+            await _courseItemService.UpdateCourseItem(currentCourseItem);
+
+            int courseId = currentCourseItem.CourseId;
+
+            UpdateLesson(lesson);
+
+            _mediaService.DeleteMediaFromProject(form.Files[0]);
+
+            return courseId;
+        }
 
             CourseItem currentCourseItem = _courseItemService.GetCourseItem(lesson.CourseItemId);
             currentCourseItem.DateCreation = DateTime.Now;

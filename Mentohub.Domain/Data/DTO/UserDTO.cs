@@ -8,7 +8,10 @@ namespace Mentohub.Domain.Data.DTO
 {
     public class UserDTO
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }  
+        public List<string> UserRoles { get; set; }
 
     }
 }

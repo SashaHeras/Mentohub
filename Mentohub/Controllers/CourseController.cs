@@ -1,8 +1,6 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
-using Mentohub.Domain.Entities;
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Mentohub.Core.Services.Interfaces;
 

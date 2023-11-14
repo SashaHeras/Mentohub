@@ -185,6 +185,64 @@ namespace Mentohub.Core.Services.Services
             return result;
         }
 
+        public List<CommentDTO> GetCourseComments(int courseID, int count = 10)
+        {
+            List<CommentDTO> commentsList = new List<CommentDTO>();
+            commentsList = _context.Comments.Where(c => c.CourseId == courseID).
+                Select(x=> new CommentDTO()
+                {
+                    Id = x.Id,
+                    Text = x.Text,
+                    Rating = x.Rating,
+                    DateAgo = GetTimeSinceDate(x.DateCreation),
+                    UserName = "",             
+                    ProfileImagePath = ""       
+                }).ToList();
+
+            if (commentsList.Count == 0)
+            {
+                commentsList.Add(new CommentDTO()
+                {
+                    Id = 5,
+                    Text = "Hello",
+                    Rating = 4,
+                    DateAgo = "4 month ago",
+                    UserName = "Heras A.",              // Add user name Heras O.
+                    ProfileImagePath = ""     // Add user profile image name
+                });
+            }
+
+            return commentsList;
+        }
+
+        public async Task<int> SaveCource(IFormCollection form)
+        {
+            int courseId = Convert.ToInt32(form["courseId"]);
+            FilesHandler handler = new FilesHandler(form.Files, courseId);
+            //handler.SaveFiles(_mediaService);
+
+            Course newCourse = new Course()
+            {
+                Name = form["name"].ToString(),
+                AuthorId = Guid.Parse(form["authorId"].ToString()),
+                Checked = false,
+                Price = Convert.ToDecimal(form["price"].ToString()),
+                CourseSubjectId = Convert.ToInt32(form["subject"]),
+                LastEdittingDate = DateTime.Now,
+                PicturePath = handler.PictureName,
+                PreviewVideoPath = handler.VideoName
+            };            
+
+            if (courseId == 0)
+            {
+                await AddCourse(newCourse);
+            }
+            else
+            {
+                newCourse.Id = courseId;
+                await UpdateCourse(newCourse);
+            }
+
         public CommentDTO EditComment(CommentDTO data)
         {
             var currentComment = _commentRepository.FirstOrDefault(x => x.Id == data.Id);
@@ -287,6 +345,58 @@ namespace Mentohub.Core.Services.Services
         public Course GetCourseFromLesson(Lesson lesson)
         {
             throw new NotImplementedException();
+        }
+
+        public class FilesHandler
+        {
+            public string VideoName { get; set; }
+
+            public string PictureName { get; set; }
+
+            public IFormFile Video { get; set; }
+
+            public IFormFile Picture { get; set; }
+
+            public int CourseID { get; set; }
+
+            public FilesHandler(IFormFileCollection formFiles, int courseID)
+            {
+                if(formFiles.Count > 0)
+                {
+                    Video = formFiles["video"];
+                    Picture = formFiles["picture"];
+                }
+                CourseID = courseID;
+            }
+
+            public async void SaveFiles(MediaService service)
+            {
+                PictureName = await service.SaveMedia(Picture, CourseID);
+                VideoName = await service.SaveMedia(Video, CourseID);
+            }
+        }
+
+        private static string GetTimeSinceDate(DateTime date)
+        {
+            TimeSpan timeSpan = DateTime.Now - date;
+
+            int totalDays = (int)timeSpan.TotalDays;
+            int totalWeeks = totalDays / 7;
+            int totalMonths = totalDays / 30;
+            int totalYears = totalDays / 365;
+
+            if (totalWeeks < 4)
+            {
+                return $"{totalWeeks} week{(totalWeeks == 1 ? "" : "s")} ago";
+            }
+            else if (totalMonths < 12)
+            {
+                return $"{totalMonths} month{(totalMonths == 1 ? "" : "s")} ago";
+            }
+            else
+            {
+                return $"{totalYears} year{(totalYears == 1 ? "" : "s")} ago";
+            }
         }
     }
 }
