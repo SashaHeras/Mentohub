@@ -11,8 +11,6 @@ namespace Mentohub.Core.Services.Interfaces
 {
     public interface ILessonService
     {
-        void CreateLesson(CourseItem courseItem, LessonDTO lesson, string fileName);
-
         LessonDTO GetLesson(Guid id);
 
         void UpdateLesson(Lesson newLesson);

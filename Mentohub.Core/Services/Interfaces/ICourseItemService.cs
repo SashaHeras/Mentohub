@@ -13,8 +13,6 @@ namespace Mentohub.Core.Services.Interfaces
     {
         CourseItem GetCourseItem(int id);
 
-        Task<CourseItem> CreateNewCourseItem(LessonDTO lesson);
-
         IQueryable<CourseItem> GetCourseItems(int courseId);
 
         CourseItemType GetItemTypeByName(string name);

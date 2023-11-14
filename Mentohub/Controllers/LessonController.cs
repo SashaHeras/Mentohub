@@ -59,8 +59,8 @@ namespace Mentohub.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(IFormCollection form, LessonDTO createLessonModel)
         {
-            var data = await _lessonService.Create(form, createLessonModel);
-            return RedirectToAction("CreateCourse", "Course", new { id = data });
+            //var data = await _lessonService.Create(form, createLessonModel);
+            return RedirectToAction("CreateCourse", "Course", new { id = 0 });
         }
 
         [HttpGet]

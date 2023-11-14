@@ -13,6 +13,8 @@ namespace Mentohub.Core.Services.Services
         private readonly ILessonRepository _lessonRepository;
         private readonly ICourseService _courseService;
         private readonly IMediaService _mediaService;
+        private readonly IAzureService _azureService;
+        private readonly ICourseItemService _courseItemService;
 
         private readonly ICourseRepository _courseRepository;
         private readonly ICourseItemRepository _courseItemRepository;
@@ -22,34 +24,40 @@ namespace Mentohub.Core.Services.Services
             ICourseService courseService,
             IMediaService mediaService,
             ICourseRepository courseRepository,
-            ICourseItemRepository courseItemRepository)
+            ICourseItemRepository courseItemRepository,
+            IAzureService azureService,
+            ICourseItemService courseItemService)
         {
             _lessonRepository = lessonRepository;
             _courseService = courseService;
             _courseRepository = courseRepository;
             _mediaService = mediaService;
             _courseItemRepository = courseItemRepository;
+            _azureService = azureService;
+            _courseItemService = courseItemService;
         }     
 
         public async Task<int> Create(IFormCollection form, LessonDTO createLessonModel)
         {
-            string videoName = await _azureService.SaveInAsync(createLessonModel.VideoFile);
-            CourseItem newCourceItem = await _courseItemService.Create(createLessonModel);
+            //string videoName = await _azureService.SaveInAsync(createLessonModel.VideoFile);
+            //CourseItem newCourceItem = await _courseItemService.Create(createLessonModel);
 
-            Lesson newLesson = new Lesson()
-            {
-                Id = Guid.NewGuid(),
-                Theme = createLessonModel.Theme,
-                Description = createLessonModel.Description,
-                Body = createLessonModel.Body,
-                VideoPath = videoName,
-                CourseItemId = newCourceItem.Id,
-                DateCreation = DateTime.Now.ToShortDateString()
-            };
+            //Lesson newLesson = new Lesson()
+            //{
+            //    Id = Guid.NewGuid(),
+            //    Theme = createLessonModel.Theme,
+            //    Description = createLessonModel.Description,
+            //    Body = createLessonModel.Body,
+            //    VideoPath = videoName,
+            //    CourseItemId = newCourceItem.Id,
+            //    DateCreation = DateTime.Now.ToShortDateString()
+            //};
 
-            await _lessonRepository.AddAsync(newLesson);
+            //await _lessonRepository.AddAsync(newLesson);
 
-            return newCourceItem.CourseId;
+            //return newCourceItem.CourseId;
+
+            return 0;
         }
 
         public async Task<int> Edit(IFormCollection form, Lesson lesson)
