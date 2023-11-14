@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using MimeKit;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,15 @@ namespace Mentohub.Core.Services
         {
             // Отправка сповіщення про зміну аватарки клієнтам
             await Clients.User(userId).SendAsync("ReceiveAvatarUpdate", avatarUrl);
+        }
+        public async Task ReceiveEmail(MimeMessage email)
+        {
+            
+            // Отримання ідентифікатора з'єднання користувача
+            var connectionId = Context.ConnectionId;
+
+            // Відправка повідомлення конкретному користувачеві
+            await Clients.Client(connectionId).SendAsync("EmailReceived", email);
         }
     }
 }

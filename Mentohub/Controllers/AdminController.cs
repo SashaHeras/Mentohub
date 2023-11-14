@@ -31,13 +31,21 @@ namespace Mentohub.Controllers
         {
             return View();
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("userlist")]
         public IActionResult UserList() => Json(_usermanager.Users.ToList());
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("deleteUserByName")]
         [SwaggerOperation(Summary = "Delete a user by Name")]
-
         public async Task<IActionResult> DeleteUser([FromForm] string userName)
         {
             // Логіка видалення користувача
@@ -130,6 +138,42 @@ namespace Mentohub.Controllers
                 return new JsonResult(model);
             }
             return NotFound();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("list of users by roleName")]
+        public async Task<IActionResult> GetUsersByRoleName(string roleName)
+        {
+            try
+            {
+                if(!string.IsNullOrEmpty(roleName)) 
+            {
+                var result =await _userService.GetAllUsersByRoleName(roleName);
+                return new JsonResult(result)
+                {
+                    StatusCode = 200
+                };
+            }
+
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new
+                {
+                    message = "Not found users by this roleName",
+                    error = ex.Message // інформація про помилку
+                };
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = 500 // код статусу, що вказує на помилку
+                };
+            }
+            return new JsonResult("Unknown error");
+
         }
     }
 }

@@ -62,7 +62,7 @@ namespace Mentohub.Core.Services.Services
             CurrentUser user = new CurrentUser { Email = model.Email, UserName = model.NickName };
             // добавляем пользователя
             var result = await _userManager.CreateAsync(user, model.Password);
-            //получаем роль
+            
 
             if (result.Succeeded == true)
             {
@@ -109,6 +109,11 @@ namespace Mentohub.Core.Services.Services
                 return false;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public async Task<bool> DeleteUserByName(string userName)
         {
             CurrentUser user = await _cRUD.FindCurrentUserByName(userName);
@@ -133,7 +138,7 @@ namespace Mentohub.Core.Services.Services
         public IAsyncEnumerable<CurrentUser> GetAllUsers()
         {
             return (IAsyncEnumerable<CurrentUser>)_userManager.Users.ToList();
-            //throw new NotImplementedException();
+            
         }
         /// <summary>
         /// download user's avatar
@@ -225,17 +230,24 @@ namespace Mentohub.Core.Services.Services
         public async Task<bool> UpdateUser( string id, EditUserDTO userDTO)
         {
             CurrentUser currentUser = await _cRUD.FindCurrentUserById(id);
-            userDTO = new EditUserDTO();
-            if (userDTO != null)
+            
+            if (currentUser == null)
             {
-                currentUser.FirstName = userDTO.FirstName;
-                currentUser.LastName = userDTO.LastName;
-                currentUser.AboutMe = userDTO.AboutMe;
-                //currentUser.DateOfBirth = userDTO.DateOfBirth;
-                await _userManager.UpdateAsync(currentUser);
-                return true;
+                return false;
             }
-            return false;
+            currentUser.FirstName = userDTO.FirstName;
+            currentUser.LastName = userDTO.LastName;
+            currentUser.AboutMe = userDTO.AboutMe;
+            if (currentUser is IdentityUser identityUser)
+            {
+                // Перевірка, чи користувач успадковується від IdentityUser
+                // Якщо так, то оновити дату народження
+                currentUser.DateOfBirth = userDTO.DateOfBirth;
+            }
+           
+            var result=await _userManager.UpdateAsync(currentUser);
+            return result.Succeeded;
+            
         }
         /// <summary>
         /// 
@@ -282,6 +294,65 @@ namespace Mentohub.Core.Services.Services
                     await _userManager.AddToRoleAsync(user, role.Name);
                     return true;
                 }
+            }
+            return false;
+        }
+        /// <summary>
+        /// сервис завантаження аватарки користувача на сторінку користувача
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        public async Task<string> GetAvatarUrl(string userId)
+        {
+            var user =await _cRUD.FindCurrentUserById(userId);
+            if (user != null && !string.IsNullOrEmpty(user.Image))
+            {
+                
+                 return user.Image; 
+                             
+            }
+            
+            // Повернути URL за замовчуванням, якщо користувач не має аватарки.
+            return "/wwwroot/avatar/default-avatar.ipg";
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
+        public async Task<List<CurrentUser>> GetAllUsersByRoleName(string roleName)
+        {
+            return await _cRUD.GetAllUsers(roleName);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
+        public async Task<bool> DeleteRole(string roleId)
+        {
+            IdentityRole role = await _cRUD.GetRoleById(roleId);
+            if (role != null)
+            {
+                await _roleManager.DeleteAsync(role);
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public async Task<bool> CreateRole(string name)
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
+                IdentityResult result = await _roleManager.CreateAsync(new IdentityRole(name));
+                if (result.Succeeded)
+                {
+                    return true;
+                }              
             }
             return false;
         }

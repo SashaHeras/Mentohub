@@ -23,5 +23,8 @@ namespace Mentohub.Core.Services.Interfaces
         public Task<UserDTO>GetUser(string userName);
         public Task<bool> LogOut();
         public Task<CurrentUser> GetCurrentUser(string id);
+        public Task<string> UploadAvatar(IFormFile avatar, string userId);
+        public Task<bool> CreateRole(string name);
+        public Task<bool> DeleteRole(string roleId);
     }
 }

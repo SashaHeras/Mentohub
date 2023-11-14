@@ -26,41 +26,96 @@ namespace Mentohub.Controllers
         }
         [Route("create")]
         public IActionResult Create() => View();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("create")]
         public async Task<IActionResult> Create(string name)
         {
-            if (!string.IsNullOrEmpty(name))
+            var result=await _userService.CreateRole(name);
+            try
             {
-                IdentityResult result = await _roleManager.CreateAsync(new IdentityRole(name));
-                if (result.Succeeded)
+                if(result)
                 {
-                    return RedirectToAction("Index");
+                    Json(result).StatusCode=204;
+                    return Json("Role was created");
                 }
                 else
                 {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                }
-            }
-            return View(name);
-        }
+                    Json(result).StatusCode = 400;
+                    return Json("Error during the creating role");
 
+                }    
+
+            }
+            catch (Exception ex)
+            {
+                var errorResponse = new
+                {
+                    message = "Role was not created ",
+                    error = ex.Message // інформація про помилку
+                };
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = 500 // код статусу, що вказує на помилку
+                };
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("listRoles")]
-        public IActionResult ListOfRoles() => Json(_roleManager.Roles.ToList());
+        public async Task<IActionResult> ListOfRoles()
+        {
+            return new JsonResult(await _cRUD.GetAllRoles());
+        }
+           
+        /// <summary>
+        /// delete role
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete]
+        [Route("delet role")]
         public async Task<IActionResult> Delete(string id)
         {
-            IdentityRole role = await _roleManager.FindByIdAsync(id);
-            if (role != null)
+            try
             {
-                IdentityResult result = await _roleManager.DeleteAsync(role);
+              var result=await _userService.DeleteRole(id);
+                if (result)
+                {
+                    Json(result).StatusCode = 204;
+                    return Json("Role is deleted");
+                }
+                    
+                else
+                {
+                    Json(result).StatusCode = 400;
+                    return Json("Role is not deleted");
+                }
+                    
             }
-            return Json("Role is deleted");
+            catch(Exception ex)
+            {
+                var errorResponse = new
+                {
+                    message = "Not found role by this roleId",
+                    error = ex.Message // інформація про помилку
+                };
+                return new JsonResult(errorResponse)
+                {
+                    StatusCode = 500 // код статусу, що вказує на помилку
+                };
+            }
+            
         }
+        [HttpGet]
+        [Route("edit")]
 
         public async Task<IActionResult> Edit(string userId)
         {
@@ -82,32 +137,7 @@ namespace Mentohub.Controllers
             }
             return NotFound();
         }
-        [HttpPost]
-        [Route("edit")]
-        public async Task<IActionResult> Edit(string userId, List<string> roles)
-        {
-            // получаем пользователя
-            CurrentUser user = await _cRUD.FindCurrentUserById(userId);
-            if (user != null)
-            {
-                // получем список ролей пользователя
-                var userRoles = await _usermanager.GetRolesAsync(user);
-                // получаем все роли
-                var allRoles = _roleManager.Roles.ToList();
-                // получаем список ролей, которые были добавлены
-                var addedRoles = roles.Except(userRoles);
-                // получаем роли, которые были удалены
-                var removedRoles = userRoles.Except(roles);
-
-                await _usermanager.AddToRolesAsync(user, addedRoles);
-
-                await _usermanager.RemoveFromRolesAsync(user, removedRoles);
-
-                return RedirectToAction("UserList");
-            }
-
-            return NotFound();
-        }
+        
 
     }
 }

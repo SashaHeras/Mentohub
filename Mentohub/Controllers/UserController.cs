@@ -5,6 +5,7 @@ using Mentohub.Domain.Data.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Security.Claims;
 
 namespace Mentohub.Controllers
 {
@@ -63,6 +64,11 @@ namespace Mentohub.Controllers
                 };
             }   
         }
+        /// <summary>
+        /// отримання профіля користувача
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("getUserProfile")]
         [SwaggerOperation(Summary ="Get user profile")]
@@ -98,7 +104,7 @@ namespace Mentohub.Controllers
             
         }
         /// <summary>
-        /// 
+        /// оновлення інформації про користувача
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="avatarFile"></param>
@@ -188,7 +194,7 @@ namespace Mentohub.Controllers
             }
         }
        /// <summary>
-       /// 
+       /// додавання ролі користувачу
        /// </summary>
        /// <param name="id"></param>
        /// <param name="roleName"></param>
@@ -231,5 +237,27 @@ namespace Mentohub.Controllers
             }
            
         }
+        /// <summary>
+        /// отримання аватарки
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("get-avatar")]
+        public async Task< IActionResult> GetAvatar(string id)
+        {
+                // Отримайте URL аватарки користувача з сервісу
+                string avatarUrl =await _userService.GetAvatarUrl(id);
+
+                if (!string.IsNullOrEmpty(avatarUrl))
+                {
+                    return new JsonResult(new { success = true, avatarUrl });
+                }
+ 
+            // Якщо аватарка не знайдена або виникла помилка
+            return new JsonResult(new { success = false, message = "Error when getting an avatar" });
+        }
     }
 }
+
+

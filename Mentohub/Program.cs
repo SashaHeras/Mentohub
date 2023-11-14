@@ -2,15 +2,18 @@ using Mentohub.Core.AllExceptions;
 using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.Extensions.Configuration;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,7 +32,7 @@ builder.Services.AddIdentity<CurrentUser, IdentityRole>()
 
 builder.Services.AddDbContext<ProjectContext>(options => options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddScoped<AnswerHistoryRepository>();
 builder.Services.AddScoped<AnswerRepository>();
 builder.Services.AddScoped<CourseItemRepository>();
@@ -55,6 +58,13 @@ builder.Services.AddScoped<TaskService>();
 builder.Services.AddScoped<TestHistoryService>();
 builder.Services.AddScoped<TestService>();
 builder.Services.AddScoped<UserService>();
+//var connectionString = builder.Configuration["AzureServiceBus:ConnectionString"];
+//var queueName = builder.Configuration["AzureServiceBus:QueueName"];
+//builder.Services.AddSingleton<IQueueService>(provider =>
+//{
+   
+//    return new QueueService(connectionString, queueName);
+//});
 builder.Services.AddSignalR();
 builder.Services.AddSwaggerGen(c =>
 {

@@ -102,10 +102,7 @@ namespace Mentohub.Core.Repositories.Repositories
             return await _userManager.FindByEmailAsync(email);
         }
 
-        Task<ICollection> ICRUD_UserRepository.GetAllUsers(string roleName)
-        {
-            throw new NotImplementedException();
-        }
+        
         /// <summary>
         /// повертає перелік ролей користувача
         /// </summary>
@@ -119,6 +116,19 @@ namespace Mentohub.Core.Repositories.Repositories
                 return roles.ToList();
             }
            return new List<string>();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
+        public async Task <IdentityRole> GetRoleById(string roleId)
+        {
+            return await _roleManager.FindByIdAsync(roleId);
+        }
+        public Task<List<IdentityRole>> GetAllRoles()
+        {
+            return Task.FromResult(_roleManager.Roles.ToList());
         }
     }
 }
