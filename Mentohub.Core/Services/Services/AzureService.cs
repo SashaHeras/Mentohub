@@ -83,8 +83,6 @@ namespace Mentohub.Core.Services.Services
             {
                 return false;
             }
-
-            return true;
         }
     }
 }

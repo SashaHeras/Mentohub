@@ -4,6 +4,7 @@ using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace Mentohub.Core.Services.Services
 {
@@ -30,20 +31,46 @@ namespace Mentohub.Core.Services.Services
             _courseItemRepository = courseItemRepository;
         }     
 
-        public void CreateLesson(CourseItem courseItem, LessonDTO lesson, string fileName)
+        public async Task<int> Create(IFormCollection form, LessonDTO createLessonModel)
         {
+            string videoName = await _azureService.SaveInAsync(createLessonModel.VideoFile);
+            CourseItem newCourceItem = await _courseItemService.Create(createLessonModel);
+
             Lesson newLesson = new Lesson()
             {
                 Id = Guid.NewGuid(),
-                Theme = lesson.Theme,
-                Description = lesson.Description,
-                Body = lesson.Body,
-                VideoPath = fileName,
-                CourseItemId = courseItem.Id,
+                Theme = createLessonModel.Theme,
+                Description = createLessonModel.Description,
+                Body = createLessonModel.Body,
+                VideoPath = videoName,
+                CourseItemId = newCourceItem.Id,
                 DateCreation = DateTime.Now.ToShortDateString()
             };
 
-            _lessonRepository.AddAsync(newLesson);
+            await _lessonRepository.AddAsync(newLesson);
+
+            return newCourceItem.CourseId;
+        }
+
+        public async Task<int> Edit(IFormCollection form, Lesson lesson)
+        {
+            if (form.Files.Count != 0)
+            {
+                await _azureService.DeleteFromAzure(lesson.VideoPath);
+                lesson.VideoPath = await _azureService.SaveInAsync(form.Files[0]);
+            }
+
+            CourseItem currentCourseItem = _courseItemService.GetCourseItem(lesson.CourseItemId);
+            currentCourseItem.DateCreation = DateTime.Now;
+            await _courseItemService.UpdateCourseItem(currentCourseItem);
+
+            int courseId = currentCourseItem.CourseId;
+
+            UpdateLesson(lesson);
+
+            _mediaService.DeleteMediaFromProject(form.Files[0]);
+
+            return courseId;
         }
 
         public LessonDTO GetLesson(Guid id)
@@ -67,7 +94,7 @@ namespace Mentohub.Core.Services.Services
             return result;
         }
 
-        public void UpdateLesson(Lesson newLesson)
+        public async void UpdateLesson(Lesson newLesson)
         {
             Lesson currentLesson = _lessonRepository.GetLessonById(newLesson.Id);
 
@@ -77,7 +104,7 @@ namespace Mentohub.Core.Services.Services
             currentLesson.CourseItemId = newLesson.CourseItemId;
             currentLesson.DateCreation = DateTime.Now.ToShortDateString();
 
-            _lessonRepository.UpdateAsync(currentLesson);
+            await _lessonRepository.UpdateAsync(currentLesson);
         }       
 
         public LessonDTO GetLessonByCourseItem(int courseItemId)

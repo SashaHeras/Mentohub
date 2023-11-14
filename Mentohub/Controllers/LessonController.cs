@@ -59,11 +59,8 @@ namespace Mentohub.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(IFormCollection form, LessonDTO createLessonModel)
         {
-            string videoName = await _azureService.SaveInAsync(createLessonModel.VideoFile);
-            CourseItem newCourceItem = await _courseItemService.CreateNewCourseItem(createLessonModel);
-            _lessonService.CreateLesson(newCourceItem, createLessonModel, videoName);
-
-            return RedirectToAction("CreateCourse", "Course", new { id = newCourceItem.CourseId });
+            var data = await _lessonService.Create(form, createLessonModel);
+            return RedirectToAction("CreateCourse", "Course", new { id = data });
         }
 
         [HttpGet]
