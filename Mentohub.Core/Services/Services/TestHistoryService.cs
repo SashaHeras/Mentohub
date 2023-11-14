@@ -1,13 +1,14 @@
-﻿using Mentohub.Core.Repositories.Repositories;
+﻿using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Entities;
 
 namespace Mentohub.Core.Services.Services
 {
-    public class TestHistoryService
+    public class TestHistoryService : ITestHistoryService
     {
-        private TestHistoryRepository _testHistoryRepository;
+        private ITestHistoryRepository _testHistoryRepository;
 
-        public TestHistoryService(TestHistoryRepository testHistoryRepository) {
+        public TestHistoryService(ITestHistoryRepository testHistoryRepository) {
             _testHistoryRepository = testHistoryRepository;
         }
 

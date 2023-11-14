@@ -1,4 +1,5 @@
 ﻿using Mentohub.Core.Infrastructure;
+using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
 
 namespace Mentohub.Core.Repositories.Intefaces

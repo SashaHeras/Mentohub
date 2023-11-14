@@ -1,20 +1,22 @@
 ﻿using Mentohub.Core.Context;
+using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Repositories;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mentohub.Core.Services.Services
 {
-    public class CourseItemService
+    public class CourseItemService : ICourseItemService
     {
         private ProjectContext _projectContext;
-        private readonly CourseTypeRepository _courseItemTypeRepository;
-        private readonly CourseItemRepository _courseItemRepository;
+        private readonly ICourseTypeRepository _courseItemTypeRepository;
+        private readonly ICourseItemRepository _courseItemRepository;
 
         public CourseItemService(
-            CourseItemRepository courseItemRepository, 
-            CourseTypeRepository courseTypeRepository,
+            ICourseItemRepository courseItemRepository, 
+            ICourseTypeRepository courseTypeRepository,
             ProjectContext projectContext
             ) {
             _courseItemTypeRepository = courseTypeRepository;

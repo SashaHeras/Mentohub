@@ -1,60 +1,45 @@
-﻿using Mentohub.Core.Context;
+﻿using Antlr.Runtime.Tree;
+using Mentohub.Core.Context;
+using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq.Expressions;
 
 namespace Mentohub.Controllers
 {
     public class TestController : Controller
     {
-        private TestService _testService;
-        private TaskService _taskService;
-        private AnswerService _answerService;
-        private CourseItemService _courseItemService;
+        private readonly ITestService _testService;
+        private readonly ITaskService _taskService;
+        private readonly IAnswerService _answerService;
+        private readonly ICourseItemService _courseItemService;
 
-        public TestController(TestService testService, TaskService taskService,
-            AnswerService answerService, CourseItemService courseItemService)
+        private readonly ITestHistoryRepository _testHistoryRepository;
+        private readonly IAnswerHistoryRepository _answerHistoryRepository;
+        private readonly ITaskHistoryRepository _taskHistoryRepository;
+
+        public TestController(
+            ITestService testService, 
+            ITaskService taskService,
+            IAnswerService answerService, 
+            ICourseItemService courseItemService,
+            ITestHistoryRepository testHistoryRepository,
+            IAnswerHistoryRepository answerHistoryRepository,
+            ITaskHistoryRepository taskHistoryRepository)
         {
             _testService = testService;
             _taskService = taskService;
             _answerService = answerService;
             _courseItemService = courseItemService;
+            _testHistoryRepository = testHistoryRepository;
+            _answerHistoryRepository = answerHistoryRepository;
+            _taskHistoryRepository = taskHistoryRepository;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        [Route("/Test/GoToTest/{courseItemId}")]
-        public IActionResult GoToTest(int courseItemId)
-        {
-            int testId = _testService.GetTestByCourseItem(courseItemId).Id;
-            return RedirectToAction("PassTest", new { id = testId });
-        }
-
-        [Route("/Test/PassTest/{id}")]
-        public IActionResult PassTest(int id)
-        {
-            var test = _testService.GetTest(id);
-            var courseItemId = test.CourseItemId;
-            var courseId = _courseItemService.GetCourseItem(courseItemId).CourseId;
-
-            ViewBag.CourseId = courseId;
-            ViewBag.Test = test;
-
-            return View();
-        }
-
-        public JsonResult GetTasks()
-        {
-            int testId = Convert.ToInt32(Request.Form["test"]);
-            var tasks = _taskService.GetTasks(testId);
-
-            return Json(tasks);
-        }
-
+        [HttpGet]
         public JsonResult GetAnswers()
         {
             int taskId = Convert.ToInt32(Request.Form["task"]);
@@ -62,127 +47,139 @@ namespace Mentohub.Controllers
             return Json(testAnswers);
         }
 
+        #region Pass test
+
+        /// <summary>
+        /// Create test
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         [HttpPost]
-        public JsonResult GetMark()
+        public JsonResult Edit([FromBody] TestDTO data)
         {
-            double total = 0;
-            double mark = 0;
-
-            int testId = int.Parse(Request.Form["test"]);
-            int userId = int.Parse(Request.Form["userid"]);
-            List<TaskHistory> taskHistories = new List<TaskHistory>();
-            List<AnswerHistory> answerHistories = new List<AnswerHistory>();
-
-            var tasks = _taskService.GetTasks(testId);
-            var taskAnswers = Request.Form["answers"].ToString().Split(',')
-                                .Select(a => new AnswerDTO {
-                                    TaskId = int.Parse(a.Split('_')[0]),
-                                    AnswerId = int.Parse(a.Split('_')[1]),
-                                    IsChecked = bool.Parse(a.Split('_')[2])
-                                }).ToList();
-
-            foreach (var task in tasks)
+            try
             {
-                double markForTask = 0;
-                var taskAnswerIds = taskAnswers.Where(a => a.TaskId == task.Id).ToList();
-                var corectAnswersCount = _answerService.PopulateAnswerHistories(taskAnswerIds, task, answerHistories);
-                int corAnsCnt = _answerService.GetCountOfCorrectAnswers(task.Id);
+                var newTest = _testService.Edit(data);
 
-                if (corAnsCnt == corectAnswersCount) {
-                    markForTask = task.Mark;
-                }
-                else if (corAnsCnt > corectAnswersCount) {
-                    double perOne = task.Mark / corAnsCnt;
-                    markForTask = task.Mark / (perOne * corectAnswersCount);
-                }
-
-                mark += markForTask;
-                total += task.Mark;
-                taskHistories.Add(new TaskHistory {
-                    TaskId = task.Id,
-                    UserMark = markForTask
-                });
+                return Json(new { IsError = false, Data = newTest, Message = "Success" });
             }
-
-            var testHistory = new TestHistory
+            catch (Exception ex)
             {
-                TestId = testId,
-                UserId = userId,
-                TotalMark = total,
-                Mark = mark
-            };
-            _testService.SaveHistory(testHistory, taskHistories, answerHistories);
-
-            return Json(mark);
+                return Json(new { IsError = true, Message = "Error" });
+            }
         }
 
-        [Route("/Test/CreateTest/{id}")]
-        public IActionResult CreateTest(int id)
+        /// <summary>
+        /// Edit task
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult EditTask([FromBody] TaskDTO data)
         {
-            ViewBag.CourseId = id;
-            return View();
+            try
+            {
+                var newTask = _taskService.Edit(data);
+
+                return Json(new { IsError = false, Data = newTask.Id, Message = "Success" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, Message = "Error" });
+            }
+        }
+
+        /// <summary>
+        /// Save answers to task
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult EditAnswers([FromBody] List<AnswerDTO> data)
+        {
+            try
+            {
+                var result = _answerService.EditAnswers(data);
+
+                return Json(new { IsError = false, Data = result, Message = "Success" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, Message = "Error" });
+            }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Get list of test tasks
+        /// </summary>
+        /// <param name="testId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public JsonResult GetTestTasks(int testId)
+        {
+            var tasks = _taskService.GetTasksList(testId);
+            return Json(tasks);
+        }
+
+        /// <summary>
+        /// Get list of answers on task
+        /// </summary>
+        /// <param name="taskId"></param>
+        /// <returns></returns>
+        [HttpGet]
+        public JsonResult GetTaskAnswers(int taskId)
+        {
+            var answers = _answerService.GetAnswersList(taskId);
+            return Json(answers);
+        }
+
+        /// <summary>
+        /// Apply results of test
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult Apply([FromBody] PassTestDTO data)
+        {
+            try
+            {
+                var result = _testService.ApplyTestResult(data);
+
+                return Json(new { IsError = true, Data = result, Message = "Success" });
+            }
+            catch(Exception ex)
+            {
+                return Json(new { IsError = true, Message = ex.Message });
+            }
         }
 
         [HttpPost]
-        public async Task<JsonResult> SaveTest()
+        public async Task<JsonResult> SaveTest(int courseID, int? testID, string testName)
         {
-            CourseItem currecntCourceItem = new CourseItem();
-            int courseId = Convert.ToInt32(Request.Form["courseId"]);
-            var sameCourseItems = _courseItemService.GetCourseItems(courseId);
+            var sameCourseItems = _courseItemService.GetCourseItems(courseID);
 
-            int? testId = Request.Form.Keys.Contains("testId")
-                ? Convert.ToInt32(Request.Form["testId"])
-                : (int?)null;
-
-            string newName = Request.Form["test"].ToString();
-
-            Test test = testId.HasValue
-                ? await _testService.RenameTest(testId.Value, newName)
-                : await _testService.CreateNewTest(newName, courseId, sameCourseItems);
+            Test test = new Test();
+            if (testID != null)
+            {
+                test = await _testService.RenameTest(testID.Value, testName);
+            }
+            else
+            {
+                test = await _testService.CreateNewTest(testName, courseID, sameCourseItems);
+            }
 
             return Json(test.Id);
         }
 
-        [HttpPost]
-        public async Task<JsonResult> SaveAnswers()
-        {
-            var allAnsws = Request.Form["answers"];
-            var allChecked = Request.Form["checked"];
-            Dictionary<string, bool> answers = _answerService.AnswersSpliter(allAnsws, allChecked);
-
-            //
-            TestTask tt = _taskService.CreateNewTask(
-                Request.Form["taskName"].ToString(),
-                Convert.ToInt32(Request.Form["orderNumber"]),
-                Convert.ToInt32(Request.Form["taskMark"]),
-                Convert.ToInt32(Request.Form["testId"])
-            ).Result;
-
-            foreach (var answer in answers)
-            {
-                TaskAnswer newAnswer = new TaskAnswer()
-                {
-                    Name = answer.Key,
-                    IsCorrect = answer.Value,
-                    TaskId = tt.Id
-                };
-
-                _answerService.AddAnswer(newAnswer);
-            }
-
-            return Json(true);
-        }
-
-        [Route("/Test/EditTest/{id}")]
         public IActionResult EditTest(int id)
         {
-            ViewBag.Test = _testService.GetTestByCourseItem(id);
-            ViewBag.CourseId = _courseItemService.GetCourseItem(id).CourseId;
-            return View();
+            var data = _testService.GetTestModel(id);
+            return View(data);
         }
 
         [HttpGet]
-        [Route("/Test/GetTasks/{id}")]
         public JsonResult GetTasks(int id)
         {
             var result = _taskService.GetTasks(id);
@@ -190,14 +187,13 @@ namespace Mentohub.Controllers
         }
 
         [HttpGet]
-        [Route("/Test/GetTask/{id}")]
         public JsonResult GetTask(int id)
         {
             var res = _taskService.GetTask(id);
             return Json(res);
         }
 
-        [Route("/Test/GetAnswersForEditting/{id}")]
+        [HttpGet]
         public JsonResult GetAnswersForEditting(int id)
         {
             var result = _answerService.GetAnswers(id);
@@ -205,28 +201,7 @@ namespace Mentohub.Controllers
             return Json(result);
         }
 
-        [HttpPost]
-        public async Task<JsonResult> SaveEdittedAnswers()
-        {
-            int taskId = Convert.ToInt32(Request.Form["taskId"]);
-            TestTask editedTask = _taskService.GetTask(taskId);
-            editedTask.Name = Request.Form["taskName"].ToString();
-            editedTask.Mark = Convert.ToInt32(Request.Form["taskMark"].ToString());
-
-            var allAnsws = Request.Form["answers"];
-            var allChecked = Request.Form["checked"];
-            Dictionary<string, bool> answers = _answerService.AnswersSpliter(allAnsws, allChecked);
-            string[] ids = Request.Form["ids"].ToString().Split(',');
-
-            await _answerService.SavingAnswers(editedTask, answers, ids);
-
-            await _taskService.UpdateTask(editedTask);
-
-            return Json(true);
-        }
-
         [HttpDelete]
-        [Route("/Test/DeleteTask/{taskId}")]
         public JsonResult DeleteTask(int taskId)
         {
             var task = _taskService.GetTask(taskId);            

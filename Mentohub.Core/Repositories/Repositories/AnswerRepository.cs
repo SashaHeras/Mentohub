@@ -6,7 +6,7 @@ namespace Mentohub.Core.Repositories.Repositories
 {
     public class AnswerRepository : Repository<TaskAnswer>, IAnswerRepository
     {
-        private ProjectContext _context;
+        private readonly ProjectContext _context;
 
         public AnswerRepository(ProjectContext repositoryContext) : base(repositoryContext)
         {

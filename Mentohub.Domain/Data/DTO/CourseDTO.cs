@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,15 +21,24 @@ namespace Mentohub.Domain.Data.DTO
 
         public string PicturePath { get; set; }
 
-        public string? PreviewVideoPath { get; set; }
+        public string PreviewVideoPath { get; set; }
 
-        public Guid AuthorId { get; set; }
+        public IFormFile Picture { get; set; }
+
+        public IFormFile PreviewVideo { get; set; }
+
+        public string AuthorId { get; set; }
+        public string AuthorName { get; set; }
+
+        public string LoadPictureName { get; set; }
+
+        public string LoadVideoName { get; set; }
 
         public bool Checked { get; set; }
 
         public decimal Price { get; set; }
 
-        public int? CourseSubjectId { get; set; }
+        public int CourseSubjectId { get; set; }
 
         public DateTime LastEdittingDate { get; set; }
 

@@ -1,17 +1,17 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Domain.Entities;
+using Mentohub.Core.Services.Interfaces;
+using Mentohub.Domain.Data.DTO;
 
 namespace Mentohub.Core.Services.Services
 {
-    public class MediaService
+    public class MediaService : IMediaService
     {
-        private CourseService _courseService;
-        private AzureService _azureService;
+        private IAzureService _azureService;
 
-        public MediaService(CourseService courseService, AzureService azureService)
+        public MediaService(IAzureService azureService)
         {
-            _courseService = courseService;
             _azureService = azureService;
         }
 
@@ -21,14 +21,13 @@ namespace Mentohub.Core.Services.Services
         /// <param name="file"></param>
         /// <param name="courseId"></param>
         /// <returns></returns>
-        public async Task<string> SaveMedia(IFormFile? file, int courseId)
+        public async Task<string> SaveMedia(IFormFile? file, CourseDTO course)
         {
             string resPath = String.Empty;
             string oldName = String.Empty;
 
             if (file != null)
             {
-                var course = _courseService.GetCourse(courseId);
                 oldName = (file.ContentType == "video/mp4") ? (course.PreviewVideoPath ?? string.Empty) : course.PicturePath;
 
                 if (oldName != null)
@@ -38,13 +37,23 @@ namespace Mentohub.Core.Services.Services
 
                 resPath = await _azureService.SaveInAsync(file);
             }
-            else if (courseId != 0)
+            else if (course != null)
             {
-                var course = _courseService.GetCourse(courseId);
                 resPath = (file.ContentType == "video/mp4") ? (course.PreviewVideoPath ?? string.Empty) : course.PicturePath;
             }
 
             return resPath;
+        }
+
+        public async Task<string> SaveFile(IFormFile file)
+        {
+            string resPath = await _azureService.SaveInAsync(file);
+            return resPath;
+        }
+
+        public async Task DeleteFile(string name)
+        {
+            await _azureService.DeleteFromAzure(name);
         }
 
         /// <summary>

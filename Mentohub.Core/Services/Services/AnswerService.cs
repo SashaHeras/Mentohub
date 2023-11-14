@@ -1,15 +1,22 @@
-﻿using Mentohub.Core.Repositories.Repositories;
+﻿using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Core.Repositories.Repositories;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
+using System.Collections.Generic;
 
 namespace Mentohub.Core.Services.Services
 {
-    public class AnswerService
+    public class AnswerService : IAnswerService
     {
-        private AnswerRepository _answerRepository;
+        private readonly IAnswerRepository _answerRepository;
+        private readonly ITaskRepository _taskRepository;
 
-        public AnswerService(AnswerRepository answerRepository) { 
+        public AnswerService(
+            IAnswerRepository answerRepository,
+            ITaskRepository taskRepository) { 
             _answerRepository = answerRepository;
+            _taskRepository = taskRepository;
         }
 
         public void RemoveAnswers(IQueryable<TaskAnswer> answers)
@@ -28,6 +35,18 @@ namespace Mentohub.Core.Services.Services
         public IQueryable<TaskAnswer> GetAnswers(int taskId)
         {
             return _answerRepository.GetAnswersByTaskId(taskId);
+        }
+
+        public List<AnswerDTO> GetAnswersList(int id)
+        {
+            return _answerRepository.GetAnswersByTaskId(id)
+                .Select(x=>new AnswerDTO()
+                {
+                    Name = x.Name,
+                    Id = x.Id,
+                    IsChecked = x.IsCorrect,
+                    TaskId = x.TaskId
+                }).ToList();
         }
 
         public TaskAnswer GetAnswer(int id)
@@ -112,24 +131,66 @@ namespace Mentohub.Core.Services.Services
         {
             var result = 0;
 
-            foreach (var taskAnswer in answers)
+            //foreach (var taskAnswer in answers)
+            //{
+            //    bool isCorrect = _answerRepository.GetAnswerByIdAndTask(taskAnswer.AnswerId, task.Id).IsCorrect;
+
+            //    var answerHistory = new AnswerHistory
+            //    {
+            //        TaskId = task.Id,
+            //        AnswerId = taskAnswer.AnswerId,
+            //        IsCorrect = (taskAnswer.IsChecked == isCorrect)
+            //    };
+
+            //    if (answerHistory.IsCorrect)
+            //    {
+            //        result++;
+            //    }
+
+            //    answerHistories.Add(answerHistory);
+            //}
+
+            return result;
+        }
+
+        public List<AnswerDTO> EditAnswers(List<AnswerDTO> answers)
+        {
+            List<AnswerDTO> result = new List<AnswerDTO>();
+            var task = _taskRepository.FirstOrDefault(x => x.Id == answers.First().TaskId);
+
+            int correctAnswersCnt = 0;
+            foreach (var item in answers)
             {
-                bool isCorrect = _answerRepository.GetAnswerByIdAndTask(taskAnswer.AnswerId, task.Id).IsCorrect;
-
-                var answerHistory = new AnswerHistory
+                var answer = _answerRepository.GetAnswerById(item.Id);
+                if (answer != null)
                 {
-                    TaskId = task.Id,
-                    AnswerId = taskAnswer.AnswerId,
-                    IsCorrect = (taskAnswer.IsChecked == isCorrect)
-                };
+                    answer.IsCorrect = item.IsChecked;
+                    answer.Name = item.Name;
 
-                if (answerHistory.IsCorrect)
+                    _answerRepository.Update(answer);
+                }
+                else
                 {
-                    result++;
+                    answer = new TaskAnswer()
+                    {
+                        IsCorrect = item.IsChecked,
+                        Name = item.Name,
+                        TaskId = item.TaskId
+                    };
+
+                    _answerRepository.Add(answer);
                 }
 
-                answerHistories.Add(answerHistory);
+                if (answer.IsCorrect == true)
+                {
+                    correctAnswersCnt++;
+                }
+
+                result.Add(answer.ToDTO());
             }
+
+            task.IsFewAnswersCorrect = correctAnswersCnt > 1;
+            _taskRepository.Update(task);
 
             return result;
         }

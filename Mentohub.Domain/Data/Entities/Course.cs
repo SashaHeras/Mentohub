@@ -20,9 +20,15 @@ namespace Mentohub.Domain.Entities
 
         public decimal Price { get; set; }
 
-        public int? CourseSubjectId { get; set; }
+        public int CourseSubjectId { get; set; }
+
+        public string? LoadVideoName { get; set; }
+
+        public string? LoadPictureName { get; set; }
 
         public DateTime LastEdittingDate { get; set; }
+
+        public List<CourseItem> CourseItems { get; set; }
     
         public CourseDTO ToDTO()
         {
@@ -32,7 +38,7 @@ namespace Mentohub.Domain.Entities
                 Name = Name,
                 PicturePath = PicturePath,
                 PreviewVideoPath = PreviewVideoPath,
-                AuthorId = AuthorId,
+                AuthorId = AuthorId.ToString(),
                 Checked = Checked,
                 Rating = Rating,
                 Price = Price,

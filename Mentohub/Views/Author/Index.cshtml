@@ -1,5 +1,5 @@
 ﻿@using Mentohub.Domain.Entities;
-@model Mentohub.Domain.Entities.Course;
+@model List<Mentohub.Domain.Entities.Course>;
 @{
     ViewData["Title"] = "Author Page";
 }
@@ -92,7 +92,7 @@
     <hr />
     <div id="coursesList">
         @{
-            foreach (Course c in ViewBag.Courses)
+            foreach (Course c in Model)
             {
                 string url = "https://mystudystorage.blob.core.windows.net/test/" + c.PicturePath;
 

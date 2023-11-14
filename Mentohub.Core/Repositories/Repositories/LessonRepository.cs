@@ -6,7 +6,7 @@ namespace Mentohub.Core.Repositories.Repositories
 {
     public class LessonRepository : Repository<Lesson>, ILessonRepository
     {
-        private ProjectContext _context;
+        private readonly ProjectContext _context;
 
         public LessonRepository(ProjectContext repositoryContext) : base(repositoryContext)
         {

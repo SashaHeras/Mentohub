@@ -1,16 +1,18 @@
-﻿using Mentohub.Core.Repositories.Repositories;
+﻿using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Core.Services.Interfaces;
+using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
 
 namespace Mentohub.Core.Services.Services
 {
-    public class TaskService
+    public class TaskService : ITaskService
     {
-        private TaskRepository _taskRepository;
-        private AnswerRepository _answerRepository;
+        private ITaskRepository _taskRepository;
+        private IAnswerRepository _answerRepository;
 
-        private AnswerService _answerService;   
+        private IAnswerService _answerService;   
 
-        public TaskService(TaskRepository taskRepository, AnswerRepository answerRepository, AnswerService answerService)
+        public TaskService(ITaskRepository taskRepository, IAnswerRepository answerRepository, IAnswerService answerService)
         {
             _taskRepository = taskRepository;
             _answerRepository = answerRepository;
@@ -32,19 +34,42 @@ namespace Mentohub.Core.Services.Services
             return await _taskRepository.UpdateAsync(task);
         }
 
-        public async Task<TestTask> CreateNewTask(string name, int order, int mark, int testId)
+        public TaskDTO Edit(TaskDTO data)
         {
-            TestTask testTask = new TestTask()
+            if(data.TestId == 0)
             {
-                Name = name,
-                OrderNumber = order,
-                Mark = mark,
-                TestId = testId
-            };
+                throw new Exception("Unknown test!");
+            }
 
-            await _taskRepository.AddAsync(testTask);
+            TestTask task = _taskRepository.GetTaskById(data.Id);
+            int sameTestTasksCount = _taskRepository.GetTaskByTestId(data.TestId).ToList().Count();
+            sameTestTasksCount = sameTestTasksCount == 0 ? 1 : sameTestTasksCount + 1;
 
-            return testTask;
+            if (task == null)
+            {
+                task = new TestTask();
+                task.TestId = data.TestId;
+                task.Name = data.Name;
+                task.Mark = data.Mark;
+                task.OrderNumber = sameTestTasksCount;
+                task.IsFewAnswersCorrect = false;
+
+                _taskRepository.Add(task);
+            }
+            else
+            {
+                task.Mark = data.Mark;
+                task.OrderNumber = data.OrderNumber;
+                task.Name = data.Name;
+                task.IsFewAnswersCorrect = task.IsFewAnswersCorrect;
+
+                _taskRepository.Update(task);
+            }
+
+            data.OrderNumber = task.OrderNumber;
+            data.Id = task.Id;
+
+            return data;
         }
 
         public async void ResetOrderNumbers(int order, List<TestTask> allTasksAfter)
@@ -68,6 +93,19 @@ namespace Mentohub.Core.Services.Services
 
             _answerService.RemoveAnswers(taskAnswers);
             _taskRepository.DeleteTask(task);
+        }
+
+        public List<TaskDTO> GetTasksList(int testId)
+        {
+            return _taskRepository.GetTaskByTestId(testId)
+                .Select(x => new TaskDTO()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    OrderNumber = x.OrderNumber,
+                    TestId = x.TestId,
+                    Mark = x.Mark
+                }).ToList();
         }
     }
 }

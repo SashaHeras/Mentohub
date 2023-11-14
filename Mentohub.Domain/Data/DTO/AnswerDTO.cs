@@ -8,9 +8,11 @@ namespace Mentohub.Domain.Data.DTO
 {
     public class AnswerDTO
     {
-        public int TaskId { get; set; }
+        public int Id { get; set; }
 
-        public int AnswerId { get; set; }
+        public string Name { get; set; }
+
+        public int TaskId { get; set; }
 
         public bool IsChecked { get; set; }
     }

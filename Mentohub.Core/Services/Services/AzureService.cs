@@ -2,10 +2,11 @@
 using Microsoft.WindowsAzure.Storage;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Domain.Entities;
+using Mentohub.Core.Services.Interfaces;
 
 namespace Mentohub.Core.Services.Services
 {
-    public class AzureService
+    public class AzureService : IAzureService
     {
         private readonly string _connectionString = "DefaultEndpointsProtocol=https;AccountName=mystudystorage;AccountKey=F2DhOdWx3qBaoImpVaDkLDVCyErlLVghvKL5kcxYLL9V7KsOQobaH8wWSh4m48ACDDK/lnsyzd3Q+AStciFc5Q==;EndpointSuffix=core.windows.net";
 

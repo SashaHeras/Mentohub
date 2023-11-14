@@ -1,6 +1,8 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Domain.Entities;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace Mentohub.Core.Repositories.Repositories
 {
@@ -13,6 +15,70 @@ namespace Mentohub.Core.Repositories.Repositories
         {
             this.repositoryContext = repositoryContext;
         }
+
+        public IQueryable<TEntity> GetAll()
+        {
+            try
+            {
+                return repositoryContext.Set<TEntity>();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($" We can`t get entites!!!\n {ex.Message}");
+            }
+        }
+
+        #region Simple add/update
+
+        public TEntity Add(TEntity entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException($"{nameof(Add)} entity must not be null!!!");
+            }
+
+            repositoryContext.Add(entity);
+            repositoryContext.SaveChanges();
+
+            return entity;
+        }
+
+        public TEntity Update(TEntity entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException($"{nameof(Update)} entity must not be null!!!");
+            }
+
+            repositoryContext.Update(entity);
+            repositoryContext.SaveChanges();
+
+            return entity;
+        }
+
+        public void UpdateList(List<TEntity> entity)
+        {
+            foreach(var e in entity)
+            {
+                repositoryContext.Update(e);
+            }
+
+            repositoryContext.SaveChanges();
+        }
+
+        public void AddList(List<TEntity> entity)
+        {
+            foreach (var e in entity)
+            {
+                repositoryContext.Add(e);
+            }
+
+            repositoryContext.SaveChanges();
+        }
+
+        #endregion
+
+        #region Async/await add/update
 
         public async Task<TEntity> AddAsync(TEntity entity)
         {
@@ -31,18 +97,6 @@ namespace Mentohub.Core.Repositories.Repositories
             catch (Exception ex)
             {
                 throw new Exception($"{nameof(entity)} could not be saved: {ex.Message}");
-            }
-        }
-
-        public IQueryable<TEntity> GetAll()
-        {
-            try
-            {
-                return repositoryContext.Set<TEntity>();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($" We can`t get entites!!!\n {ex.Message}");
             }
         }
 
@@ -65,6 +119,13 @@ namespace Mentohub.Core.Repositories.Repositories
             {
                 throw new Exception($"{nameof(entity)} could not be updated: {ex.Message}");
             }
+        }
+
+        #endregion
+
+        public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> expression)
+        {
+            return repositoryContext.Set<TEntity>().Where(expression).FirstOrDefault();
         }
     }
 }

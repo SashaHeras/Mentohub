@@ -1,35 +1,179 @@
-﻿@{
+﻿@model Mentohub.Domain.Data.DTO.TestDTO;
+@{
     ViewData["Title"] = "Edit test page";
 }
 
-<link href="~/css/editteststyle.css" rel="stylesheet" />
+<style>
+    .goBack {
+        text-decoration: none;
+        color: black;
+    }
+
+        .goBack:hover {
+            color: black;
+        }
+
+        .goBack:visited {
+            color: black;
+        }
+
+    #testMain {
+        display: flex;
+    }
+
+    .answerBlock {
+        display: flex;
+        margin: 3px;
+    }
+
+    .body {
+        margin-left: 40px;
+        margin-right: 40px;
+        padding-left: 15%;
+        padding-right: 15%;
+    }
+
+    .tasksList {
+        display: flex;
+        height: 40px;
+        margin-top: 10px;
+        margin-bottom: 15px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .testElement {
+        border-radius: 5px;
+        border-color: black;
+        border: solid 1px;
+        text-align: center;
+        height: 40px;
+        width: 40px;
+        padding-top: 6px;
+        padding: 2px;
+        background-color: #FFE4B5;
+        margin-right: 10px;
+    }
+
+    .active {
+        border-color: blue;
+        box-shadow: 0 0 8px blue;
+    }
+
+    .insideDiv {
+        display: flex;
+    }
+
+    .dot {
+        margin-left: 5px;
+        margin-top: 8px;
+        text-align: center;
+        height: 30px;
+        width: 30px;
+        color: white;
+        background-color: red;
+        border-radius: 50%;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .center-div {
+        margin: auto;
+        width: 50%;
+    }
+
+    .center {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .myTr {
+        margin-bottom: 2px;
+    }
+
+    #testname {
+        width: 100%;
+    }
+
+    #taskname {
+        width: 100%;
+    }
+
+    #taskmark {
+        width: 50%;
+    }
+
+    .shortTd {
+        width: 20%;
+    }
+
+    .centeredTd {
+        text-align: center;
+    }
+
+    #testAnswers {
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        margin-left: 25%;
+        width: 100%;
+        margin-top: 15px;
+    }
+
+    .row-content{
+        margin-top:10px;
+    }
+
+    .end-aling{
+        text-align: end;
+    }
+
+    #answersContext {
+        width: 100%;
+        padding-left: 18%;
+        margin-top: 15px;
+    }
+
+    .answerField {
+        width: 300px;
+        margin-top: 5px;
+        margin-left: 8px;
+    }
+
+    .flexable {
+        display: flex;
+    }
+
+    #myContext {
+        margin-top: 15px;
+    }
+
+    #buttons {
+        margin-top: 15px;
+    }
+
+</style>
 
 <partial name="/Views/Partial/Header.cshtml" />
 <div class="body">
     <div>
-        <a class="goBack" href="/Course/CreateCourse/@ViewBag.CourseId">Return to course</a>
+        <a class="goBack" href="/Course/CreateCourse/@Model.CourseID">Return to course</a>
     </div>
-    <table class="center" width="40%">
-        <tr class="myTr">
-            <td style="padding-right: 6px">
+    <div class="col">
+        <div class="row row-content">
+            <div class="col col-lg-2">
                 <label>Test name:</label>
-            </td>
-        </tr>
-        <tr class="myTr">
-            <td>
-                <input id="testname" class="form-control" placeholder="Enter name of test" value="@ViewBag.Test.Name" />
-            </td>
-        </tr>
-        <tr class="myTr">
-            <td style="padding-right: 6px">
-            </td>
-        </tr>
-        <tr class="myTr">
-            <td style="text-align: right">
-                <button id="SaveTest" class="btn btn-light" onclick="SaveTest()">Submit</button>
-            </td>
-        </tr>
-    </table>
+            </div>
+            <div class="col">
+                <input id="testname" class="form-control" placeholder="Enter name of test" value="@Model.Name" />
+            </div>
+            <div class="col col-lg-2">
+                <div class="col end-aling">
+                    <button id="SaveTest" style="width: 100px;" class="btn btn-success">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="tasksList" class="tasksList center-div">
         
     </div>
@@ -39,534 +183,548 @@
 </div>
 
 <script>
-    let answerCnt = 0;
-    let testId = @ViewBag.Test.Id;
-    let courseId = @ViewBag.CourseId;
-
-    let currentTaskAnswers = [];
-    let symbols = ['A','B','C','D','E','F','G','H','I','J','K','L'];
-    let correctCounter = 0;
-
-    let taskId = 0, taskMark = 0, orderNumber = 0;
-    let taskName = "";
-    let isEditting = true;
-
-    const edittingHtmlCode = `
-                <table class="center" width="40%">
-                    <tr class="myTr">
-                        <td>
-                            <label>Task name:</label>
-                        </td>
-                    </tr>
-                    <tr class="myTr">
-                        <td>
-                            <input id="taskname" type="text" class="form-control" placeholder="Enter name of task" />
-                        </td>
-                    </tr>
-                    <tr class="myTr">
-                        <td>
-                            <label>Task mark:</label>
-                        </td>
-                    </tr>
-                    <tr class="myTr">
-                        <td class="centeredTd flexable">
-                            <input id="taskmark" class="form-control" type="number" placeholder="Enter mark" style="width: 60%">
-                            <div style="text-align: right; width: 40%">
-                                <button style="width: 70%" id="DeleteTaskBtn" class="btn btn-danger" onclick="DeleteTask()">Delete task</button>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-                <div id="answersContext" width="60%">
-                    <div id="testAnswers" class="center-div">
-
-                    </div>
-                    <div id="buttons" class="center-div">
-
-                    </div>
-                </div>
-    `;
-    const creattingHtmlCode = `
-                <table class="center" width="40%">
-            <tr class="myTr">
-                    <td style="padding-right: 6px" class="shortTd">
-                    <label>Task name:</label>
-                </td>
-                <td>
-                    <input id="taskname" class="form-control" type="text" placeholder="Enter name of task" width="350px" />
-                </td>
-            </tr>
-                <tr class="myTr">
-                    <td style="padding-right: 6px" class="shortTd">
-                    <label>Task mark:</label>
-                </td>
-                <td>
-                    <input id="taskmark" class="form-control" type="number" placeholder="Enter mark" width="25px" />
-                </td>
-            </tr>
-                <tr class="myTr">
-                    <td style="padding-right: 6px" class="shortTd">
-                    <label>Answers count:</label>
-                </td>
-                <td>
-                        <input id="ansCnt" class="form-control" type="number" placeholder="Enter answers number" width="25px" />
-                </td>
-            </tr>
-                <tr class="myTr">
-                <td style="padding-right: 6px">
-                </td>
-                <td style="text-align: right">
-                        <button id="SaveTaskBtn" class="btn btn-light" onclick="SaveNewTaskData()">Submit</button>
-                </td>
-            </tr>
-        </table>
-            <div id="testAnswers" width="100%">
-                        <div id="taskAnswers" class="center-div">
-
-                        </div>
-                        <div id="buttons" class="center-div">
-
-                        </div>
-                    </div>
-    `;
-
     $(document).ready(function () {
-        let con = document.getElementById("myContext");
-        con.innerHTML = edittingHtmlCode;
+        new Test({
+            testId: @Model.Id,
+            courseId: @Model.CourseID,
+            isEditting: true,
+        }).initEdit();
+        // let con = document.getElementById("myContext");
+        // con.innerHTML = edittingHtmlCode;
 
-        GenerateTasksList();
+        // GenerateTasksList();
     });
+
+    // let answerCnt = 0;
+    // let testId = @Model.Id;
+    // let courseId = @Model.CourseID;
+
+    // let currentTaskAnswers = [];
+    // let symbols = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+    // let correctCounter = 0;
+
+    // let taskId = 0, taskMark = 0, orderNumber = 0;
+    // let taskName = "";
+    // let isEditting = true;
+
+    // let symbols = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+    // const edittingHtmlCode = `
+    //             <table class="center" width="40%">
+    //                 <tr class="myTr">
+    //                     <td>
+    //                         <label>Task name:</label>
+    //                     </td>
+    //                 </tr>
+    //                 <tr class="myTr">
+    //                     <td>
+    //                         <input id="taskname" type="text" class="form-control" placeholder="Enter name of task" />
+    //                     </td>
+    //                 </tr>
+    //                 <tr class="myTr">
+    //                     <td>
+    //                         <label>Task mark:</label>
+    //                     </td>
+    //                 </tr>
+    //                 <tr class="myTr">
+    //                     <td class="centeredTd flexable">
+    //                         <input id="taskmark" class="form-control" type="number" placeholder="Enter mark" style="width: 60%">
+    //                         <div style="text-align: right; width: 40%">
+    //                             <button style="width: 70%" id="DeleteTaskBtn" class="btn btn-danger" onclick="DeleteTask()">Delete task</button>
+    //                         </div>
+    //                     </td>
+    //                 </tr>
+    //             </table>
+    //             <div id="answersContext" width="60%">
+    //                 <div id="testAnswers" class="center-div">
+
+    //                 </div>
+    //                 <div id="buttons" class="center-div">
+
+    //                 </div>
+    //             </div>
+    // `;
+    // const creattingHtmlCode = `
+    //             <table class="center" width="40%">
+    //         <tr class="myTr">
+    //                 <td style="padding-right: 6px" class="shortTd">
+    //                 <label>Task name:</label>
+    //             </td>
+    //             <td>
+    //                 <input id="taskname" class="form-control" type="text" placeholder="Enter name of task" width="350px" />
+    //             </td>
+    //         </tr>
+    //             <tr class="myTr">
+    //                 <td style="padding-right: 6px" class="shortTd">
+    //                 <label>Task mark:</label>
+    //             </td>
+    //             <td>
+    //                 <input id="taskmark" class="form-control" type="number" placeholder="Enter mark" width="25px" />
+    //             </td>
+    //         </tr>
+    //             <tr class="myTr">
+    //                 <td style="padding-right: 6px" class="shortTd">
+    //                 <label>Answers count:</label>
+    //             </td>
+    //             <td>
+    //                     <input id="ansCnt" class="form-control" type="number" placeholder="Enter answers number" width="25px" />
+    //             </td>
+    //         </tr>
+    //             <tr class="myTr">
+    //             <td style="padding-right: 6px">
+    //             </td>
+    //             <td style="text-align: right">
+    //                     <button id="SaveTaskBtn" class="btn btn-light" onclick="SaveNewTaskData()">Submit</button>
+    //             </td>
+    //         </tr>
+    //     </table>
+    //         <div id="testAnswers" width="100%">
+    //                     <div id="taskAnswers" class="center-div">
+
+    //                     </div>
+    //                     <div id="buttons" class="center-div">
+
+    //                     </div>
+    //                 </div>
+    // `;
+
+    
    
-    function DeleteTask()
-    {
-        $.ajax({
-            url: "/Test/DeleteTask/" + taskId,
-            type: "DELETE",
-            dataType: "json",
-            success: function (result) {
-                if(result == true)
-                {
-                    let con = document.getElementById("myContext");
-                    con.innerHTML = edittingHtmlCode;
-
-                    GenerateTasksList();
-                }
-            }
-        });
-    }
-
-    // Saving data of new task (mark, name, count answers)
-    function SaveNewTaskData()
-    {
-        taskMark = document.getElementById("taskmark").value;
-        taskName = document.getElementById("taskname").value;
-        answerCnt = document.getElementById("ansCnt").value;
-
-        CreateAnswersFields();
-    }
-
-    // Generation of answer field for new task
-    function CreateAnswersFields(){
-        let block = document.getElementById("taskAnswers");
-        let buttons = document.getElementById("buttons");
-        removeAllChildElements(block);
-        removeAllChildElements(buttons);
-
-        for (let i = 0; i < answerCnt; i++) {
-            let div = document.createElement("div");
-            div.setAttribute("name", "answerBlock");
-            div.setAttribute("class", "answerBlock");
-            div.id = "answerBlock";
-
-            let cor = document.createElement("input");
-            cor.setAttribute("type", "checkbox");
-            cor.id = "correct" + (i + 1);
-
-            div.appendChild(cor);
-
-            let ans = document.createElement("input");
-            ans.setAttribute("type", "text");
-            ans.className = "form-control answerField";
-            ans.setAttribute("placeholder", "Enter answer");
-            ans.setAttribute("width", "250px");
-            ans.id = "answer" + 1;
-
-            div.appendChild(ans);
-
-            block.appendChild(div);
-        }
-
-        let btn = document.createElement("button");
-        btn.setAttribute("onclick", "SaveNewTaskAnswers()");
-        btn.className = "btn btn-light";
-        btn.textContent = "Submit";
-
-        buttons.appendChild(btn);
-    }
-
-    // Saving of answers for new task and saving task
-    function SaveNewTaskAnswers() {
-        let allAnswers = [];
-        let allChecked = [];
-
-        // Reading all entered answers
-        let answers = document.getElementsByName("answerBlock");
-        for (let i = 0; i < answerCnt; i++) {
-            let c = 0;
-            for (const child of answers[i].children) {
-                if (c == 0) {
-                    allChecked.push(child.checked);
-                }
-                else if (c == 1) {
-                    allAnswers.push(child.value.replace(',', '|'));
-                }
-                c++;
-            }
-        }
-
-        // Checking is a correct answers
-        if (allChecked.find(function (e) { return e == true }) == undefined) {
-            alert("Select true variant!");
-        }
-        else {
-            let formData = new FormData();
-
-            orderNumber = document.querySelectorAll('#tasksList .testElement').length;
-            orderNumber++;
-
-            formData.append("answers", allAnswers);
-            formData.append("checked", allChecked);
-            formData.append("orderNumber", orderNumber);
-            formData.append("taskName", taskName);
-            formData.append("taskMark", taskMark);
-            formData.append("testId", testId);
-
-            $.ajax({
-                url: "/Test/SaveAnswers",
-                type: "POST",
-                data: formData,
-                dataType: "json",
-                contentType: false,
-                processData: false,
-                success: function (result) {
-                    Cleaning();
-                    GenerateTasksList();
-                }
-            });
-        }
-    }
-
-    function Cleaning() {
-        let block = document.getElementById("testAnswers");
-        removeAllChildElements(block);
-
-        document.getElementById("taskmark").value = "";
-        document.getElementById("taskname").value = "";
-        document.getElementById("ansCnt").value = "";
-    }
-
-    // Make div active
-    function ChangeActiveDiv(div)
-    {
-        let formControls = document.querySelectorAll('.testElement');
-        formControls.forEach(control => {
-            control.classList.remove('active');
-        });
-
-        div.classList.add('active');
-    }
-
-    // Method for onclick on test element
-    function TestElementClick(div, id){
-        ChangeActiveDiv(div);
-        GenerateTask(id);
-    }
-
-    // Generation of test elements
-    function GenerateTasksList()
-    {
-        let main = document.getElementById("tasksList");
-        removeAllChildElements(main);
-
-        let myUrl = "/Test/GetTasks/" + testId;
-        $.ajax({
-            url: myUrl,
-            type: "GET",
-            dataType: "json",
-            success: function (result) {
-                let inside = document.createElement("div");
-                inside.className = "insideDiv";
-
-                for (let i = 0; i < result.length; i++) {
-                    let div = document.createElement("div");
-                    div.className = "testElement";
-                    div.textContent = result[i].orderNumber;
-                    div.addEventListener("click", () => TestElementClick(div, result[i].id));
-                    inside.appendChild(div);
-                }
-
-                let createNewButton = document.createElement("button");
-                createNewButton.className = "btn btn-primary";
-                createNewButton.innerHTML = `<i class="bi bi-plus-circle"></i>`;
-                createNewButton.addEventListener("click", ChangeOnCreateForm);
-
-                inside.appendChild(createNewButton);
-                main.appendChild(inside);
-            }
-        });
-    }
-
-    function ChangeOnCreateForm()
-    {
-        if(isEditting == false){
-            return;
-        }
-
-        document.getElementById("myContext").innerHTML = creattingHtmlCode;
-        isEditting = false;
-    }
-
-    function GenerateTask(id){
-        if(isEditting == false)
-        {
-            document.getElementById("myContext").innerHTML = "";
-            isEditting = true;
-            document.getElementById("myContext").innerHTML = edittingHtmlCode;
-        }
-
-        let myUrl = "/Test/GetTask/" + id;
-        $.ajax({
-            url: myUrl,
-            type: "GET",
-            dataType: "json",
-            success: function (result) {
-                document.getElementById("taskmark").value = "";
-                document.getElementById("taskname").value = "";
-                document.getElementById("taskmark").value = result.mark;
-                document.getElementById("taskname").value = result.name;
-            }
-        });
-
-        taskId = id;
-        GenerateAnswers(id);
-    }
-
-    // Function for saving and creation test
-    function SaveTest() {
-        let name = document.getElementById("testname").value;
-
-        let formData = new FormData();
-
-        formData.append("test", name);
-        formData.append("testId", testId);
-        formData.append("courseId", courseId);
-
-        $.ajax({
-            url: "/Test/SaveTest",
-            type: "POST",
-            data: formData,
-            dataType: "json",
-            contentType: false,
-            processData: false,
-            success: function (result) {
-                if (result != 0) {
-                    testId = result;
-                    alert("Test name edited!");
-                }
-            }
-        });
-    }
-
-    // Function for saving task and it`s answers
-    function SaveAnswers() {
-        let allAnswers = [];
-        let allChecked = [];
-        let allIds = [];
-
-        // Reading all entered answers
-        let answers = document.getElementsByName("answerBlock");
-        for (let i = 0; i < answers.length; i++) {
-            let c = 0;
-            allIds.push(answers[i].id.replace("answerBlock",""));
-            for (const child of answers[i].children) {
-                if (c == 0) {
-                    allChecked.push(child.checked);
-                }
-                else if (c == 1) {
-                    allAnswers.push(child.value.replace(',', '|'));
-                }
-                c++;
-            }
-        }
-        // Checking is a correct answers
-        if (allChecked.some(item => item === true) == false) {
-            alert("Select true variant!");
-        }
-        else {
-            taskMark = document.getElementById("taskmark").value;
-            taskName = document.getElementById("taskname").value;
-
-            let formData = new FormData();
-
-            formData.append("answers", allAnswers);
-            formData.append("checked", allChecked);
-            formData.append("ids", allIds);
-            formData.append("taskName", taskName);
-            formData.append("taskMark", taskMark);
-            formData.append("taskId", taskId);
-            formData.append("testId", testId);
-            $.ajax({
-                url: "/Test/SaveEdittedAnswers",
-                type: "POST",
-                data: formData,
-                dataType: "json",
-                contentType: false,
-                processData: false,
-                success: function (result) {
-
-                }
-            });
-        }   
-        correctCounter = 0;
-    }
-
-    // Function for cleaning place for new task
-    function Cleaning() {
-        let block = document.getElementById("testAnswers");
-        removeAllChildElements(block);
-
-        document.getElementById("taskmark").value = "";
-        document.getElementById("taskname").value = "";
-    }
-
-    function removeAllChildElements(block) {
-        while (block.firstChild) {
-            block.removeChild(block.lastChild);
-        }
-    }
-
-    // Function to generation of answers fields
-    function GenerateAnswers(taskId) {
-        let block = document.getElementById("testAnswers");
-        let buttons = document.getElementById("buttons");
-        correctCounter = 0;
-
-        removeAllChildElements(block);
-        removeAllChildElements(buttons);
-
-        const thisUrl = `/Test/GetAnswersForEditting/${taskId}`;
-        $.ajax({
-            url: thisUrl,
-            type: "GET",
-            dataType: "json",
-            success: function (result) {
-                currentTaskAnswers = result;
-                taskId = currentTaskAnswers[0].taskId;
-                console.log(currentTaskAnswers);
-
-                result.forEach(answer => {
-                    const div = document.createElement("div");
-                    div.setAttribute("name", "answerBlock");
-                    div.className = "answerBlock";
-                    div.id = `answerBlock${answer.id}`;
-
-                    const cor = document.createElement("input");
-                    cor.setAttribute("type", "checkbox");
-                    cor.checked = answer.isCorrect;
-                    cor.id = `correct${answer.id}`;
-                    div.appendChild(cor);
-
-                    const ans = document.createElement("input");
-                    ans.setAttribute("type", "text");
-                    ans.setAttribute("placeholder", "Enter answer");
-                    ans.className = "answerField form-control";
-                    ans.setAttribute("value", answer.name);
-                    ans.setAttribute("width", "450px");
-                    ans.id = `answer${answer.id}`;
-                    div.appendChild(ans);
-
-                    const deleteAnswer = document.createElement("div");
-                    deleteAnswer.setAttribute("onclick", `DeleteAnswer('${answer.id}')`);
-                    deleteAnswer.setAttribute("class", "dot");
-                    deleteAnswer.innerHTML = `<i class="bi bi-trash-fill"></i>`;
-                    div.appendChild(deleteAnswer);
-
-                    block.appendChild(div);
-                });
-
-                let btnSub = document.createElement("button");
-                btnSub.setAttribute("onclick", "SaveAnswers()");
-                btnSub.setAttribute("style", "margin-left: 25%;");
-                btnSub.className = "btn btn-success";
-                btnSub.textContent = "Submit";
-
-                let btnAdd = document.createElement("button");
-                btnAdd.setAttribute("onclick", "AddAnswerField()"); 
-                btnAdd.className = "btn btn-light";
-                btnAdd.textContent = "Add new answer";
-
-                buttons.appendChild(btnAdd);
-                buttons.appendChild(btnSub);
-            }
-        });
-    }
-
-    function AddAnswerField()
-    {
-        let block = document.getElementById("testAnswers");
-        let buttons = document.getElementById("buttons");
-
-        let div = document.createElement("div");
-        div.setAttribute("name", "answerBlock");
-        div.className = "answerBlock";
-        div.id = "answerBlock" + symbols[correctCounter];
-
-        let cor = document.createElement("input");
-        cor.setAttribute("type", "checkbox");
-        cor.id = "correct" + correctCounter;
-        correctCounter++;
-
-        div.appendChild(cor);
-
-        let ans = document.createElement("input");
-        ans.setAttribute("type", "text");
-        ans.setAttribute("placeholder", "Enter answer");
-        ans.className = "answerField";
-        ans.setAttribute("width", "450px");
-        ans.id = "answer" + 1;
-
-        div.appendChild(ans);
-
-        let deleteAnswer = document.createElement("div");
-        deleteAnswer.setAttribute("onclick", "DeleteAnswer('" + symbols[correctCounter] + "')");
-        deleteAnswer.setAttribute("class", "dot");
-        deleteAnswer.innerHTML = "-"
-
-        div.appendChild(deleteAnswer);
-
-        block.appendChild(div);
-    }
-
-    function DeleteAnswer(id){
-        let deletedElem = document.getElementById("answerBlock" + id);
-        deletedElem.remove();
-
-        let formData = new FormData();
-
-        formData.append("answerId", id);
-
-        $.ajax({
-            url: "/Test/DeleteAnswer",
-            type: "POST",
-            data: formData,
-            dataType: "json",
-            contentType: false,
-            processData: false,
-            success: function (result) {
-                if (result != false){
-                    currentTaskAnswers = result;
-                }
-            }
-        });
-    }
+    // function DeleteTask()
+    // {
+    //     console.log(taskId);
+    //     $.ajax({
+    //         url: "/Test/DeleteTask/" + taskId,
+    //         type: "DELETE",
+    //         dataType: "json",
+    //         success: function (result) {
+    //             if(result == true)
+    //             {
+    //                 let con = document.getElementById("myContext");
+    //                 con.innerHTML = edittingHtmlCode;
+
+    //                 GenerateTasksList();
+    //             }
+    //         }
+    //     });
+    // }
+
+    // // Saving data of new task (mark, name, count answers)
+    // function SaveNewTaskData()
+    // {
+    //     taskMark = document.getElementById("taskmark").value;
+    //     taskName = document.getElementById("taskname").value;
+    //     answerCnt = document.getElementById("ansCnt").value;
+
+    //     CreateAnswersFields();
+    // }
+
+    // // Generation of answer field for new task
+    // function CreateAnswersFields(){
+    //     let block = document.getElementById("taskAnswers");
+    //     let buttons = document.getElementById("buttons");
+    //     removeAllChildElements(block);
+    //     removeAllChildElements(buttons);
+
+    //     for (let i = 0; i < answerCnt; i++) {
+    //         let div = document.createElement("div");
+    //         div.setAttribute("name", "answerBlock");
+    //         div.setAttribute("class", "answerBlock");
+    //         div.id = "answerBlock";
+
+    //         let cor = document.createElement("input");
+    //         cor.setAttribute("type", "checkbox");
+    //         cor.id = "correct" + (i + 1);
+
+    //         div.appendChild(cor);
+
+    //         let ans = document.createElement("input");
+    //         ans.setAttribute("type", "text");
+    //         ans.className = "form-control answerField";
+    //         ans.setAttribute("placeholder", "Enter answer");
+    //         ans.setAttribute("width", "250px");
+    //         ans.id = "answer" + 1;
+
+    //         div.appendChild(ans);
+
+    //         block.appendChild(div);
+    //     }
+
+    //     let btn = document.createElement("button");
+    //     btn.setAttribute("onclick", "SaveNewTaskAnswers()");
+    //     btn.className = "btn btn-light";
+    //     btn.textContent = "Submit";
+
+    //     buttons.appendChild(btn);
+    // }
+
+    // // Saving of answers for new task and saving task
+    // function SaveNewTaskAnswers() {
+    //     let allAnswers = [];
+    //     let allChecked = [];
+
+    //     // Reading all entered answers
+    //     let answers = document.getElementsByName("answerBlock");
+    //     for (let i = 0; i < answerCnt; i++) {
+    //         let c = 0;
+    //         for (const child of answers[i].children) {
+    //             if (c == 0) {
+    //                 allChecked.push(child.checked);
+    //             }
+    //             else if (c == 1) {
+    //                 allAnswers.push(child.value.replace(',', '|'));
+    //             }
+    //             c++;
+    //         }
+    //     }
+
+    //     // Checking is a correct answers
+    //     if (allChecked.find(function (e) { return e == true }) == undefined) {
+    //         alert("Select true variant!");
+    //     }
+    //     else {
+    //         let formData = new FormData();
+
+    //         orderNumber = document.querySelectorAll('#tasksList .testElement').length;
+    //         orderNumber++;
+
+    //         formData.append("answers", allAnswers);
+    //         formData.append("checked", allChecked);
+    //         formData.append("orderNumber", orderNumber);
+    //         formData.append("taskName", taskName);
+    //         formData.append("taskMark", taskMark);
+    //         formData.append("testId", testId);
+
+    //         $.ajax({
+    //             url: "/Test/SaveAnswers",
+    //             type: "POST",
+    //             data: formData,
+    //             dataType: "json",
+    //             contentType: false,
+    //             processData: false,
+    //             success: function (result) {
+    //                 Cleaning();
+    //                 GenerateTasksList();
+    //             }
+    //         });
+    //     }
+    // }
+
+    // function Cleaning() {
+    //     let block = document.getElementById("testAnswers");
+    //     removeAllChildElements(block);
+
+    //     document.getElementById("taskmark").value = "";
+    //     document.getElementById("taskname").value = "";
+    //     document.getElementById("ansCnt").value = "";
+    // }
+
+    // // Make div active
+    // function ChangeActiveDiv(div)
+    // {
+    //     let formControls = document.querySelectorAll('.testElement');
+    //     formControls.forEach(control => {
+    //         control.classList.remove('active');
+    //     });
+
+    //     div.classList.add('active');
+    // }
+
+    // // Method for onclick on test element
+    // function TestElementClick(div, id){
+    //     ChangeActiveDiv(div);
+    //     GenerateTask(id);
+    // }
+
+    // // Generation of test elements
+    // function GenerateTasksList()
+    // {
+    //     let main = document.getElementById("tasksList");
+    //     removeAllChildElements(main);
+
+    //     let myUrl = "/Test/GetTasks/" + testId;
+    //     $.ajax({
+    //         url: myUrl,
+    //         type: "GET",
+    //         dataType: "json",
+    //         success: function (result) {
+    //             let inside = document.createElement("div");
+    //             inside.className = "insideDiv";
+
+    //             for (let i = 0; i < result.length; i++) {
+    //                 let div = document.createElement("div");
+    //                 div.className = "testElement";
+    //                 div.textContent = result[i].orderNumber;
+    //                 div.addEventListener("click", () => TestElementClick(div, result[i].id));
+    //                 inside.appendChild(div);
+    //             }
+
+    //             let createNewButton = document.createElement("button");
+    //             createNewButton.className = "btn btn-primary";
+    //             createNewButton.innerHTML = `<i class="bi bi-plus-circle"></i>`;
+    //             createNewButton.addEventListener("click", ChangeOnCreateForm);
+
+    //             inside.appendChild(createNewButton);
+    //             main.appendChild(inside);
+    //         }
+    //     });
+    // }
+
+    // function ChangeOnCreateForm()
+    // {
+    //     if(isEditting == false){
+    //         return;
+    //     }
+
+    //     document.getElementById("myContext").innerHTML = creattingHtmlCode;
+    //     isEditting = false;
+    // }
+
+    // function GenerateTask(id){
+    //     if(isEditting == false)
+    //     {
+    //         document.getElementById("myContext").innerHTML = "";
+    //         isEditting = true;
+    //         document.getElementById("myContext").innerHTML = edittingHtmlCode;
+    //     }
+
+    //     let myUrl = "/Test/GetTask/" + id;
+    //     $.ajax({
+    //         url: myUrl,
+    //         type: "GET",
+    //         dataType: "json",
+    //         success: function (result) {
+    //             document.getElementById("taskmark").value = "";
+    //             document.getElementById("taskname").value = "";
+    //             document.getElementById("taskmark").value = result.mark;
+    //             document.getElementById("taskname").value = result.name;
+    //         }
+    //     });
+
+    //     taskId = id;
+    //     GenerateAnswers(id);
+    // }
+
+    // // Function for saving and creation test
+    // function SaveTest() {
+    //     let name = document.getElementById("testname").value;
+
+    //     let formData = new FormData();
+
+    //     formData.append("testName", name);
+    //     formData.append("testId", testId);
+    //     formData.append("courseId", courseId);
+
+    //     $.ajax({
+    //         url: "/Test/SaveTest",
+    //         type: "POST",
+    //         data: formData,
+    //         dataType: "json",
+    //         contentType: false,
+    //         processData: false,
+    //         success: function (result) {
+    //             if (result != 0) {
+    //                 testId = result;
+    //                 alert("Test name edited!");
+    //             }
+    //         }
+    //     });
+    // }
+
+    // // Function for saving task and it`s answers
+    // function SaveAnswers() {
+    //     let allAnswers = [];
+    //     let allChecked = [];
+    //     let allIds = [];
+
+    //     // Reading all entered answers
+    //     let answers = document.getElementsByName("answerBlock");
+    //     for (let i = 0; i < answers.length; i++) {
+    //         let c = 0;
+    //         allIds.push(answers[i].id.replace("answerBlock",""));
+    //         for (const child of answers[i].children) {
+    //             if (c == 0) {
+    //                 allChecked.push(child.checked);
+    //             }
+    //             else if (c == 1) {
+    //                 allAnswers.push(child.value.replace(',', '|'));
+    //             }
+    //             c++;
+    //         }
+    //     }
+    //     // Checking is a correct answers
+    //     if (allChecked.some(item => item === true) == false) {
+    //         alert("Select true variant!");
+    //     }
+    //     else {
+    //         taskMark = document.getElementById("taskmark").value;
+    //         taskName = document.getElementById("taskname").value;
+
+    //         let formData = new FormData();
+
+    //         formData.append("answers", allAnswers);
+    //         formData.append("checked", allChecked);
+    //         formData.append("ids", allIds);
+    //         formData.append("taskName", taskName);
+    //         formData.append("taskMark", taskMark);
+    //         formData.append("taskId", taskId);
+    //         formData.append("testId", testId);
+    //         $.ajax({
+    //             url: "/Test/SaveEdittedAnswers",
+    //             type: "POST",
+    //             data: formData,
+    //             dataType: "json",
+    //             contentType: false,
+    //             processData: false,
+    //             success: function (result) {
+
+    //             }
+    //         });
+    //     }   
+    //     correctCounter = 0;
+    // }
+
+    // // Function for cleaning place for new task
+    // function Cleaning() {
+    //     let block = document.getElementById("testAnswers");
+    //     removeAllChildElements(block);
+
+    //     document.getElementById("taskmark").value = "";
+    //     document.getElementById("taskname").value = "";
+    // }
+
+    // function removeAllChildElements(block) {
+    //     while (block.firstChild) {
+    //         block.removeChild(block.lastChild);
+    //     }
+    // }
+
+    // // Function to generation of answers fields
+    // function GenerateAnswers(taskId) {
+    //     let block = document.getElementById("testAnswers");
+    //     let buttons = document.getElementById("buttons");
+    //     correctCounter = 0;
+
+    //     removeAllChildElements(block);
+    //     removeAllChildElements(buttons);
+
+    //     console.log(taskId);
+
+    //     const thisUrl = `/Test/GetAnswersForEditting/${taskId}`;
+    //     $.ajax({
+    //         url: thisUrl,
+    //         type: "GET",
+    //         dataType: "json",
+    //         success: function (result) {
+    //             currentTaskAnswers = result;
+
+    //             console.log(currentTaskAnswers);
+
+    //             taskId = currentTaskAnswers[0].taskId;
+    //             console.log(currentTaskAnswers);
+
+    //             result.forEach(answer => {
+    //                 const div = document.createElement("div");
+    //                 div.setAttribute("name", "answerBlock");
+    //                 div.className = "answerBlock";
+    //                 div.id = `answerBlock${answer.id}`;
+
+    //                 const cor = document.createElement("input");
+    //                 cor.setAttribute("type", "checkbox");
+    //                 cor.checked = answer.isCorrect;
+    //                 cor.id = `correct${answer.id}`;
+    //                 div.appendChild(cor);
+
+    //                 const ans = document.createElement("input");
+    //                 ans.setAttribute("type", "text");
+    //                 ans.setAttribute("placeholder", "Enter answer");
+    //                 ans.className = "answerField form-control";
+    //                 ans.setAttribute("value", answer.name);
+    //                 ans.setAttribute("width", "450px");
+    //                 ans.id = `answer${answer.id}`;
+    //                 div.appendChild(ans);
+
+    //                 const deleteAnswer = document.createElement("div");
+    //                 deleteAnswer.setAttribute("onclick", `DeleteAnswer('${answer.id}')`);
+    //                 deleteAnswer.setAttribute("class", "dot");
+    //                 deleteAnswer.innerHTML = `<i class="bi bi-trash-fill"></i>`;
+    //                 div.appendChild(deleteAnswer);
+
+    //                 block.appendChild(div);
+    //             });
+
+    //             let btnSub = document.createElement("button");
+    //             btnSub.setAttribute("onclick", "SaveAnswers()");
+    //             btnSub.setAttribute("style", "margin-left: 25%;");
+    //             btnSub.className = "btn btn-success";
+    //             btnSub.textContent = "Submit";
+
+    //             let btnAdd = document.createElement("button");
+    //             btnAdd.setAttribute("onclick", "AddAnswerField()"); 
+    //             btnAdd.className = "btn btn-light";
+    //             btnAdd.textContent = "Add new answer";
+
+    //             buttons.appendChild(btnAdd);
+    //             buttons.appendChild(btnSub);
+    //         }
+    //     });
+    // }
+
+    // function AddAnswerField()
+    // {
+    //     let block = document.getElementById("testAnswers");
+    //     let buttons = document.getElementById("buttons");
+
+    //     let div = document.createElement("div");
+    //     div.setAttribute("name", "answerBlock");
+    //     div.className = "answerBlock";
+    //     div.id = "answerBlock" + symbols[correctCounter];
+
+    //     let cor = document.createElement("input");
+    //     cor.setAttribute("type", "checkbox");
+    //     cor.id = "correct" + correctCounter;
+    //     correctCounter++;
+
+    //     div.appendChild(cor);
+
+    //     let ans = document.createElement("input");
+    //     ans.setAttribute("type", "text");
+    //     ans.setAttribute("placeholder", "Enter answer");
+    //     ans.className = "answerField";
+    //     ans.setAttribute("width", "450px");
+    //     ans.id = "answer" + 1;
+
+    //     div.appendChild(ans);
+
+    //     let deleteAnswer = document.createElement("div");
+    //     deleteAnswer.setAttribute("onclick", "DeleteAnswer('" + symbols[correctCounter] + "')");
+    //     deleteAnswer.setAttribute("class", "dot");
+    //     deleteAnswer.innerHTML = "-"
+
+    //     div.appendChild(deleteAnswer);
+
+    //     block.appendChild(div);
+    // }
+
+    // function DeleteAnswer(id){
+    //     let deletedElem = document.getElementById("answerBlock" + id);
+    //     deletedElem.remove();
+
+    //     let formData = new FormData();
+
+    //     formData.append("answerId", id);
+
+    //     $.ajax({
+    //         url: "/Test/DeleteAnswer",
+    //         type: "POST",
+    //         data: formData,
+    //         dataType: "json",
+    //         contentType: false,
+    //         processData: false,
+    //         success: function (result) {
+    //             if (result != false){
+    //                 currentTaskAnswers = result;
+    //             }
+    //         }
+    //     });
+    // }
 </script>

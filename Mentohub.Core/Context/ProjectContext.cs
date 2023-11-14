@@ -51,11 +51,63 @@ namespace Mentohub.Core.Context
         {
             modelBuilder.Entity<Lesson>().HasKey(x => x.Id);
             modelBuilder.Entity<Course>().HasKey(c => c.Id);
+            modelBuilder.Entity<Test>().HasKey(c => c.Id);
+            modelBuilder.Entity<CourseItem>().HasKey(c => c.Id);
+            modelBuilder.Entity<TaskAnswer>().HasKey(c => c.Id);
+            modelBuilder.Entity<TestTask>().HasKey(c => c.Id);
+            modelBuilder.Entity<AnswerHistory>().HasKey(c => c.Id);
+            modelBuilder.Entity<TaskHistory>().HasKey(c => c.Id);
+            modelBuilder.Entity<TestHistory>().HasKey(c => c.Id);
+
+            modelBuilder.Entity<TestHistory>()
+                .HasOne(t1 => t1.Test)
+                .WithMany(t2 => t2.TestHistory)
+                .HasForeignKey(t1 => t1.TestId);
+
+            modelBuilder.Entity<CourseItem>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.CourseItems)
+                .HasForeignKey(t1 => t1.CourseId);
+
+            modelBuilder.Entity<TaskHistory>()
+                .HasOne(t1 => t1.TestHistory)
+                .WithMany(t2 => t2.TaskHistory)
+                .HasForeignKey(t1 => t1.TestHistoryId);
+
+            modelBuilder.Entity<TaskHistory>()
+                .HasOne(t1 => t1.TestTask)
+                .WithMany(t2 => t2.TaskHistory)
+                .HasForeignKey(t1 => t1.TaskId);
+
+            modelBuilder.Entity<AnswerHistory>()
+                .HasOne(t1 => t1.TaskHistory)
+                .WithMany(t2 => t2.AnswerHistory)
+                .HasForeignKey(t1 => t1.TaskHistoryId);
+
+            modelBuilder.Entity<CourseItem>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.CourseItems)
+                .HasForeignKey(t1 => t1.CourseId);
+
+            modelBuilder.Entity<TestTask>()
+                .HasOne(c => c.Test)
+                .WithMany(p => p.TestTasks)
+                .HasForeignKey(c => c.TestId);
+
+            modelBuilder.Entity<TaskAnswer>()
+                .HasOne(t1 => t1.TestTask)
+                .WithMany(t2 => t2.TaskAnswers)
+                .HasForeignKey(t1 => t1.TaskId);
+
+            modelBuilder.Entity<AnswerHistory>()
+                .HasOne(t1 => t1.TaskAnswer)
+                .WithMany(t2 => t2.AnswerHistory)
+                .HasForeignKey(t1 => t1.AnswerId);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=localhost;Initial Catalog=StudyDB;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;Trusted_Connection=True", builder =>
+            optionsBuilder.UseSqlServer("Server=localhost;Database=StudyDB; Trusted_Connection=True;TrustServerCertificate=True", builder =>
             {
                 builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
             });

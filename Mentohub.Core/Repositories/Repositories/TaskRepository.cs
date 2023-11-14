@@ -6,7 +6,7 @@ namespace Mentohub.Core.Repositories.Repositories
 {
     public class TaskRepository : Repository<TestTask>, ITaskRepository
     {
-        private ProjectContext _context;
+        private readonly ProjectContext _context;
 
         public TaskRepository(ProjectContext repositoryContext) : base(repositoryContext)
         {

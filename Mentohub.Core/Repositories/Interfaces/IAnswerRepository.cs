@@ -12,5 +12,7 @@ namespace Mentohub.Core.Repositories.Intefaces
         public IQueryable<TaskAnswer> GetAnswersByTaskId(int taskId);
 
         public int GetCountOfCorrectAnswers(int taskId);
+
+        public TaskAnswer GetAnswerByIdAndTask(int id, int taskId);
     }
 }

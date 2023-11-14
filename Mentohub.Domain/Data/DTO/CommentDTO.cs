@@ -18,6 +18,10 @@ namespace Mentohub.Domain.Data.DTO
 
         public string UserName { get; set; }
 
+        public string AuthorId { get; set; }
+
+        public int CourseId { get; set; }
+
         public string ProfileImagePath { get; set; }
     }
 }

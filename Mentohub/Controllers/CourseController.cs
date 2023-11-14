@@ -4,129 +4,80 @@ using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using Mentohub.Core.Services.Interfaces;
 
 namespace Mentohub.Controllers
 {
     public class CourseController : Controller
     {
-        private readonly ProjectContext _context;
+        private readonly ICourseService _courseService;
 
-        private readonly CourseService _courseService;
-        private readonly LessonService _lessonService;
-        private readonly MediaService _mediaService;
-        private readonly CourseItemService _courseItemService;
-
-        public CourseController(ProjectContext projectContext, 
-            CourseService service, 
-            LessonService lessonService,
-            MediaService mediaService, 
-            CourseItemService courseItemService)
+        public CourseController(ICourseService service)
         {
-            _context = projectContext;
             _courseService = service;  
-            _courseItemService = courseItemService;
-            _lessonService = lessonService;
-            _mediaService = mediaService;
         }
 
-        public IActionResult Index(int id)
-        {
-            var course = _courseService.GetCourse(id);
-            return View(course);
-        }
-
-        [Route("/Course/Edit/{id}")]
-        public IActionResult Edit(int id)
-        {
-            var course = _courseService.GetCourse(id);
-            return View(course);
-        }
-
-        [HttpGet]
-        public JsonResult GetElements()
-        {
-            var courseId = Convert.ToInt32(Request.Form["id"]);
-            var elements = _courseItemService.GetElementsByCourseId(courseId);
-
-            return Json(elements);
-        }
-
-        [HttpGet]
-        public JsonResult GetElementName()
-        {
-            int courseItemId = Convert.ToInt32(Request.Form["elementId"]);
-            var element = _courseItemService.GetCourseItem(courseItemId);
-            var typeName = _courseItemService.GetItemType(element.TypeId).Name;
-
-            return Json(element, typeName);
-        }
-
+        /// <summary>
+        /// Create/edit course
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         [HttpPost]
-        public JsonResult GetCourseElements()
+        public JsonResult Edit(CourseDTO data)
         {
-            var course = Request.Form["course"];
-            var result = _courseService.GetCourseElements(Convert.ToInt32(course));
-            return Json(result);
-        }
-
-        [HttpPost]
-        public async Task<JsonResult> SaveCource()
-        {
-            int courseID = await _courseService.SaveCource(Request.Form);
-            return Json(courseID);
-        }
-
-        [HttpDelete]
-        [Route("/Course/DeleteCourseItem/{courseItemId}/{typeId}")]
-        public async Task<JsonResult> DeleteCourseItem(int courseItemId, int typeId)
-        {          
             try
             {
-                var data = await _courseItemService.DeleteCourseItem(courseItemId, typeId);
-                return Json(new { IsError = false, Data = data, Message = "" });
+                var course = _courseService.Edit(data);
+                return Json(new { IsError = false, Data = course, Message = "Success" });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Json(new { IsError = true, Message = ex.Message });
             }
         }
 
+        /// <summary>
+        /// Get course elements (tests/lessons)
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <returns></returns>
         [HttpGet]
-        [Route("/Course/Comments/{courseId}/{commentsCount}")]
+        public JsonResult GetCourseElements(int courseId)
+        {
+            var result = _courseService.GetCourseElements(courseId);
+            return Json(result);
+        }
+
+        /// <summary>
+        /// Get course comments
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <param name="commentsCount"></param>
+        /// <returns></returns>
+        [HttpGet]
         public JsonResult GetComments(int courseId, int commentsCount = 10)
         {
             var data = _courseService.GetCourseComments(courseId, commentsCount);
             return Json(data);
         }
 
+        /// <summary>
+        /// Edit/create comment to course
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         [HttpPost]
-        public IActionResult LoadPartialPage(string type, string courseItemId)
+        public JsonResult EditComment([FromBody] CommentDTO data)
         {
-            if (type == "1")
+            try
             {
-
+                var comment = _courseService.EditComment(data);
+                return Json(new { IsError = false, Data = comment, Message = "Success" });
             }
-
-            int itemId = Convert.ToInt32(courseItemId);
-            int courseId = _courseItemService.GetCourseItem(itemId).CourseId;
-
-            CourseDTO c = _courseService.GetCourse(courseId);
-            Lesson l = _lessonService.GetLessonByCourseItem(itemId);
-
-            LessonDTO lessonPartial = new LessonDTO()
+            catch (Exception ex)
             {
-                Id = l.Id,
-                Theme = l.Theme,
-                Description = l.Description,
-                VideoPath = l.VideoPath,
-                Body = l.Body,
-                DateCreation = l.DateCreation,
-                CourseItemId = l.CourseItemId,
-                CourseID = c.Id,
-                CourseRating = c.Rating
-            };
-
-            return PartialView("~/Views/Partial/_LessonPartial.cshtml", lessonPartial);
-        }        
+                return Json(new { IsError = true, Message = ex.Message });
+            }
+        }
     }
 }

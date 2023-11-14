@@ -1,4 +1,5 @@
 ﻿using Mentohub.Core.Context;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
@@ -8,14 +9,18 @@ namespace Mentohub.Controllers
 {
     public class LessonController : Controller
     {
-        private LessonService _lessonService;
-        private AzureService _azureService;
-        private MediaService _mediaService;
-        private CourseItemService _courseItemService;
-        private readonly CourseService _courseService;
+        private readonly ILessonService _lessonService;
+        private readonly IAzureService _azureService;
+        private readonly IMediaService _mediaService;
+        private readonly ICourseItemService _courseItemService;
+        private readonly ICourseService _courseService;
 
-        public LessonController(LessonService lessonService, AzureService azureService, MediaService mediaService, 
-            CourseItemService courseItemService, CourseService courseService)
+        public LessonController( 
+            ILessonService lessonService, 
+            IAzureService azureService, 
+            IMediaService mediaService, 
+            ICourseItemService courseItemService, 
+            ICourseService courseService)
         {
             _lessonService = lessonService;
             _azureService = azureService;
@@ -38,7 +43,7 @@ namespace Mentohub.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Route("/Lesson/CreateLesson/{id}")]
+        [HttpPost]
         public IActionResult CreateLesson(int id)
         {
             ViewBag.CourseId = id;
@@ -61,21 +66,21 @@ namespace Mentohub.Controllers
             return RedirectToAction("CreateCourse", "Course", new { id = newCourceItem.CourseId });
         }
 
-        [Route("/Lesson/GoToLesson/{id}")]
+        [HttpGet]
         public IActionResult GoToLesson(int id)
         {
             Guid lessonGuid = _lessonService.GetLessonByCourseItem(id).Id;
             return RedirectToAction("Lesson", new { id = lessonGuid });
         }
 
-        [Route("/Lesson/Lesson/{id}")]
+        [HttpGet]
         public IActionResult Lesson(Guid id)
         {
             var data = _lessonService.GetLesson(id);
             return View(data);
         }
 
-        [HttpPost]
+        [HttpGet]
         public JsonResult LessonJson(Guid id)
         {            
             try
@@ -89,44 +94,85 @@ namespace Mentohub.Controllers
             }
         }
 
+        [HttpGet]
         [Route("/Lesson/EditLesson/{id}")]
         public IActionResult EditLesson(int id)
         {
-            Lesson l = _lessonService.GetLessonByCourseItem(id);
-            ViewBag.Lesson = l;
+            LessonDTO lesson = _lessonService.GetLessonByCourseItem(id);
 
-            return View(l);  
+            return View(lesson);  
         }
 
-        [Route("/Lesson/Edit")]
-        public async Task<IActionResult> Edit(IFormCollection form, Lesson lesson)
-        {
-            string videoPath = String.Empty;
-            string oldVideoName = String.Empty;
+        //[HttpGet]
+        //[Route("/Lesson/Edit")]
+        //public async Task<IActionResult> Edit(IFormCollection form, Lesson lesson)
+        //{
+        //    string videoPath = String.Empty;
+        //    string oldVideoName = String.Empty;
 
-            if (form.Files.Count != 0)
-            {
-                await _azureService.DeleteFromAzure(lesson.VideoPath);
-                videoPath = _azureService.SaveInAsync(form.Files[0]).Result;
-                lesson.VideoPath = videoPath;
-            }
-            else
-            {
-                oldVideoName = _lessonService.GetLesson(lesson.Id).VideoPath;
-                lesson.VideoPath = oldVideoName;
-            }
+        //    if (form.Files.Count != 0)
+        //    {
+        //        await _azureService.DeleteFromAzure(lesson.VideoPath);
+        //        videoPath = _azureService.SaveInAsync(form.Files[0]).Result;
+        //        lesson.VideoPath = videoPath;
+        //    }
+        //    else
+        //    {
+        //        oldVideoName = _lessonService.GetLesson(lesson.Id).VideoPath;
+        //        lesson.VideoPath = oldVideoName;
+        //    }
 
-            CourseItem currentCourseItem = _courseItemService.GetCourseItem(lesson.CourseItemId);
-            currentCourseItem.DateCreation = DateTime.Now;
+        //    CourseItem currentCourseItem = _courseItemService.GetCourseItem(lesson.CourseItemId);
+        //    currentCourseItem.DateCreation = DateTime.Now;
 
-            int courseId = currentCourseItem.CourseId;
-            await _courseItemService.UpdateCourseItem(currentCourseItem);  
+        //    int courseId = currentCourseItem.CourseId;
+        //    await _courseItemService.UpdateCourseItem(currentCourseItem);  
             
-            _lessonService.UpdateLesson(lesson);
+        //    _lessonService.UpdateLesson(lesson);
 
-            _mediaService.DeleteMediaFromProject(form.Files[0]);
+        //    _mediaService.DeleteMediaFromProject(form.Files[0]);
 
-            return RedirectToAction("CreateCourse", "Course", new { id = courseId });
+        //    return RedirectToAction("CreateCourse", "Course", new { id = courseId });
+        //}
+
+        /// <summary>
+        /// Edit/create lesson
+        /// </summary>
+        /// <param name="lesson"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<JsonResult> Edit(LessonDTO lesson)
+        {
+            try
+            {
+                var data = await _lessonService.Edit(lesson);
+
+                return Json(new { IsError = false, Data = data, Message = "Success" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, Message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Delete lesson
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        public JsonResult Delete(string id)
+        {
+            try
+            {
+                _lessonService.Delete(Guid.Parse(id));
+
+                return Json(new { IsError = false, Message = "Success" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, Message = ex.Message });
+            }
         }
     }
 }

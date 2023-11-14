@@ -1,5 +1,8 @@
 using Mentohub.Core.Context;
+using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Repositories;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,28 +15,31 @@ builder.Services.AddDbContext<ProjectContext>(options => options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
         ));
 
-builder.Services.AddScoped<AnswerHistoryRepository>();
-builder.Services.AddScoped<AnswerRepository>();
-builder.Services.AddScoped<CourseItemRepository>();
-builder.Services.AddScoped<CourseRepository>();
-builder.Services.AddScoped<CourseTypeRepository>();
-builder.Services.AddScoped<LessonRepository>();
-builder.Services.AddScoped<TaskHistoryRepository>();
-builder.Services.AddScoped<TaskRepository>();
-builder.Services.AddScoped<TestHistoryRepository>();
-builder.Services.AddScoped<TestRepository>();
+builder.Services.AddScoped<IAnswerHistoryRepository, AnswerHistoryRepository>();
+builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
+builder.Services.AddScoped<ICourseItemRepository, CourseItemRepository>();
+builder.Services.AddScoped<ICourseRepository, CourseRepository>();
+builder.Services.AddScoped<ICourseTypeRepository, CourseTypeRepository>();
+builder.Services.AddScoped<ILessonRepository, LessonRepository>();
+builder.Services.AddScoped<ITaskHistoryRepository, TaskHistoryRepository>();
+builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<ITestHistoryRepository, TestHistoryRepository>();
+builder.Services.AddScoped<ITestRepository, TestRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 
-builder.Services.AddScoped<AnswerHistoryService>();
-builder.Services.AddScoped<AnswerService>();
-builder.Services.AddScoped<AzureService>();
-builder.Services.AddScoped<CourseItemService>();
-builder.Services.AddScoped<CourseService>();
-builder.Services.AddScoped<LessonService>();
-builder.Services.AddScoped<MediaService>();
-builder.Services.AddScoped<TaskHistoryService>();
-builder.Services.AddScoped<TaskService>();
-builder.Services.AddScoped<TestHistoryService>();
-builder.Services.AddScoped<TestService>();
+builder.Services.AddScoped<IAnswerHistoryService, AnswerHistoryService>();
+builder.Services.AddScoped<IAnswerService, AnswerService>();
+builder.Services.AddScoped<IAzureService, AzureService>();
+builder.Services.AddScoped<ICourseItemService, CourseItemService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<ILessonService, LessonService>();
+builder.Services.AddScoped<IMediaService, MediaService>();
+builder.Services.AddScoped<ITaskHistoryService, TaskHistoryService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
+builder.Services.AddScoped<ITestHistoryService, TestHistoryService>();
+builder.Services.AddScoped<ITestService, TestService>();
+
+builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 

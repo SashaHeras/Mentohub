@@ -12,6 +12,8 @@
 
         public int OrderNumber { get; set; }
 
-        public int StatusId { get; set; }        
+        public int StatusId { get; set; }
+        
+        public Course Course { get; set; }
     }
 }

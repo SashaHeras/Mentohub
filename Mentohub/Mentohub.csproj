@@ -9,7 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BundleMinifyInlineJsCss" Version="1.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
     <PackageReference Include="System.Text.Json" Version="7.0.0" />
   </ItemGroup>
 
@@ -19,8 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Content\Scripts\Test\" />
     <Folder Include="wwwroot\Pictures\" />
     <Folder Include="wwwroot\Videos\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\js\Test.js" />
   </ItemGroup>
 
 </Project>

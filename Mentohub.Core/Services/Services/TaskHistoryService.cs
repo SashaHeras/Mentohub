@@ -1,13 +1,15 @@
-﻿using Mentohub.Core.Repositories.Repositories;
+﻿using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Core.Repositories.Repositories;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Entities;
 
 namespace Mentohub.Core.Services.Services
 {
-    public class TaskHistoryService
+    public class TaskHistoryService : ITaskHistoryService
     {
-        private TaskHistoryRepository _taskHistoryRepository;
+        private ITaskHistoryRepository _taskHistoryRepository;
 
-        public TaskHistoryService(TaskHistoryRepository taskHistoryRepository) {
+        public TaskHistoryService(ITaskHistoryRepository taskHistoryRepository) {
             _taskHistoryRepository = taskHistoryRepository;
         }
 

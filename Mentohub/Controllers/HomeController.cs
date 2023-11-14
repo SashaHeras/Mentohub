@@ -1,4 +1,5 @@
-﻿using Mentohub.Core.Repositories.Repositories;
+﻿using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -7,10 +8,10 @@ namespace Mentohub.Controllers
 {
     public class HomeController : Controller
     {
-        private LessonRepository _lessonRepository;
-        private CourseRepository _courseRepository;
+        private readonly ILessonRepository _lessonRepository;
+        private readonly ICourseRepository _courseRepository;
 
-        public HomeController(LessonRepository lessonRepository, CourseRepository courseRepository)
+        public HomeController(ILessonRepository lessonRepository, ICourseRepository courseRepository)
         {
             _lessonRepository = lessonRepository;
             _courseRepository = courseRepository;
@@ -27,13 +28,10 @@ namespace Mentohub.Controllers
             return View();
         }
 
-        [Route("/Home/Lesson/{id}")]
         public IActionResult Lesson(Guid id)
         {
-            ViewBag.Lesson = _lessonRepository.GetLessonById(id);
-
-            // ReSharper disable once Mvc.ViewNotResolved
-            return View();
+            var lesson = _lessonRepository.GetLessonById(id);
+            return View(lesson);
         }
 
         public IActionResult Privacy()

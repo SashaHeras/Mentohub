@@ -14,6 +14,10 @@
 
         public string DateCreation { get; set; }
 
+        public string? LoadVideoName { get; set; }
+
+        public DateTime? UpdateDate { get; set; }
+
         public int CourseItemId { get; set; }
     }
 }
