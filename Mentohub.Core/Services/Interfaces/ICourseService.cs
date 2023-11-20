@@ -16,14 +16,10 @@ namespace Mentohub.Core.Services.Interfaces
     {
         IQueryable<Course> GetAuthorsCourses(Guid userId);
 
-        Course GetCourseFromLesson(Lesson lesson);
-
         List<CourseElementDTO> GetCourseElements(int id);
 
         List<CommentDTO> GetCourseComments(int courseID, int count = 10);
 
         Task<CourseDTO> Edit(CourseDTO courseDTO);
-
-        CommentDTO EditComment(CommentDTO data);
     }
 }

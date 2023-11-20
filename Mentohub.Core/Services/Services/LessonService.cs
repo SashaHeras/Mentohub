@@ -15,9 +15,6 @@ namespace Mentohub.Core.Services.Services
         private readonly IMediaService _mediaService;
         private readonly IAzureService _azureService;
         private readonly ICourseItemService _courseItemService;
-        private readonly AzureService _azureService;
-        private readonly MediaService _mediaService;
-        private readonly CourseItemService _courseItemService;
 
         private readonly ICourseRepository _courseRepository;
         private readonly ICourseItemRepository _courseItemRepository;
@@ -84,23 +81,11 @@ namespace Mentohub.Core.Services.Services
             return courseId;
         }
 
-            CourseItem currentCourseItem = _courseItemService.GetCourseItem(lesson.CourseItemId);
-            currentCourseItem.DateCreation = DateTime.Now;
-            await _courseItemService.UpdateCourseItem(currentCourseItem);
-
-            int courseId = currentCourseItem.CourseId;
-
-            UpdateLesson(lesson);
-
-            _mediaService.DeleteMediaFromProject(form.Files[0]);
-
-            return courseId;
-        }
-
         public LessonDTO GetLesson(Guid id)
         {           
-            var lesson = _lessonRepository.GetLessonById(id);            
-            var course = _courseService.GetCourseFromLesson(lesson);
+            var lesson = _lessonRepository.GetLessonById(id);
+            var courseItem = _courseItemRepository.FirstOrDefault(y => y.Id == lesson.CourseItemId);
+            var course = _courseRepository.FirstOrDefault(x => x.Id == courseItem.CourseId);
 
             LessonDTO result = new LessonDTO() {
                 Id = lesson.Id,
