@@ -145,7 +145,7 @@ namespace Mentohub.Controllers
         /// <param name="roleName"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("list of users by roleName")]
+        [Route("listOfUsersByRoleName")]
         public async Task<IActionResult> GetUsersByRoleName(string roleName)
         {
             try

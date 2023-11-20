@@ -24,7 +24,7 @@ namespace Mentohub.Core.Repositories.Repositories
         private readonly ILogger<AccountController> _logger;
         private readonly AllException _exception;
         private readonly UserService _userService;
-        private readonly IEmailSender _emailSender;
+        private readonly EmailSender _emailSender;
         private readonly UserManager<CurrentUser> _userManager;
         private readonly IHubContext<SignalRHub> _hubContext;
         public AccountController(
@@ -32,7 +32,7 @@ namespace Mentohub.Core.Repositories.Repositories
             UserService userService,
            ILogger<AccountController> logger,
            AllException exception,
-           IEmailSender emailSender,
+           EmailSender emailSender,
            UserManager<CurrentUser> userManager, IHubContext<SignalRHub> hubContext)
         {
             _exception = exception;

@@ -26,5 +26,6 @@ namespace Mentohub.Core.Services.Interfaces
         public Task<string> UploadAvatar(IFormFile avatar, string userId);
         public Task<bool> CreateRole(string name);
         public Task<bool> DeleteRole(string roleId);
+        public Task<bool> AddRoleToUserListRoles(string userId, string roleId);
     }
 }

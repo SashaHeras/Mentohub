@@ -3,9 +3,12 @@ using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mentohub.Core.Context
 {
+    [Table("AspNetUsers")]
+    
     public class ProjectContext : IdentityDbContext<CurrentUser>
     {
         public DbSet<Lesson> Lessons { get; set; }
@@ -55,6 +58,11 @@ namespace Mentohub.Core.Context
             modelBuilder.Entity<AnswerHistory>().HasKey(c => c.Id);
             modelBuilder.Entity<TaskHistory>().HasKey(c => c.Id);
             modelBuilder.Entity<TestHistory>().HasKey(c => c.Id);
+            modelBuilder.Entity<IdentityUserLogin<string>>().HasNoKey();
+            //modelBuilder.Entity<IdentityUserRole<string>>().HasNoKey();
+            modelBuilder.Entity<IdentityUserToken<string>>().HasNoKey();
+            modelBuilder.Entity<IdentityUserRole<string>>()
+        .HasKey(ur => new { ur.UserId, ur.RoleId });
 
             modelBuilder.Entity<TestHistory>()
                 .HasOne(t1 => t1.Test)
@@ -100,15 +108,23 @@ namespace Mentohub.Core.Context
                 .HasOne(t1 => t1.TaskAnswer)
                 .WithMany(t2 => t2.AnswerHistory)
                 .HasForeignKey(t1 => t1.AnswerId);
+
+
+            //modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("AspNetRoleClaims");
+
+            modelBuilder.Entity<IdentityUserRole<string>>().ToTable("AspNetUserRoles");
+            modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("AspNetUserLogins");
+            modelBuilder.Entity<IdentityRole>().ToTable("AspNetRoles");
+            modelBuilder.Entity<IdentityUserToken<string>>().ToTable("AspNetUserTokens");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=localhost;Database=StudyDB; Trusted_Connection=True;TrustServerCertificate=True", builder =>
+            optionsBuilder.UseSqlServer("Server=ALLA2021\\SQLEXPRESS01;Database=StudyDB;Trusted_Connection=True;MultipleActiveResultSets=true", builder =>
             {
                 builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
             });
-            base.OnConfiguring(optionsBuilder);
+            //base.OnConfiguring(optionsBuilder);
         }
     }
 }

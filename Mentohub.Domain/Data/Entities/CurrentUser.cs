@@ -1,9 +1,11 @@
 ﻿using Mentohub.Domain.Data.Entities.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mentohub.Domain.Data.Entities
 {
+    [Table("AspNetUsers")]
     public class CurrentUser: IdentityUser, IItem
     {
         [JsonProperty]

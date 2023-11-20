@@ -160,7 +160,7 @@ namespace Mentohub.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("upload avatar")]
+        [Route("uploadAvatar")]
         [SwaggerOperation(Summary ="Download user's avatar")]
         public async Task<JsonResult> UploadAvatar(IFormFile avatar,string id)
         {
@@ -202,16 +202,18 @@ namespace Mentohub.Controllers
         [HttpPost]
         [Route("addRole")]
         [SwaggerOperation(Summary ="add role to user`s roles")]
-        public async Task<JsonResult> AddUserRoles([FromForm]string id,
+        public async Task<JsonResult> AddUserRoles([FromForm]string userId,
             [FromForm]string roleName)
         {
+            
+            var user=await _cRUD.FindCurrentUserById(userId);
+            _logger.LogInformation(roleName, user.UserName);
             try
-            {
-                var user =await _userService.GetCurrentUser(id);
-                if(user != null && await _userService.AddRoleToUserListRoles(user,roleName))
+            {              
+                if( await _userService.AddRoleToUserListRoles(userId, roleName))
                 {
 
-                    var UserDTO = await _userService.GetUser(user.UserName);
+                    var UserDTO = await _userService.GetProfile(userId);
                     return new JsonResult(UserDTO)
                     {
                         StatusCode = 200
@@ -221,7 +223,6 @@ namespace Mentohub.Controllers
                 {
                     StatusCode = 500
                 };
-
             }
             catch(Exception ex)
             {
@@ -243,7 +244,7 @@ namespace Mentohub.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("get-avatar")]
+        [Route("getAvatar")]
         public async Task< IActionResult> GetAvatar(string id)
         {
                 // Отримайте URL аватарки користувача з сервісу

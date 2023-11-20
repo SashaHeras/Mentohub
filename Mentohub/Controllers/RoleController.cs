@@ -81,7 +81,7 @@ namespace Mentohub.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
-        [Route("delet role")]
+        [Route("deletRole")]
         public async Task<IActionResult> Delete(string id)
         {
             try

@@ -54,35 +54,29 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<CurrentUser> CreateUser(RegisterDTO model)
         {
-            if (await _roleManager.FindByNameAsync("Customer") == null)
+            var role = await _roleManager.FindByNameAsync("Customer");
+            if (role == null)
             {
-                var role = await _roleManager.CreateAsync(new IdentityRole("Customer"));
+                role = new IdentityRole("Customer");
+                await _roleManager.CreateAsync(role);
             }
+                CurrentUser user = new CurrentUser { Email = model.Email, UserName = model.NickName };
+                // добавляем пользователя
+                var result = await _userManager.CreateAsync(user, model.Password);
 
-            CurrentUser user = new CurrentUser { Email = model.Email, UserName = model.NickName };
-            // добавляем пользователя
-            var result = await _userManager.CreateAsync(user, model.Password);
-            
-
-            if (result.Succeeded == true)
-            {
-                await _userManager.AddToRoleAsync(user, "Customer");
+                if (result.Succeeded && role!=null)
+                {
+                _logger.LogInformation($"Role: {role.Id}, User: {user.Id}");
+                await _userManager.AddToRoleAsync(user, role.Name);
 
                 _logger.LogInformation("User created a new account with password.");
 
-                //установка куки
-                await _signInManager.SignInAsync(user, false);
-                return user;
-            }
-            else
-            {
-                // Якщо створення користувача не вдалося, виводимо помилки в лог або консоль
-                foreach (var error in result.Errors)
-                {
-                    Console.WriteLine($"Помилка при створенні користувача: {error.Description}");
+                    //установка куки
+                    await _signInManager.SignInAsync(user, false);
+                    return user;
                 }
-                return _exciption.NotFoundObject("User isn't created");
-            }
+                return _exciption.NotFoundObject("User was not created");
+            
         }
         /// <summary>
         /// сервіс видалення проіфілю користувача
@@ -199,18 +193,20 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<CurrentUser> Login(LoginDTO model)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Email,
-                 model.Password, model.RememberMe, false);
-            if (result.Succeeded)
+            if (model.Email != null && model.Password != null)
             {
-                _logger.LogInformation("User logged in");
-
-                return await _cRUD.FindCurrentUserByEmail(model.Email);
+                var result = await _cRUD.Login(model);
+                if (result)
+                {
+                    _logger.LogInformation("User logged in");
+                    return await _cRUD.FindCurrentUserByEmail(model.Email);
+                }
             }
             else
             {
-                return _exciption.NotFoundObject("User is not found");
+                return _exciption.NotFoundObject("Wrong email or password");
             }
+            return _exciption.NotFoundObject("User is not found");
         }
         /// <summary>
         /// вихід з аккаунта
@@ -283,16 +279,25 @@ namespace Mentohub.Core.Services.Services
         /// <param name="user"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        public async Task<bool> AddRoleToUserListRoles(CurrentUser user, string roleName)
+        public async Task<bool> AddRoleToUserListRoles(string userId, string roleName)
         {
-
-            var allRoles = _roleManager.Roles.ToList();
-            foreach (var role in allRoles)
+            var user =await _cRUD.FindCurrentUserById(userId);
+            var identityRole = await _roleManager.FindByNameAsync(roleName);
+            if (identityRole != null&& user!=null)
             {
-                if (role.Name == roleName)
+                var userRoles=_userManager.GetRolesAsync(user);
+                foreach (var role in await userRoles)
                 {
-                    await _userManager.AddToRoleAsync(user, role.Name);
-                    return true;
+                    if (role != identityRole.Name)
+                    {
+                        await _userManager.AddToRoleAsync(user, roleName);
+                        return true;
+                    }
+                    else
+                    {
+                        _logger.LogInformation("Role already exists for this user");
+                        return false;
+                    }
                 }
             }
             return false;
@@ -345,8 +350,9 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         public async Task<bool> CreateRole(string name)
-        {
-            if (!string.IsNullOrEmpty(name))
+        { 
+            if (!string.IsNullOrEmpty(name)
+                &&await _roleManager.FindByNameAsync(name)==null)
             {
                 IdentityResult result = await _roleManager.CreateAsync(new IdentityRole(name));
                 if (result.Succeeded)
@@ -356,6 +362,8 @@ namespace Mentohub.Core.Services.Services
             }
             return false;
         }
+
+        
     }
 }
 

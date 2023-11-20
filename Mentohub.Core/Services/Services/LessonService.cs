@@ -15,9 +15,6 @@ namespace Mentohub.Core.Services.Services
         private readonly IMediaService _mediaService;
         private readonly IAzureService _azureService;
         private readonly ICourseItemService _courseItemService;
-        private readonly AzureService _azureService;
-        private readonly MediaService _mediaService;
-        private readonly CourseItemService _courseItemService;
 
         private readonly ICourseRepository _courseRepository;
         private readonly ICourseItemRepository _courseItemRepository;
@@ -38,7 +35,7 @@ namespace Mentohub.Core.Services.Services
             _courseItemRepository = courseItemRepository;
             _azureService = azureService;
             _courseItemService = courseItemService;
-        }     
+        }
 
         public async Task<int> Create(IFormCollection form, LessonDTO createLessonModel)
         {
@@ -84,25 +81,13 @@ namespace Mentohub.Core.Services.Services
             return courseId;
         }
 
-            CourseItem currentCourseItem = _courseItemService.GetCourseItem(lesson.CourseItemId);
-            currentCourseItem.DateCreation = DateTime.Now;
-            await _courseItemService.UpdateCourseItem(currentCourseItem);
-
-            int courseId = currentCourseItem.CourseId;
-
-            UpdateLesson(lesson);
-
-            _mediaService.DeleteMediaFromProject(form.Files[0]);
-
-            return courseId;
-        }
-
         public LessonDTO GetLesson(Guid id)
-        {           
-            var lesson = _lessonRepository.GetLessonById(id);            
+        {
+            var lesson = _lessonRepository.GetLessonById(id);
             var course = _courseService.GetCourseFromLesson(lesson);
 
-            LessonDTO result = new LessonDTO() {
+            LessonDTO result = new LessonDTO()
+            {
                 Id = lesson.Id,
                 Theme = lesson.Theme,
                 Description = lesson.Description,
@@ -129,13 +114,13 @@ namespace Mentohub.Core.Services.Services
             currentLesson.DateCreation = DateTime.Now.ToShortDateString();
 
             await _lessonRepository.UpdateAsync(currentLesson);
-        }       
+        }
 
         public LessonDTO GetLessonByCourseItem(int courseItemId)
         {
             var lesson = _lessonRepository.GetLessonByCourseItemId(courseItemId);
 
-            if(lesson == null)
+            if (lesson == null)
             {
                 throw new Exception("Lesson not found!");
             }
@@ -157,7 +142,7 @@ namespace Mentohub.Core.Services.Services
             var currentLesson = _lessonRepository.FirstOrDefault(x => x.Id == lesson.Id);
             var currentCourse = _courseRepository.GetCourse(lesson.CourseID);
 
-            if(currentLesson == null)
+            if (currentLesson == null)
             {
                 var countCurrentElements = _courseItemRepository.GetCourseItemsByCourseId(lesson.CourseID).Count();
 
@@ -198,7 +183,7 @@ namespace Mentohub.Core.Services.Services
                 currentLesson.Description = lesson.Description;
                 currentLesson.UpdateDate = DateTime.Now;
 
-                if(currentLesson.LoadVideoName == null || currentLesson.LoadVideoName != lesson.VideoFile.FileName)
+                if (currentLesson.LoadVideoName == null || currentLesson.LoadVideoName != lesson.VideoFile.FileName)
                 {
                     await _mediaService.DeleteFile(currentLesson.VideoPath);
                     string video = await _mediaService.SaveFile(lesson.VideoFile);
@@ -217,7 +202,7 @@ namespace Mentohub.Core.Services.Services
             var courseItem = _courseItemRepository.FirstOrDefault(x => x.Id == lesson.CourseItemId);
             courseItem.StatusId = (int)e_ItemStatus.DELETED;
 
-            _courseItemRepository.Update(courseItem);   
+            _courseItemRepository.Update(courseItem);
         }
     }
 }
