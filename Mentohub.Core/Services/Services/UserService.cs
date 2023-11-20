@@ -183,6 +183,11 @@ namespace Mentohub.Core.Services.Services
             dto.Email = currentUser.Email;
             dto.Name = currentUser.UserName;
             dto.UserRoles = await _cRUD.GetUserRoles(currentUser);
+            dto.AboutMe = currentUser.AboutMe;
+            dto.DateOfBirth = currentUser.DateOfBirth;
+            dto.FirstName = currentUser.FirstName;
+            dto .LastName = currentUser.LastName;
+            dto.Image = currentUser.Image;
             return dto;
         }
 
@@ -240,10 +245,8 @@ namespace Mentohub.Core.Services.Services
                 // Якщо так, то оновити дату народження
                 currentUser.DateOfBirth = userDTO.DateOfBirth;
             }
-           
             var result=await _userManager.UpdateAsync(currentUser);
             return result.Succeeded;
-            
         }
         /// <summary>
         /// 
@@ -260,6 +263,11 @@ namespace Mentohub.Core.Services.Services
                 userDTO.Name = user.UserName;
                 userDTO.Email = user.Email;
                 userDTO.UserRoles = await _cRUD.GetUserRoles(user);
+                userDTO.AboutMe=user.AboutMe;
+                userDTO.DateOfBirth=user.DateOfBirth;
+                userDTO.FirstName = user.FirstName;
+                userDTO.LastName = user.LastName;
+                userDTO.Image=user.Image;
                 return userDTO;
             }
             return _exciption.NullException(nameof(userName));
