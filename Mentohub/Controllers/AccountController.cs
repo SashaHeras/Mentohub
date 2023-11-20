@@ -19,21 +19,20 @@ namespace Mentohub.Core.Repositories.Repositories
     {
         private readonly SignInManager<CurrentUser> _signInManager;
 
-        //private readonly IUserStore<CurrentUser> _userStore;
-        //private readonly IUserEmailStore<CurrentUser> _emailStore;
         private readonly ILogger<AccountController> _logger;
         private readonly AllException _exception;
         private readonly UserService _userService;
         private readonly EmailSender _emailSender;
         private readonly UserManager<CurrentUser> _userManager;
         private readonly IHubContext<SignalRHub> _hubContext;
+
         public AccountController(
             SignInManager<CurrentUser> signInManager,
             UserService userService,
-           ILogger<AccountController> logger,
-           AllException exception,
-           EmailSender emailSender,
-           UserManager<CurrentUser> userManager, IHubContext<SignalRHub> hubContext)
+            ILogger<AccountController> logger,
+            AllException exception,
+            EmailSender emailSender,
+            UserManager<CurrentUser> userManager, IHubContext<SignalRHub> hubContext)
         {
             _exception = exception;
             _signInManager = signInManager;
@@ -41,8 +40,9 @@ namespace Mentohub.Core.Repositories.Repositories
             _userService = userService;
             _emailSender = emailSender;
             _userManager = userManager;
-            _hubContext= hubContext;
+            _hubContext = hubContext;
         }
+
         [HttpGet]
         [Route("register")]
         [SwaggerOperation(Summary = "Отримання форми реєстрації користувача", Tags = new[] { "Теги" })]
@@ -50,6 +50,7 @@ namespace Mentohub.Core.Repositories.Repositories
         {
             return View();
         }
+
         [HttpPost]
         [Route("register")]
         [SwaggerOperation(Summary = "Реєстрація користувача", Tags = new[] { "Теги" })]
@@ -58,9 +59,9 @@ namespace Mentohub.Core.Repositories.Repositories
         {
             try
             {
-              var createdUser = await _userService.CreateUser(model);
-              if (ModelState.IsValid && createdUser != null)
-              {
+                var createdUser = await _userService.CreateUser(model);
+                if (ModelState.IsValid && createdUser != null)
+                {
                     // Генеруємо токен для підтвердження email
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(createdUser);
                     var callbackUrl = Url.Action("ConfirmEmail", "Account",
@@ -70,14 +71,13 @@ namespace Mentohub.Core.Repositories.Repositories
                     // Відправляємо лист для підтвердження email
                     await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
                         $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
-                    
+
                     _logger.LogInformation("User created successfully.");
                     return new JsonResult(createdUser)
                     {
-                       StatusCode=200
+                        StatusCode = 200
                     };
-              }
-
+                }
             }            
             catch (Exception ex) 
             { // Обробка помилки та повернення JsonResult із відповідними даними про помилку
@@ -149,8 +149,7 @@ namespace Mentohub.Core.Repositories.Repositories
         [ProducesResponseType(typeof(JsonResult), 200)]
         [ProducesResponseType(typeof(JsonResult), 400)]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
-        {
-            
+        {            
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
             {
                 return new JsonResult("No data to send");
@@ -162,7 +161,7 @@ namespace Mentohub.Core.Repositories.Repositories
             {
                 return new JsonResult("User is not found")
                 {
-                    StatusCode=400
+                    StatusCode = 400
                 };
             }
 
@@ -172,7 +171,7 @@ namespace Mentohub.Core.Repositories.Repositories
             {
                 return new JsonResult("Email was confirmed")
                 {
-                    StatusCode=200
+                    StatusCode = 200
                 };
             }
             else

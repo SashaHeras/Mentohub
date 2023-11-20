@@ -69,7 +69,7 @@ namespace Mentohub.Controllers
         {
             try
             {
-                var comment = _courseService.EditComment(data);
+                var comment = string.Empty;
                 return Json(new { IsError = false, Data = comment, Message = "Success" });
             }
             catch (Exception ex)
