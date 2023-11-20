@@ -82,9 +82,10 @@ namespace Mentohub.Core.Services.Services
         }
 
         public LessonDTO GetLesson(Guid id)
-        {
+        {           
             var lesson = _lessonRepository.GetLessonById(id);
-            var course = _courseService.GetCourseFromLesson(lesson);
+            var courseItem = _courseItemRepository.FirstOrDefault(y => y.Id == lesson.CourseItemId);
+            var course = _courseRepository.FirstOrDefault(x => x.Id == courseItem.CourseId);
 
             LessonDTO result = new LessonDTO()
             {
