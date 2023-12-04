@@ -54,11 +54,18 @@ namespace Mentohub.Core.Repositories.Repositories
         [HttpPost]
         [Route("register")]
         [SwaggerOperation(Summary = "Реєстрація користувача", Tags = new[] { "Теги" })]
-        //[ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> Register([FromForm] RegisterDTO model)
         {
             try
             {
+                // Перевірка наявності користувача з такою самою електронною поштою
+                var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUser != null)
+                {
+                    return BadRequest("User with this email already exists.");
+                }
+
                 var createdUser = await _userService.CreateUser(model);
                 if (ModelState.IsValid && createdUser != null)
                 {
@@ -75,7 +82,8 @@ namespace Mentohub.Core.Repositories.Repositories
                     _logger.LogInformation("User created successfully.");
                     return new JsonResult(createdUser)
                     {
-                        StatusCode = 200
+                        StatusCode = 201, 
+                        Value= createdUser
                     };
                 }
             }            
