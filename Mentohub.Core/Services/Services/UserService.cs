@@ -128,11 +128,17 @@ namespace Mentohub.Core.Services.Services
                 return false;
             }
         }
-
-        public IAsyncEnumerable<CurrentUser> GetAllUsers()
+        public  IList<string> GetUserRoles(CurrentUser user)
         {
-            return (IAsyncEnumerable<CurrentUser>)_userManager.Users.ToList();
-            
+           return (IList<string>)_userManager.GetRolesAsync(user);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IList<CurrentUser> GetAllUsers()
+        {
+            return  _userManager.Users.ToList();
         }
         /// <summary>
         /// download user's avatar
@@ -320,13 +326,11 @@ namespace Mentohub.Core.Services.Services
             var user =await _cRUD.FindCurrentUserById(userId);
             if (user != null && !string.IsNullOrEmpty(user.Image))
             {
-                
-                 return user.Image; 
-                             
-            }
-            
+                 return user.Image;         
+            }   
             // Повернути URL за замовчуванням, якщо користувач не має аватарки.
             return "/wwwroot/avatar/default-avatar.ipg";
+
         }
         /// <summary>
         /// 
@@ -371,7 +375,7 @@ namespace Mentohub.Core.Services.Services
             return false;
         }
 
-        
+      
     }
 }
 

@@ -258,6 +258,7 @@ namespace Mentohub.Controllers
             // Якщо аватарка не знайдена або виникла помилка
             return new JsonResult(new { success = false, message = "Error when getting an avatar" });
         }
+        
     }
 }
 

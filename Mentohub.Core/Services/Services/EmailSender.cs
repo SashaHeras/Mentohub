@@ -49,7 +49,7 @@ namespace Mentohub.Core.Services.Services
                 var smtpUsername = _configuration["Email:SmtpUsername"];
                 var smtpPassword = _configuration["Email:SmtpPassword"];
 
-                await client.ConnectAsync(smtpServer, smtpPort, SecureSocketOptions.Auto);
+                await client.ConnectAsync(smtpServer, smtpPort, SecureSocketOptions.StartTls);
                 //client.CheckCertificateRevocation = false;
                 await client.AuthenticateAsync(smtpUsername, smtpPassword);
                 await client.SendAsync(message);
