@@ -40,7 +40,8 @@ namespace Mentohub.Core.Services.Services
 
                 message.Body = bodyBuilder.ToMessageBody();
             //await _queueService.SendMessageAsync(JsonConvert.SerializeObject(message));
-
+            try
+            { 
             using (var client = new SmtpClient())
             {
                 var smtpServer = _configuration["Email:SmtpServer"];
@@ -48,12 +49,19 @@ namespace Mentohub.Core.Services.Services
                 var smtpUsername = _configuration["Email:SmtpUsername"];
                 var smtpPassword = _configuration["Email:SmtpPassword"];
 
-                await client.ConnectAsync(smtpServer, smtpPort, SecureSocketOptions.StartTls);
+                await client.ConnectAsync(smtpServer, smtpPort, SecureSocketOptions.Auto);
+                //client.CheckCertificateRevocation = false;
                 await client.AuthenticateAsync(smtpUsername, smtpPassword);
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);
+                    
             }
-
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
+            }
+            
         }
         
     }
