@@ -8,7 +8,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Mentohub.Core.Context
 {
     [Table("AspNetUsers")]
-    
     public class ProjectContext : IdentityDbContext<CurrentUser>
     {
         public DbSet<Lesson> Lessons { get; set; }
@@ -36,11 +35,6 @@ namespace Mentohub.Core.Context
         public DbSet<ItemStatus> ItemsStatuses { get; set; }
 
         public DbSet<Comment> Comments { get; set; }
-
-        public ProjectContext()
-        {
-
-        }
 
         public ProjectContext(DbContextOptions<ProjectContext> options) : base(options)
         {
@@ -113,12 +107,12 @@ namespace Mentohub.Core.Context
             modelBuilder.Entity<IdentityUserToken<string>>().ToTable("AspNetUserTokens");
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("Server=localhost;Database=StudyDB; Trusted_Connection=True;TrustServerCertificate=True", builder =>
-            {
-                builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
-            });
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseNpgsql("User ID=admin;Password=root;Host=localhost;Port=5432;Database=mentohub;Pooling=true;MinPoolSize=0;MaxPoolSize=100;ConnectionLifetime=0;", builder =>
+        //    {
+        //        builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+        //    });
+        //}
     }
 }

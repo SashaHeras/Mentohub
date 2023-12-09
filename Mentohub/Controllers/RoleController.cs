@@ -26,8 +26,9 @@ namespace Mentohub.Controllers
         }
         [Route("create")]
         public IActionResult Create() => View();
+
         /// <summary>
-        /// 
+        /// Method for role creation
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -35,37 +36,38 @@ namespace Mentohub.Controllers
         [Route("create")]
         public async Task<IActionResult> Create(string name)
         {
-            var result=await _userService.CreateRole(name);
             try
             {
-                if(result)
+                var result = await _userService.CreateRole(name);
+                if (result)
                 {
-                    Json(result).StatusCode=204;
-                    return Json("Role was created");
+                    Json(result).StatusCode = 204;
+                    return Json($"Role {name} was created");
                 }
                 else
                 {
-                    Json(result).StatusCode = 400;
-                    return Json("Error during the creating role");
-
-                }    
-
+                    var res = Json($"Error during the creating role {name}");
+                    res.StatusCode = 400;
+                    return res;
+                }
             }
             catch (Exception ex)
             {
                 var errorResponse = new
                 {
-                    message = "Role was not created ",
+                    message = $"Role {name} was not created",
                     error = ex.Message // інформація про помилку
                 };
+
                 return new JsonResult(errorResponse)
                 {
                     StatusCode = 500 // код статусу, що вказує на помилку
                 };
             }
         }
+
         /// <summary>
-        /// 
+        /// Get list of all roles
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -86,7 +88,7 @@ namespace Mentohub.Controllers
         {
             try
             {
-              var result=await _userService.DeleteRole(id);
+                var result = await _userService.DeleteRole(id);
                 if (result)
                 {
                     Json(result).StatusCode = 204;
@@ -111,12 +113,11 @@ namespace Mentohub.Controllers
                 {
                     StatusCode = 500 // код статусу, що вказує на помилку
                 };
-            }
-            
+            }            
         }
+
         [HttpGet]
         [Route("edit")]
-
         public async Task<IActionResult> Edit(string userId)
         {
             // получаем пользователя
