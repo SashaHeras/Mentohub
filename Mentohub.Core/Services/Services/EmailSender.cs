@@ -41,18 +41,26 @@ namespace Mentohub.Core.Services.Services
                 message.Body = bodyBuilder.ToMessageBody();
             //await _queueService.SendMessageAsync(JsonConvert.SerializeObject(message));
 
-            using (var client = new SmtpClient())
+            try
             {
-                var smtpServer = _configuration["Email:SmtpServer"];
-                var smtpPort = Convert.ToInt32(_configuration["Email:SmtpPort"]);
-                var smtpUsername = _configuration["Email:SmtpUsername"];
-                var smtpPassword = _configuration["Email:SmtpPassword"];
+                using (var client = new SmtpClient())
+                {
+                    var smtpServer = _configuration["Email:SmtpServer"];
+                    var smtpPort = Convert.ToInt32(_configuration["Email:SmtpPort"]);
+                    var smtpUsername = _configuration["Email:SmtpUsername"];
+                    var smtpPassword = _configuration["Email:SmtpPassword"];
 
-                await client.ConnectAsync(smtpServer, smtpPort, SecureSocketOptions.StartTls);
-                //client.CheckCertificateRevocation = false;
-                await client.AuthenticateAsync(smtpUsername, smtpPassword);
-                await client.SendAsync(message);
-                await client.DisconnectAsync(true);
+                    await client.ConnectAsync(smtpServer, smtpPort, SecureSocketOptions.Auto);
+                    //client.CheckCertificateRevocation = false;
+                    await client.AuthenticateAsync(smtpUsername, smtpPassword);
+                    await client.SendAsync(message);
+                    await client.DisconnectAsync(true);
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex}");
             }
 
         }
