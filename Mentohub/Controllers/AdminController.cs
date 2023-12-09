@@ -1,8 +1,10 @@
-﻿using Mentohub.Core.Services.Services;
+﻿using Mentohub.Core.Services;
+using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Mentohub.Controllers
@@ -13,18 +15,21 @@ namespace Mentohub.Controllers
     public class AdminController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserManager<CurrentUser> _usermanager;
+        
         private readonly UserService _userService;
         private readonly ILogger<AdminController> _logger;
-
+        private readonly EmailSender _emailSender;
+        //private readonly IHubContext<SignalRHub> _signalRHub;
         public AdminController(RoleManager<IdentityRole> roleManager,
-            UserManager<CurrentUser> usermanager, UserService userService,
-            ILogger<AdminController> logger)
+             UserService userService,
+            ILogger<AdminController> logger, EmailSender emailSender 
+           /* IHubContext<SignalRHub> signalRHub*/)
         {
             _roleManager = roleManager;
-            _usermanager = usermanager;
             _userService = userService;
             _logger = logger;
+            _emailSender = emailSender;
+            //_signalRHub = signalRHub;
         }
 
         public IActionResult Index()
@@ -36,8 +41,8 @@ namespace Mentohub.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("userlist")]
-        public IActionResult UserList() => Json(_usermanager.Users.ToList());
+        [Route("userslist")]
+        public IActionResult UserList() => Json(_userService.GetAllUsers());
         /// <summary>
         /// 
         /// </summary>
@@ -122,11 +127,11 @@ namespace Mentohub.Controllers
         public async Task<IActionResult> EditUserRoles([FromForm]string userId)
         {
             // получаем пользователя
-            CurrentUser user = await _usermanager.FindByIdAsync(userId);
+            CurrentUser user = await _userService.GetCurrentUser(userId);
             if (user != null)
             {
                 // получем список ролей пользователя
-                var userRoles = await _usermanager.GetRolesAsync(user);
+                var userRoles = _userService.GetUserRoles(user);
                 var allRoles = _roleManager.Roles.ToList();
                 ChangeRoleDTO model = new ChangeRoleDTO
                 {
@@ -174,6 +179,21 @@ namespace Mentohub.Controllers
             }
             return new JsonResult("Unknown error");
 
+        }
+        [HttpPost]
+        [Route("sendEmail")]
+        public async Task<IActionResult> SendEmail([FromForm]string email, [FromForm] string subject, [FromForm] string htmlmessage)
+        {
+            if(!string.IsNullOrEmpty(email)&&!string.IsNullOrEmpty(htmlmessage)) 
+            { 
+            await _emailSender.SendEmailAsync(email, subject, htmlmessage);
+                //await _signalRHub.ReceiveEmail(email);
+                return new JsonResult("Email is sent successfully")
+                {
+                    StatusCode = 200
+                };      
+            }
+            return new JsonResult("An error occurred while trying to send an email");
         }
     }
 }

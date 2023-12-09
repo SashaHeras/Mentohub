@@ -115,7 +115,9 @@ namespace Mentohub.Core.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=localhost;Database=StudyDB; Trusted_Connection=True;TrustServerCertificate=True", builder =>
+            //"Server=ALLA2021\\SQLEXPRESS01;Database=StudyDB;Trusted_Connection=True;MultipleActiveResultSets=true"
+            //"Server=localhost;Database=StudyDB; Trusted_Connection=True;TrustServerCertificate=True"
+            optionsBuilder.UseSqlServer("Server=ALLA2021\\SQLEXPRESS01;Database=StudyDB;Trusted_Connection=True;MultipleActiveResultSets=true", builder =>
             {
                 builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
             });

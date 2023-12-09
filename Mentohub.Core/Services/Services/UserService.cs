@@ -128,11 +128,17 @@ namespace Mentohub.Core.Services.Services
                 return false;
             }
         }
-
-        public IAsyncEnumerable<CurrentUser> GetAllUsers()
+        public  IList<string> GetUserRoles(CurrentUser user)
         {
-            return (IAsyncEnumerable<CurrentUser>)_userManager.Users.ToList();
-            
+           return (IList<string>)_userManager.GetRolesAsync(user);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public IList<CurrentUser> GetAllUsers()
+        {
+            return  _userManager.Users.ToList();
         }
         /// <summary>
         /// download user's avatar
@@ -183,6 +189,11 @@ namespace Mentohub.Core.Services.Services
             dto.Email = currentUser.Email;
             dto.Name = currentUser.UserName;
             dto.UserRoles = await _cRUD.GetUserRoles(currentUser);
+            dto.AboutMe = currentUser.AboutMe;
+            dto.DateOfBirth = currentUser.DateOfBirth;
+            dto.FirstName = currentUser.FirstName;
+            dto .LastName = currentUser.LastName;
+            dto.Image = currentUser.Image;
             return dto;
         }
 
@@ -240,10 +251,8 @@ namespace Mentohub.Core.Services.Services
                 // Якщо так, то оновити дату народження
                 currentUser.DateOfBirth = userDTO.DateOfBirth;
             }
-           
             var result=await _userManager.UpdateAsync(currentUser);
             return result.Succeeded;
-            
         }
         /// <summary>
         /// 
@@ -260,6 +269,11 @@ namespace Mentohub.Core.Services.Services
                 userDTO.Name = user.UserName;
                 userDTO.Email = user.Email;
                 userDTO.UserRoles = await _cRUD.GetUserRoles(user);
+                userDTO.AboutMe=user.AboutMe;
+                userDTO.DateOfBirth=user.DateOfBirth;
+                userDTO.FirstName = user.FirstName;
+                userDTO.LastName = user.LastName;
+                userDTO.Image=user.Image;
                 return userDTO;
             }
             return _exciption.NullException(nameof(userName));
@@ -312,13 +326,11 @@ namespace Mentohub.Core.Services.Services
             var user =await _cRUD.FindCurrentUserById(userId);
             if (user != null && !string.IsNullOrEmpty(user.Image))
             {
-                
-                 return user.Image; 
-                             
-            }
-            
+                 return user.Image;         
+            }   
             // Повернути URL за замовчуванням, якщо користувач не має аватарки.
             return "/wwwroot/avatar/default-avatar.ipg";
+
         }
         /// <summary>
         /// 
@@ -363,7 +375,7 @@ namespace Mentohub.Core.Services.Services
             return false;
         }
 
-        
+      
     }
 }
 
