@@ -62,7 +62,7 @@ namespace Mentohub.Core.Services.Services
                     Rating = 0.00,
                     Price = courseDTO.Price,
                     CourseSubjectId = (int)courseDTO.CourseSubjectId,
-                    LastEdittingDate = DateTime.Now
+                    LastEdittingDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc)
                 };
 
                 try
@@ -94,7 +94,7 @@ namespace Mentohub.Core.Services.Services
                 currentCourse.Checked = courseDTO.Checked;
                 currentCourse.Rating = courseDTO.Rating;
                 currentCourse.Price = courseDTO.Price;
-                currentCourse.LastEdittingDate = DateTime.Now;
+                currentCourse.LastEdittingDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
                 currentCourse.CourseSubjectId = courseDTO.CourseSubjectId;
                             
                 if (currentCourse.LoadPictureName == null || courseDTO.Picture.FileName != currentCourse.LoadPictureName)

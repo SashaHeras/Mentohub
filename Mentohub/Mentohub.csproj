@@ -35,6 +35,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Content\Videos\" />
+    <Folder Include="Content\Pictures\" />
     <Folder Include="Views\Account\" />
     <Folder Include="Views\Admin\" />
     <Folder Include="Content\Scripts\Test\" />

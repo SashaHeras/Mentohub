@@ -100,38 +100,6 @@ namespace Mentohub.Controllers
             return View(lesson);  
         }
 
-        //[HttpGet]
-        //[Route("/Lesson/Edit")]
-        //public async Task<IActionResult> Edit(IFormCollection form, Lesson lesson)
-        //{
-        //    string videoPath = String.Empty;
-        //    string oldVideoName = String.Empty;
-
-        //    if (form.Files.Count != 0)
-        //    {
-        //        await _azureService.DeleteFromAzure(lesson.VideoPath);
-        //        videoPath = _azureService.SaveInAsync(form.Files[0]).Result;
-        //        lesson.VideoPath = videoPath;
-        //    }
-        //    else
-        //    {
-        //        oldVideoName = _lessonService.GetLesson(lesson.Id).VideoPath;
-        //        lesson.VideoPath = oldVideoName;
-        //    }
-
-        //    CourseItem currentCourseItem = _courseItemService.GetCourseItem(lesson.CourseItemId);
-        //    currentCourseItem.DateCreation = DateTime.Now;
-
-        //    int courseId = currentCourseItem.CourseId;
-        //    await _courseItemService.UpdateCourseItem(currentCourseItem);  
-            
-        //    _lessonService.UpdateLesson(lesson);
-
-        //    _mediaService.DeleteMediaFromProject(form.Files[0]);
-
-        //    return RedirectToAction("CreateCourse", "Course", new { id = courseId });
-        //}
-
         /// <summary>
         /// Edit/create lesson
         /// </summary>

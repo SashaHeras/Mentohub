@@ -95,7 +95,7 @@ namespace Mentohub.Core.Services.Services
             {
                 TypeId = _courseItemService.GetItemTypeByName("Test").Id,
                 CourseId = courseId,
-                DateCreation = DateTime.Now,
+                DateCreation = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
                 OrderNumber = sameCourseItems.Count() > 0 ? sameCourseItems.Last().OrderNumber + 1 : 1
             };
             await _courseItemRepository.AddAsync(newCourseItem);
@@ -130,7 +130,7 @@ namespace Mentohub.Core.Services.Services
             {
                 CourseItem newCourseItem = new CourseItem()
                 {
-                    DateCreation = DateTime.Now,
+                    DateCreation = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
                     CourseId = data.CourseID,
                     StatusId = (int)e_ItemStatus.OK,
                     TypeId = (int)e_ItemType.Test,

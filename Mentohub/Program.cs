@@ -35,6 +35,8 @@ internal class Program
             .AddEntityFrameworkStores<ProjectContext>()
             .AddDefaultTokenProviders();
 
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
         builder.Services.AddEntityFrameworkNpgsql();
         builder.Services.AddDbContextPool<ProjectContext>(
                 options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultPost")));
