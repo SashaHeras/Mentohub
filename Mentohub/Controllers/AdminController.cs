@@ -31,20 +31,22 @@ namespace Mentohub.Controllers
         {
             return View();
         }
+
         /// <summary>
-        /// 
+        /// Get list of users
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("userlist")]
-        public IActionResult UserList() => Json(_usermanager.Users.ToList());
+        [Route("GetUserList")]
+        public IActionResult GetUserList() => Json(_usermanager.Users.ToList());
+
         /// <summary>
-        /// 
+        /// Delete user by name
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
         [HttpDelete]
-        [Route("deleteUserByName")]
+        [Route("DeleteUserByName")]
         [SwaggerOperation(Summary = "Delete a user by Name")]
         public async Task<IActionResult> DeleteUser([FromForm] string userName)
         {
@@ -81,8 +83,9 @@ namespace Mentohub.Controllers
                 };
             }
         }
+
         [HttpGet]
-        [Route("getUser")]
+        [Route("GetUser")]
         [SwaggerOperation(Summary = "Get information about user")]
         public async Task<IActionResult> GetUser(string userName)
         {
@@ -109,8 +112,10 @@ namespace Mentohub.Controllers
                     StatusCode = 500 // код статусу, що вказує на помилку
                 };
             }
+
             return new JsonResult("Unknown error");
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -128,6 +133,7 @@ namespace Mentohub.Controllers
                 // получем список ролей пользователя
                 var userRoles = await _usermanager.GetRolesAsync(user);
                 var allRoles = _roleManager.Roles.ToList();
+
                 ChangeRoleDTO model = new ChangeRoleDTO
                 {
                     UserId = user.Id,
@@ -135,30 +141,29 @@ namespace Mentohub.Controllers
                     UserRoles = userRoles,
                     AllRoles = allRoles,
                 };
+
                 return new JsonResult(model);
             }
+
             return NotFound();
         }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="roleName"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("listOfUsersByRoleName")]
+        [Route("ListOfUsersByRoleName")]
         public async Task<IActionResult> GetUsersByRoleName(string roleName)
         {
             try
             {
-                if(!string.IsNullOrEmpty(roleName)) 
-            {
-                var result =await _userService.GetAllUsersByRoleName(roleName);
+                var result = await _userService.GetAllUsersByRoleName(roleName);
                 return new JsonResult(result)
                 {
                     StatusCode = 200
                 };
-            }
-
             }
             catch (Exception ex)
             {
@@ -167,13 +172,12 @@ namespace Mentohub.Controllers
                     message = "Not found users by this roleName",
                     error = ex.Message // інформація про помилку
                 };
+
                 return new JsonResult(errorResponse)
                 {
                     StatusCode = 500 // код статусу, що вказує на помилку
                 };
             }
-            return new JsonResult("Unknown error");
-
         }
     }
 }

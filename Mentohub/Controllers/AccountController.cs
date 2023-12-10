@@ -54,7 +54,6 @@ namespace Mentohub.Core.Repositories.Repositories
         [HttpPost]
         [Route("register")]
         [SwaggerOperation(Summary = "Реєстрація користувача", Tags = new[] { "Теги" })]
-        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Register([FromForm] RegisterDTO model)
         {
             try
@@ -80,7 +79,8 @@ namespace Mentohub.Core.Repositories.Repositories
                 }
             }            
             catch (Exception ex) 
-            { // Обробка помилки та повернення JsonResult із відповідними даними про помилку
+            { 
+                // Обробка помилки та повернення JsonResult із відповідними даними про помилку
                 var errorResponse = new
                 {
                     message = "Error during user registration",
@@ -92,6 +92,7 @@ namespace Mentohub.Core.Repositories.Repositories
                 };
 
             }
+
             return _exception.NotFoundObjectResult("User was not created");
         }
         
@@ -112,33 +113,36 @@ namespace Mentohub.Core.Repositories.Repositories
             {
                 var authenticatedUser =await _userService.Login(credentials);
 
-               if (ModelState.IsValid && authenticatedUser != null)
-               {
-                 return new JsonResult(authenticatedUser)
-                 {
-                    StatusCode = 200
-                 };
-               }
-
+                if (ModelState.IsValid && authenticatedUser != null)
+                {
+                    return new JsonResult(authenticatedUser)
+                    {
+                        StatusCode = 200
+                    };
+                }
             }
             catch(Exception ex)
             {
                 var errorResponse = new
                 {
                     message = "Error trying to log in user",
-                    error = ex.Message // інформація про помилку
+                    error = ex.Message                              // інформація про помилку
                 };
+
                 return new JsonResult("Authentication failed")
                 {
-                    StatusCode = 401 // Код статусу "Unauthorized"
+                    StatusCode = 401                                // Код статусу "Unauthorized"
                 };
             }
+
             return _exception.NotFoundObjectResult("User is not found");
         }
+
         public JsonResult LogoutAsync()
         {
             return new JsonResult(_userService.LogOut());
         }
+
         /// <summary>
         /// Confirm user's email after registration.
         /// </summary>
@@ -152,11 +156,13 @@ namespace Mentohub.Core.Repositories.Repositories
         {            
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
             {
-                return new JsonResult("No data to send");
+                return new JsonResult("No data to send")
+                {
+                    StatusCode = 400
+                }; 
             }
 
             var user = await _userService.GetCurrentUser(userId);
-
             if (user == null)
             {
                 return new JsonResult("User is not found")
@@ -166,21 +172,18 @@ namespace Mentohub.Core.Repositories.Repositories
             }
 
             var result = await _userManager.ConfirmEmailAsync(user, code);
-
-            if (result.Succeeded)
-            {
-                return new JsonResult("Email was confirmed")
-                {
-                    StatusCode = 200
-                };
-            }
-            else
+            if (!result.Succeeded)
             {
                 return new JsonResult("Email was not confirmed")
                 {
                     StatusCode = 400
                 };
-            }           
+            }
+
+            return new JsonResult("Email was confirmed")
+            {
+                StatusCode = 200
+            };
         }
     }
 }

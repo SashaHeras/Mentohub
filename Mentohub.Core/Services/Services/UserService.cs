@@ -327,8 +327,14 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<List<CurrentUser>> GetAllUsersByRoleName(string roleName)
         {
+            if (!string.IsNullOrEmpty(roleName))
+            {
+                throw new Exception("No role name to search!");
+            }
+
             return await _cRUD.GetAllUsers(roleName);
         }
+
         /// <summary>
         /// 
         /// </summary>
