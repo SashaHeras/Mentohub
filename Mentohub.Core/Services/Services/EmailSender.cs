@@ -21,48 +21,46 @@ namespace Mentohub.Core.Services.Services
         //private readonly IQueueService _queueService;
 
         public EmailSender(IConfiguration configuration/*, IQueueService queueService*/)
+        {
+            _configuration = configuration;
+            //_queueService = queueService;
+        }
+
+        public async Task SendEmailAsync(string email, string subject, string htmlMessage)
+        {
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(_configuration["Email:FromName"], _configuration["Email:FromAddress"]));
+            message.To.Add(new MailboxAddress("Dear customer", email));
+            message.Subject = subject;
+
+            var bodyBuilder = new BodyBuilder
             {
-                _configuration = configuration;
-                //_queueService = queueService;
-            }
+                HtmlBody = htmlMessage
+            };
 
-            public async Task SendEmailAsync(string email, string subject, string htmlMessage)
-            {
-                var message = new MimeMessage();
-                message.From.Add(new MailboxAddress(_configuration["Email:FromName"], _configuration["Email:FromAddress"]));
-                message.To.Add(new MailboxAddress("Dear customer",email));
-                message.Subject = subject;
-
-                var bodyBuilder = new BodyBuilder
-                {
-                    HtmlBody = htmlMessage
-                };
-
-                message.Body = bodyBuilder.ToMessageBody();
+            message.Body = bodyBuilder.ToMessageBody();
             //await _queueService.SendMessageAsync(JsonConvert.SerializeObject(message));
-            try
-            { 
-            using (var client = new SmtpClient())
-            {
-                var smtpServer = _configuration["Email:SmtpServer"];
-                var smtpPort = Convert.ToInt32(_configuration["Email:SmtpPort"]);
-                var smtpUsername = _configuration["Email:SmtpUsername"];
-                var smtpPassword = _configuration["Email:SmtpPassword"];
 
-                await client.ConnectAsync(smtpServer, smtpPort, SecureSocketOptions.Auto);
-                //client.CheckCertificateRevocation = false;
-                await client.AuthenticateAsync(smtpUsername, smtpPassword);
-                await client.SendAsync(message);
-                await client.DisconnectAsync(true);
-                    
-            }
+            try
+            {
+                using (var client = new SmtpClient())
+                {
+                    var smtpServer = _configuration["Email:SmtpServer"];
+                    var smtpPort = Convert.ToInt32(_configuration["Email:SmtpPort"]);
+                    var smtpUsername = _configuration["Email:SmtpUsername"];
+                    var smtpPassword = _configuration["Email:SmtpPassword"];
+
+                    await client.ConnectAsync(smtpServer, smtpPort, SecureSocketOptions.Auto);
+                    //client.CheckCertificateRevocation = false;
+                    await client.AuthenticateAsync(smtpUsername, smtpPassword);
+                    await client.SendAsync(message);
+                    await client.DisconnectAsync(true);
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex}");
             }
-            
-        }
-        
+        }       
     }
 }

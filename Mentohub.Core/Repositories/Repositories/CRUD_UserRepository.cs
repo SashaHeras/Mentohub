@@ -47,10 +47,12 @@ namespace Mentohub.Core.Repositories.Repositories
             CurrentUser user = await _userManager.FindByNameAsync(name);
             if (user == null)
             {
-                return _exception.NotFoundObject("Customer is not found");
+                return _exception.NotFoundObject("User is not found");
             }
+
             return user;
         }
+
         /// <summary>
         /// пошук користувача по id
         /// </summary>
@@ -63,8 +65,10 @@ namespace Mentohub.Core.Repositories.Repositories
             {
                 return _exception.NotFoundObject("Customer is not found");
             }
+
             return user;
         }
+
         /// <summary>
         /// оновлення інформації про аватарку користувача
         /// </summary>
@@ -74,7 +78,6 @@ namespace Mentohub.Core.Repositories.Repositories
         public async Task UpdateAvatarUrl(string userId, string avatarUrl)
         {
             var user = await _userManager.FindByIdAsync(userId);
-
             if (user != null)
             {
                 user.Image = avatarUrl;
@@ -91,6 +94,7 @@ namespace Mentohub.Core.Repositories.Repositories
         {
             return (List<CurrentUser>)await _userManager.GetUsersInRoleAsync(roleName);
         }
+
         /// <summary>
         /// пошук користувача по email
         /// </summary>
@@ -100,7 +104,6 @@ namespace Mentohub.Core.Repositories.Repositories
         {
             return await _userManager.FindByEmailAsync(email);
         }
-
 
         /// <summary>
         /// повертає перелік ролей користувача
@@ -114,8 +117,10 @@ namespace Mentohub.Core.Repositories.Repositories
                 var roles = await _userManager.GetRolesAsync(user);
                 return roles.ToList();
             }
+
             return new List<string>();
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -125,19 +130,25 @@ namespace Mentohub.Core.Repositories.Repositories
         {
             return await _roleManager.FindByIdAsync(roleId);
         }
+
         public Task<List<IdentityRole>> GetAllRoles()
         {
             return Task.FromResult(_roleManager.Roles.ToList());
         }
+
         public async Task<IdentityRole> GetRoleName(string roleId)
         {
             return await _roleManager.FindByIdAsync(roleId);
         }
+
         public async Task<bool> Login(LoginDTO model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
-            if(user!=null)
-            return await _userManager.CheckPasswordAsync(user, model.Password);
+            if (user != null)
+            {
+                return await _userManager.CheckPasswordAsync(user, model.Password);
+            }
+            
             return false;
         }
     }

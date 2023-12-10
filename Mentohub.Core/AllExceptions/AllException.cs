@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Mentohub.Core.AllExceptions
 {
-    public class AllException:Exception
+    public class AllException : Exception
     {
         /// <summary>
         /// 
@@ -25,6 +25,7 @@ namespace Mentohub.Core.AllExceptions
         {
             throw new NotImplementedException(v);
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -35,6 +36,7 @@ namespace Mentohub.Core.AllExceptions
         {
             throw new NotImplementedException();
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -45,11 +47,13 @@ namespace Mentohub.Core.AllExceptions
         {
             throw new NotImplementedException();
         }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="v"></param>
         public void NewException(string v) { }
+
         /// <summary>
         /// 
         /// </summary>

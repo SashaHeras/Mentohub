@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Mentohub.Controllers
 {
-    public class EmailController:Controller
+    public class EmailController : Controller
     {
         private readonly IHubContext<SignalRHub> _hubContext;
         public EmailController(IHubContext<SignalRHub> hubContext)
