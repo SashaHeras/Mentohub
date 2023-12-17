@@ -9,6 +9,8 @@ using Mentohub.Core.AllExceptions;
 using Microsoft.AspNetCore.Authorization;
 using Mentohub.Core.Services;
 using Microsoft.AspNetCore.SignalR;
+using Mentohub.Core.Services.Interfaces;
+using Mentohub.Domain.Data.DTO.Helpers;
 
 namespace Mentohub.Core.Repositories.Repositories
 {
@@ -21,17 +23,17 @@ namespace Mentohub.Core.Repositories.Repositories
 
         private readonly ILogger<AccountController> _logger;
         private readonly AllException _exception;
-        private readonly UserService _userService;
-        private readonly EmailSender _emailSender;
+        private readonly IUserService _userService;
+        private readonly IEmailSender _emailSender;
         private readonly UserManager<CurrentUser> _userManager;
         private readonly IHubContext<SignalRHub> _hubContext;
 
         public AccountController(
             SignInManager<CurrentUser> signInManager,
-            UserService userService,
+            IUserService userService,
             ILogger<AccountController> logger,
             AllException exception,
-            EmailSender emailSender,
+            IEmailSender emailSender,
             UserManager<CurrentUser> userManager, IHubContext<SignalRHub> hubContext)
         {
             _exception = exception;
@@ -111,10 +113,10 @@ namespace Mentohub.Core.Repositories.Repositories
             // Логіка аутентифікації користувача
             try
             {
-                var authenticatedUser =await _userService.Login(credentials);
-
+                var authenticatedUser = await _userService.Login(credentials);
                 if (ModelState.IsValid && authenticatedUser != null)
                 {
+                    Response.Cookies.Append("userID", MentoShyfr.Encrypt(authenticatedUser.Id.ToString()));
                     return new JsonResult(authenticatedUser)
                     {
                         StatusCode = 200

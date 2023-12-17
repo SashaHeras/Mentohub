@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mentohub.Domain.Data.DTO
+namespace Mentohub.Domain.Data.DTO.Helpers
 {
     public static class Helper
     {

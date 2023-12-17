@@ -8,6 +8,7 @@ using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
+using Mentohub.Domain.Data.DTO.Helpers;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
