@@ -20,7 +20,8 @@ namespace Mentohub.Controllers
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        [HttpGet]
+        [Route("/Comment/List")]
+        [HttpPost]
         public JsonResult List([FromBody] CommentFilter filter)
         {
             var data = _commentService.List(filter);
@@ -32,6 +33,7 @@ namespace Mentohub.Controllers
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
+        [Route("/Comment/Edit")]
         [HttpPost]
         public JsonResult Edit([FromBody] CommentDTO data)
         {
