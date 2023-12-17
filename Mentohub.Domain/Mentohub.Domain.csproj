@@ -15,5 +15,9 @@
     <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\DTO\Mappers\" />
+  </ItemGroup>
+
 </Project>
 

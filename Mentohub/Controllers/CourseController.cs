@@ -45,37 +45,5 @@ namespace Mentohub.Controllers
             var result = _courseService.GetCourseElements(courseId);
             return Json(result);
         }
-
-        /// <summary>
-        /// Get course comments
-        /// </summary>
-        /// <param name="courseId"></param>
-        /// <param name="commentsCount"></param>
-        /// <returns></returns>
-        [HttpGet]
-        public JsonResult GetComments(int courseId, int commentsCount = 10)
-        {
-            var data = _courseService.GetCourseComments(courseId, commentsCount);
-            return Json(data);
-        }
-
-        /// <summary>
-        /// Edit/create comment to course
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public JsonResult EditComment([FromBody] CommentDTO data)
-        {
-            try
-            {
-                var comment = string.Empty;
-                return Json(new { IsError = false, Data = comment, Message = "Success" });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { IsError = true, Message = ex.Message });
-            }
-        }
     }
 }

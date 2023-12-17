@@ -25,5 +25,9 @@ namespace Mentohub.Core.Repositories.Interfaces
         public Task<List<string>> GetUserRoles(CurrentUser user);
 
         public Task<IdentityRole> GetRoleById(string roleId);
+
+        public Task<bool> Login(LoginDTO model);
+
+        public Task UpdateAvatarUrl(string userId, string avatarUrl);
     }
 }
