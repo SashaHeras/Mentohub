@@ -1,5 +1,6 @@
 ﻿
 using Mentohub.Core.AllExceptions;
+using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
@@ -24,7 +25,7 @@ namespace Mentohub.Core.Services.Services
         private readonly UserManager<CurrentUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly AllException _exciption;
-        private CRUD_UserRepository _cRUD;
+        private readonly ICRUD_UserRepository _userRepository;
         private readonly ILogger<UserService> _logger;
         private readonly SignInManager<CurrentUser> _signInManager;
         private readonly IHubContext<SignalRHub> _hubContext;
@@ -33,12 +34,17 @@ namespace Mentohub.Core.Services.Services
         /// конструктор сервісу з параметром
         /// </summary>
         /// <param name="cRUD"></param>
-        public UserService(CRUD_UserRepository cRUD, UserManager<CurrentUser> userManager
-            , RoleManager<IdentityRole> roleManager, AllException exciption,
-            ILogger<UserService> logger, SignInManager<CurrentUser> signInManager,
-            IHubContext<SignalRHub> hubContext, IWebHostEnvironment webHostEnvironment)
+        public UserService(
+            ICRUD_UserRepository cRUD, 
+            UserManager<CurrentUser> userManager,
+            RoleManager<IdentityRole> roleManager, 
+            AllException exciption,
+            ILogger<UserService> logger,
+            SignInManager<CurrentUser> signInManager,
+            IHubContext<SignalRHub> hubContext, 
+            IWebHostEnvironment webHostEnvironment)
         {
-            _cRUD = cRUD;
+            _userRepository = cRUD;
             _userManager = userManager;
             _roleManager = roleManager;
             _exciption = exciption;
@@ -85,7 +91,7 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<bool> DeleteUser(string id)
         {
-            CurrentUser user = await _cRUD.FindCurrentUserById(id);
+            CurrentUser user = await _userRepository.FindCurrentUserById(id);
             if (user == null)
             {
                 return _exciption.RankException("User does not exist");
@@ -110,7 +116,7 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<bool> DeleteUserByName(string userName)
         {
-            CurrentUser user = await _cRUD.FindCurrentUserByName(userName);
+            CurrentUser user = await _userRepository.FindCurrentUserByName(userName);
             if (user == null)
             {
                 return _exciption.RankException("User does not exist");
@@ -167,7 +173,7 @@ namespace Mentohub.Core.Services.Services
             // Оновіть URL аватарки в базі даних
             var avatarUrl = "/avatar/" + uniqueFileName;
             // оновлення URL аватарки в базі даних 
-            await _cRUD.UpdateAvatarUrl(userId, avatarUrl);
+            await _userRepository.UpdateAvatarUrl(userId, avatarUrl);
 
             _logger.LogInformation("avatar is successfully saved");
             // сповіщення про зміну аватарки користувачу за допомогою SignalR
@@ -184,11 +190,11 @@ namespace Mentohub.Core.Services.Services
         public async Task<UserDTO> GetProfile(string id)
         {
             UserDTO dto = new UserDTO();
-            CurrentUser currentUser = await _cRUD.FindCurrentUserById(id);
+            CurrentUser currentUser = await _userRepository.FindCurrentUserById(id);
             dto.Id = currentUser.Id;  
             dto.Email = currentUser.Email;
             dto.Name = currentUser.UserName;
-            dto.UserRoles = await _cRUD.GetUserRoles(currentUser);
+            dto.UserRoles = await _userRepository.GetUserRoles(currentUser);
             dto.AboutMe = currentUser.AboutMe;
             dto.DateOfBirth = currentUser.DateOfBirth;
             dto.FirstName = currentUser.FirstName;
@@ -206,11 +212,11 @@ namespace Mentohub.Core.Services.Services
         {
             if (model.Email != null && model.Password != null)
             {
-                var result = await _cRUD.Login(model);
+                var result = await _userRepository.Login(model);
                 if (result)
                 {
                     _logger.LogInformation("User logged in");
-                    return await _cRUD.FindCurrentUserByEmail(model.Email);
+                    return await _userRepository.FindCurrentUserByEmail(model.Email);
                 }
             }
             else
@@ -236,7 +242,7 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<bool> UpdateUser( string id, EditUserDTO userDTO)
         {
-            CurrentUser currentUser = await _cRUD.FindCurrentUserById(id);
+            CurrentUser currentUser = await _userRepository.FindCurrentUserById(id);
             
             if (currentUser == null)
             {
@@ -261,14 +267,14 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<UserDTO> GetUser(string userName)
         {
-            CurrentUser user = await _cRUD.FindCurrentUserByName(userName);
+            CurrentUser user = await _userRepository.FindCurrentUserByName(userName);
             if (user != null)
             {
                 UserDTO userDTO = new UserDTO();
                 userDTO.Id = user.Id;
                 userDTO.Name = user.UserName;
                 userDTO.Email = user.Email;
-                userDTO.UserRoles = await _cRUD.GetUserRoles(user);
+                userDTO.UserRoles = await _userRepository.GetUserRoles(user);
                 userDTO.AboutMe=user.AboutMe;
                 userDTO.DateOfBirth=user.DateOfBirth;
                 userDTO.FirstName = user.FirstName;
@@ -285,7 +291,7 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<CurrentUser> GetCurrentUser(string id)
         {
-            return await _cRUD.FindCurrentUserById(id);
+            return await _userRepository.FindCurrentUserById(id);
         }
         /// <summary>
         /// 
@@ -295,7 +301,7 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<bool> AddRoleToUserListRoles(string userId, string roleName)
         {
-            var user =await _cRUD.FindCurrentUserById(userId);
+            var user =await _userRepository.FindCurrentUserById(userId);
             var identityRole = await _roleManager.FindByNameAsync(roleName);
             if (identityRole != null&& user!=null)
             {
@@ -323,7 +329,7 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<string> GetAvatarUrl(string userId)
         {
-            var user =await _cRUD.FindCurrentUserById(userId);
+            var user =await _userRepository.FindCurrentUserById(userId);
             if (user != null && !string.IsNullOrEmpty(user.Image))
             {
                  return user.Image;         
@@ -339,7 +345,7 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<List<CurrentUser>> GetAllUsersByRoleName(string roleName)
         {
-            return await _cRUD.GetAllUsers(roleName);
+            return await _userRepository.GetAllUsers(roleName);
         }
         /// <summary>
         /// 
@@ -348,7 +354,7 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<bool> DeleteRole(string roleId)
         {
-            IdentityRole role = await _cRUD.GetRoleById(roleId);
+            IdentityRole role = await _userRepository.GetRoleById(roleId);
             if (role != null)
             {
                 await _roleManager.DeleteAsync(role);
@@ -356,6 +362,7 @@ namespace Mentohub.Core.Services.Services
             }
             return false;
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -372,6 +379,7 @@ namespace Mentohub.Core.Services.Services
                     return true;
                 }              
             }
+
             return false;
         }
         public ChangeRoleDTO EditUserRoles(CurrentUser user)

@@ -38,6 +38,7 @@ namespace Mentohub.Core.Services.Services
 
                 message.Body = bodyBuilder.ToMessageBody();
             //await _queueService.SendMessageAsync(JsonConvert.SerializeObject(message));
+
             try
             { 
                 using (var client = new SmtpClient())

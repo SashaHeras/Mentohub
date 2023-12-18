@@ -39,7 +39,7 @@ namespace Mentohub.Core.Services.Services
             {
                 TypeId = courseItemType,
                 CourseId = Convert.ToInt32(lesson.CourseID),
-                DateCreation = DateTime.Now,
+                DateCreation = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
                 OrderNumber = sameCourseItems.Count() > 0 ? sameCourseItems.Last().OrderNumber + 1 : 1,
                 StatusId = 2
             };

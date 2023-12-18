@@ -5,6 +5,7 @@ using Mentohub.Domain.Data;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Mentohub.Core.Services.Services
 {
@@ -69,7 +70,7 @@ namespace Mentohub.Core.Services.Services
             }
 
             CourseItem currentCourseItem = _courseItemService.GetCourseItem(lesson.CourseItemId);
-            currentCourseItem.DateCreation = DateTime.Now;
+            currentCourseItem.DateCreation = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
             await _courseItemService.UpdateCourseItem(currentCourseItem);
 
             int courseId = currentCourseItem.CourseId;
@@ -112,7 +113,7 @@ namespace Mentohub.Core.Services.Services
             currentLesson.Description = newLesson.Description;
             currentLesson.Body = newLesson.Body;
             currentLesson.CourseItemId = newLesson.CourseItemId;
-            currentLesson.DateCreation = DateTime.Now.ToShortDateString();
+            currentLesson.DateCreation = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc).ToShortDateString();
 
             await _lessonRepository.UpdateAsync(currentLesson);
         }
@@ -145,49 +146,52 @@ namespace Mentohub.Core.Services.Services
 
             if (currentLesson == null)
             {
-                var countCurrentElements = _courseItemRepository.GetCourseItemsByCourseId(lesson.CourseID).Count();
-
-                CourseItem newCourseItem = new CourseItem()
+                try
                 {
-                    TypeId = (int)e_ItemType.Lesson,
-                    StatusId = (int)e_ItemStatus.OK,
-                    DateCreation = DateTime.Now,
-                    OrderNumber = countCurrentElements + 1,
-                    CourseId = lesson.CourseID
-                };
+                    var countCurrentElements = _courseItemRepository.GetCourseItemsByCourseId(lesson.CourseID).Count();
 
-                string video = await _mediaService.SaveFile(lesson.VideoFile);
+                    CourseItem newCourseItem = new CourseItem()
+                    {
+                        TypeId = (int)e_ItemType.Lesson,
+                        StatusId = (int)e_ItemStatus.OK,
+                        DateCreation = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
+                        OrderNumber = countCurrentElements + 1,
+                        CourseId = lesson.CourseID
+                    };
 
-                Lesson newLesson = new Lesson()
+                    lesson.VideoPath = await _mediaService.SaveFile(lesson.VideoFile);
+
+                    Lesson newLesson = LessonFromDTO(lesson);
+
+                    _courseItemRepository.Add(newCourseItem);
+
+                    newLesson.CourseItemId = newCourseItem.Id;
+
+                    _lessonRepository.Add(newLesson);
+
+                    lesson.Id = newLesson.Id;
+                    lesson.CourseItemId = newCourseItem.Id;
+                }
+                catch(Exception ex)
                 {
-                    Theme = lesson.Theme,
-                    Description = lesson.Description,
-                    Body = lesson.Body,
-                    VideoPath = video,
-                    DateCreation = DateTime.Now.ToString(),
-                    LoadVideoName = lesson.VideoFile.FileName
-                };
-
-                _courseItemRepository.Add(newCourseItem);
-
-                newLesson.CourseItemId = newCourseItem.Id;
-
-                _lessonRepository.Add(newLesson);
-
-                lesson.Id = newLesson.Id;
-                lesson.CourseItemId = newCourseItem.Id;
+                    if (lesson.VideoPath != null)
+                    {
+                        await _mediaService.DeleteFile(lesson.VideoPath);
+                    }
+                }
             }
             else
             {
                 currentLesson.Theme = lesson.Theme;
                 currentLesson.Body = lesson.Body;
                 currentLesson.Description = lesson.Description;
-                currentLesson.UpdateDate = DateTime.Now;
+                currentLesson.UpdateDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
 
                 if (currentLesson.LoadVideoName == null || currentLesson.LoadVideoName != lesson.VideoFile.FileName)
                 {
                     await _mediaService.DeleteFile(currentLesson.VideoPath);
-                    string video = await _mediaService.SaveFile(lesson.VideoFile);
+                    lesson.VideoPath = await _mediaService.SaveFile(lesson.VideoFile);
+                    currentLesson.VideoPath = lesson.VideoPath;
                     currentLesson.LoadVideoName = lesson.VideoFile.FileName;
                 }
 
@@ -195,6 +199,19 @@ namespace Mentohub.Core.Services.Services
             }
 
             return lesson;
+        }
+
+        public Lesson LessonFromDTO(LessonDTO data)
+        {
+            return new Lesson()
+            {
+                Theme = data.Theme,
+                Description = data.Description,
+                Body = data.Body,
+                VideoPath = data.VideoPath,
+                DateCreation = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc).ToString(),
+                LoadVideoName = data.VideoFile.FileName
+            };
         }
 
         public void Delete(Guid id)

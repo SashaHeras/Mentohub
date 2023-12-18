@@ -3,6 +3,7 @@ using Microsoft.WindowsAzure.Storage;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Domain.Entities;
 using Mentohub.Core.Services.Interfaces;
+using Microsoft.AspNetCore.Hosting.Server;
 
 namespace Mentohub.Core.Services.Services
 {
@@ -21,16 +22,7 @@ namespace Mentohub.Core.Services.Services
         /// <returns>Name of file in Azure with was generated as Guid</returns>
         public async Task<string> SaveInAsync(IFormFile file)
         {
-            string uploads = file.ContentType == "video/mp4" ? 
-                "C:\\Users\\acsel\\source\\repos\\XMLEdition\\XMLEdition\\wwwroot\\Videos\\" 
-                : "C:\\Users\\acsel\\source\\repos\\XMLEdition\\XMLEdition\\wwwroot\\Pictures\\";
             string newName = Guid.NewGuid().ToString().Replace("-", "");
-
-            string filePath = Path.Combine(uploads, file.FileName);
-            using (Stream fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await file.CopyToAsync(fileStream);
-            }
 
             try
             {
@@ -42,7 +34,7 @@ namespace Mentohub.Core.Services.Services
 
                 var blockBlob = container.GetBlockBlobReference(newName);
 
-                await using (var stream = System.IO.File.OpenRead(uploads + file.FileName))
+                await using (var stream = file.OpenReadStream())
                 {
                     await blockBlob.UploadFromStreamAsync(stream);
                 }
@@ -51,8 +43,7 @@ namespace Mentohub.Core.Services.Services
             }
             catch (Exception ex)
             {
-                // handle exceptions
-                return "";
+                throw ex;
             }
         }
 
