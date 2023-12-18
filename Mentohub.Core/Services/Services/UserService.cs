@@ -374,8 +374,26 @@ namespace Mentohub.Core.Services.Services
             }
             return false;
         }
+        public ChangeRoleDTO EditUserRoles(CurrentUser user)
+        {
+            if (user != null)
+            {
+                // получем список ролей пользователя
+                var userRoles = GetUserRoles(user);
+                var allRoles =_roleManager.Roles.ToList();
+                ChangeRoleDTO model = new ChangeRoleDTO
+                {
+                    UserId = user.Id,
+                    UserEmail = user.Email,
+                    UserRoles = userRoles,
+                    AllRoles = allRoles,
+                };
+                return model;
+            }
+            return null /*_exciption.NullObject("Current user does not exist ")*/;
+        }
 
-      
+
     }
 }
 
