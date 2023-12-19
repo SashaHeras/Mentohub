@@ -60,5 +60,9 @@ namespace Mentohub.Core.AllExceptions
         {
             throw new NotImplementedException();
         }
+        public ChangeRoleDTO NullObject(string v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

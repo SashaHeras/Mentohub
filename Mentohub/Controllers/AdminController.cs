@@ -128,21 +128,9 @@ namespace Mentohub.Controllers
         {
             // получаем пользователя
             CurrentUser user = await _userService.GetCurrentUser(userId);
-            if (user != null)
-            {
-                // получем список ролей пользователя
-                var userRoles = _userService.GetUserRoles(user);
-                var allRoles = _roleManager.Roles.ToList();
-                ChangeRoleDTO model = new ChangeRoleDTO
-                {
-                    UserId = user.Id,
-                    UserEmail = user.Email,
-                    UserRoles = userRoles,
-                    AllRoles = allRoles,
-                };
-                return new JsonResult(model);
-            }
-            return NotFound();
+            var model = _userService.EditUserRoles(user);
+            if(model == null) {return NotFound(); }
+            return new JsonResult(model);
         }
         /// <summary>
         /// 
