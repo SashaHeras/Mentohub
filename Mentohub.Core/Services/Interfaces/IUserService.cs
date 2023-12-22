@@ -27,5 +27,7 @@ namespace Mentohub.Core.Services.Interfaces
         public Task<bool> CreateRole(string name);
         public Task<bool> DeleteRole(string roleId);
         public Task<bool> AddRoleToUserListRoles(string userId, string roleId);
+        public Task<bool> DeleteUserByName(string userName);
+        public Task<List<CurrentUser>> GetAllUsersByRoleName(string roleName);
     }
 }

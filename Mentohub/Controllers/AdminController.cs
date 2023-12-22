@@ -1,4 +1,5 @@
-﻿using Mentohub.Core.Services.Services;
+﻿using Mentohub.Core.Services.Interfaces;
+using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -14,11 +15,11 @@ namespace Mentohub.Controllers
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<CurrentUser> _usermanager;
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
         private readonly ILogger<AdminController> _logger;
 
         public AdminController(RoleManager<IdentityRole> roleManager,
-            UserManager<CurrentUser> usermanager, UserService userService,
+            UserManager<CurrentUser> usermanager, IUserService userService,
             ILogger<AdminController> logger)
         {
             _roleManager = roleManager;
