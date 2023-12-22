@@ -41,50 +41,6 @@ namespace Mentohub.Controllers
         [Route("GetUserList")]
         public IActionResult GetUserList() => Json(_usermanager.Users.ToList());
 
-        /// <summary>
-        /// Delete user by name
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
-        [HttpDelete]
-        [Route("DeleteUserByName")]
-        [SwaggerOperation(Summary = "Delete a user by Name")]
-        public async Task<IActionResult> DeleteUser([FromForm] string userName)
-        {
-            // Логіка видалення користувача
-            try
-            {
-                var deletedUser = await _userService.DeleteUserByName(userName);
-                if (deletedUser)
-                {
-                    _logger.LogInformation("User deleted successfully.");
-                    return new JsonResult("User deleted successfully ")
-                    {
-                        StatusCode = 204 // Код статусу "No Content"
-                    };
-                }
-                else
-                {
-                    return new JsonResult("User not found")
-                    {
-                        StatusCode = 404 // Код статусу "Not Found"
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                var errorResponse = new
-                {
-                    message = "Error when deleting a user",
-                    error = ex.Message // інформація про помилку
-                };
-                return new JsonResult(errorResponse)
-                {
-                    StatusCode = 500 // код статусу, що вказує на помилку
-                };
-            }
-        }
-
         [HttpGet]
         [Route("GetUser")]
         [SwaggerOperation(Summary = "Get information about user")]
