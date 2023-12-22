@@ -123,14 +123,14 @@ namespace Mentohub.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("editUserRoles")]
-        [SwaggerOperation(Summary ="Edit the list of user's roles")]
-        public async Task<IActionResult> EditUserRoles([FromForm]string userId)
+        [SwaggerOperation(Summary = "Edit the list of user's roles")]
+        public async Task<JsonResult> EditUserRoles([FromForm] string userId)
         {
             // получаем пользователя
             CurrentUser user = await _userService.GetCurrentUser(userId);
             var model = _userService.EditUserRoles(user);
-            if(model == null) {return NotFound(); }
-            return new JsonResult(model);
+            if (model == null) { return Json("Not found"); }
+            return Json(model);
         }
         /// <summary>
         /// 
