@@ -107,15 +107,15 @@ namespace Mentohub.Core.Context
             modelBuilder.Entity<IdentityUserToken<string>>().ToTable("AspNetUserTokens");
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //"Server=ALLA2021\\SQLEXPRESS01;Database=StudyDB;Trusted_Connection=True;MultipleActiveResultSets=true"
-            //"Server=localhost;Database=StudyDB; Trusted_Connection=True;TrustServerCertificate=True"
-            optionsBuilder.UseSqlServer("Server=ALLA2021\\SQLEXPRESS01;Database=StudyDB;Trusted_Connection=True;MultipleActiveResultSets=true", builder =>
-            {
-                builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
-            });
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    //"Server=ALLA2021\\SQLEXPRESS01;Database=StudyDB;Trusted_Connection=True;MultipleActiveResultSets=true"
+        //    //"Server=localhost;Database=StudyDB; Trusted_Connection=True;TrustServerCertificate=True"
+        //    //optionsBuilder.UseSqlServer("Server=ALLA2021\\SQLEXPRESS01;Database=StudyDB;Trusted_Connection=True;MultipleActiveResultSets=true", builder =>
+        //    //{
+        //    //    builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+        //    //});
+        //}
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
         //    optionsBuilder.UseNpgsql("User ID=admin;Password=root;Host=localhost;Port=5432;Database=mentohub;Pooling=true;MinPoolSize=0;MaxPoolSize=100;ConnectionLifetime=0;", builder =>

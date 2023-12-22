@@ -37,13 +37,13 @@ internal class Program
 
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-        //builder.Services.AddEntityFrameworkNpgsql();
-        //builder.Services.AddDbContextPool<ProjectContext>(
-        //        options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultPost")));
+        builder.Services.AddEntityFrameworkNpgsql();
+        builder.Services.AddDbContextPool<ProjectContext>(
+                options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultPost")));
 
-        builder.Services.AddDbContext<ProjectContext>(options => options.UseSqlServer(
-                builder.Configuration.GetConnectionString("DefaultConnection")
-                ));
+        //builder.Services.AddDbContext<ProjectContext>(options => options.UseSqlServer(
+        //        builder.Configuration.GetConnectionString("DefaultConnection")
+        //        ));
 
 
         builder.Services.AddScoped<IAnswerHistoryRepository, AnswerHistoryRepository>();
