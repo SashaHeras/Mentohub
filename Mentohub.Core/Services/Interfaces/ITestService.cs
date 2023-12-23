@@ -24,7 +24,7 @@ namespace Mentohub.Core.Services.Interfaces
 
         Task<Test> RenameTest(int testId, string newName);
 
-        PassTestResultDTO ApplyTestResult(PassTestDTO data);
+        Task<PassTestResultDTO> ApplyTestResult(PassTestDTO data);
 
         TestDTO GetTestModel(int courseItemId);
     }

@@ -141,11 +141,11 @@ namespace Mentohub.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult Apply([FromBody] PassTestDTO data)
+        public async Task<JsonResult> Apply([FromBody] PassTestDTO data)
         {
             try
             {
-                var result = _testService.ApplyTestResult(data);
+                var result = await _testService.ApplyTestResult(data);
 
                 return Json(new { IsError = true, Data = result, Message = "Success" });
             }

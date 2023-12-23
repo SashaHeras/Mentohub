@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Mentohub.Domain.Data.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mentohub.Domain.Entities
 {
@@ -14,19 +15,22 @@ namespace Mentohub.Domain.Entities
 
         public int TestId { get; set; }
 
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
 
         public List<TaskHistory> TaskHistory { get; set; }
 
         [ForeignKey("TestId")]
         public Test Test { get; set; }
 
+        [ForeignKey("UserId")]
+        public CurrentUser User { get; set; }
+
         public TestHistory()
         {
 
         }
 
-        public TestHistory(double totalMark, DateTime date, int testId, Guid userId)
+        public TestHistory(double totalMark, DateTime date, int testId, string userId)
         {
             TotalMark = totalMark;
             Date = date;

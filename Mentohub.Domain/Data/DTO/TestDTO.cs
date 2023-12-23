@@ -20,6 +20,8 @@ namespace Mentohub.Domain.Data.DTO
 
     public class PassTestDTO : TestDTO
     {
+        public string UserID { get; set; }
+
         public List<PassTaskDTO> Tasks { get; set; }
     }
 
