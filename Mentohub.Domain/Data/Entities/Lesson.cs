@@ -1,4 +1,6 @@
-﻿namespace Mentohub.Domain.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Mentohub.Domain.Entities
 {
     public class Lesson
     {
@@ -19,5 +21,8 @@
         public DateTime? UpdateDate { get; set; }
 
         public int CourseItemId { get; set; }
+
+        [ForeignKey("CourseItemId")]
+        public CourseItem CourseItem { get; set; }
     }
 }

@@ -37,7 +37,7 @@ namespace Mentohub.Core.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
                         .HasColumnType("text");
@@ -132,7 +132,7 @@ namespace Mentohub.Core.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("DateCreation")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("Rating")
                         .HasColumnType("integer");
@@ -145,6 +145,8 @@ namespace Mentohub.Core.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
 
                     b.ToTable("Comments");
                 });
@@ -167,7 +169,7 @@ namespace Mentohub.Core.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("LastEdittingDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("LoadPictureName")
                         .HasColumnType("text");
@@ -209,7 +211,7 @@ namespace Mentohub.Core.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("DateCreation")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("OrderNumber")
                         .HasColumnType("integer");
@@ -307,7 +309,7 @@ namespace Mentohub.Core.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdateDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("VideoPath")
                         .IsRequired()
@@ -400,7 +402,7 @@ namespace Mentohub.Core.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<double>("Mark")
                         .HasColumnType("double precision");
@@ -589,6 +591,17 @@ namespace Mentohub.Core.Migrations
                     b.Navigation("TestTask");
                 });
 
+            modelBuilder.Entity("Mentohub.Domain.Entities.Comment", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Entities.Course", "Course")
+                        .WithMany("Comments")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
             modelBuilder.Entity("Mentohub.Domain.Entities.CourseItem", b =>
                 {
                     b.HasOne("Mentohub.Domain.Entities.Course", "Course")
@@ -665,6 +678,8 @@ namespace Mentohub.Core.Migrations
 
             modelBuilder.Entity("Mentohub.Domain.Entities.Course", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("CourseItems");
                 });
 

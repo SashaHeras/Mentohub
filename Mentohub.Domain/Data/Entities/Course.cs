@@ -1,4 +1,5 @@
 ﻿using Mentohub.Domain.Data.DTO;
+using System.ComponentModel.DataAnnotations;
 
 namespace Mentohub.Domain.Entities
 {
@@ -29,7 +30,9 @@ namespace Mentohub.Domain.Entities
         public DateTime LastEdittingDate { get; set; }
 
         public List<CourseItem> CourseItems { get; set; }
-    
+
+        public List<Comment> Comments { get; set; }
+
         public CourseDTO ToDTO()
         {
             return new CourseDTO

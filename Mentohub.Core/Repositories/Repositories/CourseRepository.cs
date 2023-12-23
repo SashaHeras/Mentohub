@@ -2,6 +2,7 @@
 using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Mentohub.Core.Repositories.Repositories
 {
@@ -34,16 +35,9 @@ namespace Mentohub.Core.Repositories.Repositories
             return GetAll().Where(course => course.Id == courseId).FirstOrDefault();
         }
 
-        /// <summary>
-        /// Method execute stored procedure from db to get a list of course elements
-        /// </summary>
-        /// <param name="courseId"></param>
-        /// <returns></returns>
-        public string GetCourseElementsList(string courseId)
+        public Course FirstOrDefault(Expression<Func<Course, bool>> expression)
         {
-            //string query = "EXEC GetCourseElementsList @courseId = " + courseId;
-            //var result = _context.Database.FromSqlRaw(query).AsEnumerable().FirstOrDefault();
-            return string.Empty;
+            return GetAll(expression).Include(x => x.Comments).Include(x => x.CourseItems).FirstOrDefault();
         }
     }
 }

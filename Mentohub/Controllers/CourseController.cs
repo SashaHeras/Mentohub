@@ -37,12 +37,12 @@ namespace Mentohub.Controllers
         /// <summary>
         /// Get course elements (tests/lessons)
         /// </summary>
-        /// <param name="courseId"></param>
+        /// <param name="Id"></param>
         /// <returns></returns>
-        [HttpGet]
-        public JsonResult GetCourseElements(int courseId)
+        [HttpPost]
+        public JsonResult GetCourseElements(int Id)
         {
-            var result = _courseService.GetCourseElements(courseId);
+            var result = _courseService.GetCourseElements(Id);
             return Json(result);
         }
     }

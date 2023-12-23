@@ -15,5 +15,9 @@
         public int StatusId { get; set; }
         
         public Course Course { get; set; }
+
+        public Lesson Lesson { get; set; }
+
+        public Test Test { get; set; }
     }
 }

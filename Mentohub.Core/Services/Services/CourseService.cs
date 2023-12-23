@@ -7,10 +7,12 @@ using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
+using Mentohub.Domain.Data;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.Helpers;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using static System.Net.Mime.MediaTypeNames;
@@ -25,6 +27,7 @@ namespace Mentohub.Core.Services.Services
         private readonly ICourseItemRepository _courseItemRepository;
         private readonly ICourseTypeRepository _courseTypeRepository;
         private readonly ILessonRepository _lessonRepository;
+        private readonly ITestRepository _testRepository;
         private readonly ICommentRepository _commentRepository;
 
         private readonly IMediaService _mediaService;
@@ -37,6 +40,7 @@ namespace Mentohub.Core.Services.Services
             ICourseTypeRepository courseTypeRepository,
             ICommentRepository commentRepository,
             ILessonRepository lessonRepository,
+            ITestRepository testRepository,
             ICourseItemService courseItemService,
             IMediaService mediaService)
         {
@@ -48,6 +52,7 @@ namespace Mentohub.Core.Services.Services
             _courseItemService = courseItemService;
             _mediaService = mediaService;
             _commentRepository = commentRepository;
+            _testRepository = testRepository;
         }
 
         public async Task<CourseDTO> Edit(CourseDTO courseDTO)
@@ -134,30 +139,53 @@ namespace Mentohub.Core.Services.Services
         /// <summary>
         /// Execute stored procedure to generate list of course elements
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="Id"></param>
         /// <returns>
         /// Elements list in Json format
         /// </returns>
-        public List<CourseElementDTO> GetCourseElements(int id)
+        public List<CourseElementDTO> GetCourseElements(int Id)
         {
-            var elementsJson = _courseRepository.GetCourseElementsList(id.ToString());
-            var entityList = JsonSerializer.Deserialize<List<CourseElement>>(elementsJson);
             var result = new List<CourseElementDTO>();
-            if (entityList != null)
+            var course = _courseRepository.FirstOrDefault(x => x.Id == Id);
+            if(course == null)
             {
-                foreach (var e in entityList)
+                throw new Exception("Course not found");
+            }
+
+            var courseItemsIDs = course.CourseItems.Select(x => x.Id).ToList();
+            var tests = _testRepository.GetAll(x => courseItemsIDs.Contains(x.CourseItemId)).ToList();
+            var lessons = _lessonRepository.GetAll(x => courseItemsIDs.Contains(x.CourseItemId)).ToList();
+
+            if (tests.Count != 0 || lessons.Count != 0)
+            {
+                foreach (var t in tests)
                 {
                     result.Add(new CourseElementDTO()
                     {
-                        CourseItemId = e.CourseItemId,
-                        TypeId = e.TypeId,
-                        CourseId = e.CourseId,
-                        DateCreation = e.DateCreation,
-                        OrderNumber = e.OrderNumber,
-                        ElementName = e.ElementName
+                        CourseItemId = t.CourseItemId,
+                        TypeId = (int)e_ItemType.Test,
+                        CourseId = course.Id,
+                        DateCreation = t.CourseItem.DateCreation,
+                        OrderNumber = t.CourseItem.OrderNumber,
+                        ElementName = t.Name
+                    });
+                }
+
+                foreach (var l in lessons)
+                {
+                    result.Add(new CourseElementDTO()
+                    {
+                        CourseItemId = l.CourseItemId,
+                        TypeId = (int)e_ItemType.Lesson,
+                        CourseId = course.Id,
+                        DateCreation = l.CourseItem.DateCreation,
+                        OrderNumber = l.CourseItem.OrderNumber,
+                        ElementName = l.Theme
                     });
                 }
             }
+
+            result = result.OrderBy(x => x.OrderNumber).ToList();
 
             return result;
         }

@@ -52,9 +52,15 @@ namespace Mentohub.Core.Context
             modelBuilder.Entity<AnswerHistory>().HasKey(c => c.Id);
             modelBuilder.Entity<TaskHistory>().HasKey(c => c.Id);
             modelBuilder.Entity<TestHistory>().HasKey(c => c.Id);
+            modelBuilder.Entity<Comment>().HasKey(c => c.Id);
             modelBuilder.Entity<IdentityUserLogin<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserToken<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserRole<string>>().HasKey(ur => new { ur.UserId, ur.RoleId });
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.Comments)
+                .HasForeignKey(t1 => t1.CourseId);
 
             modelBuilder.Entity<TestHistory>()
                 .HasOne(t1 => t1.Test)
@@ -96,6 +102,16 @@ namespace Mentohub.Core.Context
                 .WithMany(t2 => t2.TaskAnswers)
                 .HasForeignKey(t1 => t1.TaskId);
 
+            modelBuilder.Entity<Lesson>()
+                .HasOne(t1 => t1.CourseItem)
+                .WithOne(t2 => t2.Lesson)
+                .HasForeignKey<Lesson>(x => x.CourseItemId);
+
+            modelBuilder.Entity<Test>()
+                .HasOne(t1 => t1.CourseItem)
+                .WithOne(t2 => t2.Test)
+                .HasForeignKey<Test>(x => x.CourseItemId);
+
             modelBuilder.Entity<AnswerHistory>()
                 .HasOne(t1 => t1.TaskAnswer)
                 .WithMany(t2 => t2.AnswerHistory)
@@ -109,7 +125,7 @@ namespace Mentohub.Core.Context
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
-        //    optionsBuilder.UseNpgsql("User ID=admin;Password=root;Host=localhost;Port=5432;Database=mentohub;Pooling=true;MinPoolSize=0;MaxPoolSize=100;ConnectionLifetime=0;", builder =>
+        //    optionsBuilder.UseNpgsql("User ID=admin;Password=root;Host=localhost;Port=5432;Database=mentohub;MinPoolSize=0;MaxPoolSize=100;ConnectionLifetime=0;", builder =>
         //    {
         //        builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
         //    });

@@ -1,6 +1,8 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Mentohub.Core.Repositories.Repositories
 {
@@ -31,6 +33,11 @@ namespace Mentohub.Core.Repositories.Repositories
         public IQueryable<CourseItem> GetCourseItemsByCourseId(int courseId)
         {
             return GetAll().Where(ci => ci.CourseId == courseId).OrderBy(ci => ci.OrderNumber);
+        }
+
+        public CourseItem First(Expression<Func<CourseItem, bool>> expression)
+        {
+            return GetAll(expression).Include(x => x.Course).FirstOrDefault();
         }
     }
 }

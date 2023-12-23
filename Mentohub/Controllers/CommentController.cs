@@ -20,7 +20,7 @@ namespace Mentohub.Controllers
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        [Route("/Comment/List")]
+        [Route("Comment/List")]
         [HttpPost]
         public JsonResult List([FromBody] CommentFilter filter)
         {

@@ -1,9 +1,11 @@
-﻿using Mentohub.Core.Repositories.Interfaces;
+﻿using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.Filters;
 using Mentohub.Domain.Data.DTO.Helpers;
 using Mentohub.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,19 +17,31 @@ namespace Mentohub.Core.Services.Services
     public class CommentService : ICommentService
     {
         private readonly ICommentRepository _commentRepository;
+        private readonly ICourseRepository _courseRepository;
         private readonly ICRUD_UserRepository _userRepository;
 
         public CommentService(
             ICommentRepository commentRepository,
-            ICRUD_UserRepository userRepository
+            ICRUD_UserRepository userRepository,
+            ICourseRepository courseRepository
             )
         {
             _commentRepository = commentRepository;
             _userRepository = userRepository;
+            _courseRepository = courseRepository;
         }
 
         public CommentDTO Edit(CommentDTO data)
         {
+            var course = _courseRepository.GetAll(x => x.Id == data.CourseId)
+                                          .Include(x => x.Comments)
+                                          .FirstOrDefault();
+
+            if(course == null)
+            {
+                throw new Exception("Course was not found!");
+            }
+
             var comment = _commentRepository.FirstOrDefault(x => x.Id == data.Id);
             if(comment == null)
             {
@@ -40,7 +54,12 @@ namespace Mentohub.Core.Services.Services
                     DateCreation = DateTime.Now
                 };
 
-                _commentRepository.Add(comment);
+                if(course.Comments == null)
+                {
+                    course.Comments = new List<Comment>();
+                }
+
+                course.Comments.Add(comment);
 
                 data.Id = comment.Id;
                 data.DateAgo = Helper.GetTimeSinceDate(comment.DateCreation);
@@ -50,9 +69,10 @@ namespace Mentohub.Core.Services.Services
             {
                 comment.Rating = data.Rating;
                 comment.Text = data.Text;
-
-                _commentRepository.Update(comment);
             }
+
+            course.Rating = (course.Comments.Sum(x => x.Rating) / (double)course.Comments.Count());
+            _courseRepository.Update(course);
 
             return data;
         }
