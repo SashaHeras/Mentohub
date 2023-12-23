@@ -39,7 +39,7 @@ namespace Mentohub.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("GetUserList")]
-        public IActionResult GetUserList() => Json(_usermanager.Users.ToList());
+        public IActionResult GetUserList() => Json(_userService.GetAllUsers());
 
         [HttpGet]
         [Route("GetUser")]
