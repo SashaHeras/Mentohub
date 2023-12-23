@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mentohub.Domain.Data
+namespace Mentohub.Domain.Data.Enums
 {
     public enum e_ItemStatus
     {
