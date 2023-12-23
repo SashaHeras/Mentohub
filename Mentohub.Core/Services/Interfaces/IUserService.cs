@@ -13,8 +13,8 @@ namespace Mentohub.Core.Services.Interfaces
 {
     public interface IUserService
     {
-       
-        public IAsyncEnumerable<CurrentUser> GetAllUsers();
+
+        public IList<CurrentUser> GetAllUsers();
         public Task<CurrentUser> CreateUser( RegisterDTO model);
         public Task<bool> UpdateUser( string id, EditUserDTO model);
         public Task<bool> DeleteUser(string id);
@@ -27,5 +27,7 @@ namespace Mentohub.Core.Services.Interfaces
         public Task<bool> CreateRole(string name);
         public Task<bool> DeleteRole(string roleId);
         public Task<bool> AddRoleToUserListRoles(string userId, string roleId);
+        
+        public Task<List<CurrentUser>> GetAllUsersByRoleName(string roleName);
     }
 }

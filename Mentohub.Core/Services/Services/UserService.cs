@@ -113,36 +113,10 @@ namespace Mentohub.Core.Services.Services
                 return false;
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
-        public async Task<bool> DeleteUserByName(string userName)
+        
+        public IList<CurrentUser> GetAllUsers()
         {
-            CurrentUser user = await _userRepository.FindCurrentUserByName(userName);
-            if (user == null)
-            {
-                return _exciption.RankException("User does not exist");
-            }
-            await _signInManager.SignOutAsync();
-            var result = await _userManager.DeleteAsync(user);
-            if (result.Succeeded)
-            {
-                // Успішно видалено
-                return true;
-            }
-            else
-            {
-                // Помилка при видаленні користувача
-                return false;
-            }
-        }
-
-        public IAsyncEnumerable<CurrentUser> GetAllUsers()
-        {
-            return (IAsyncEnumerable<CurrentUser>)_userManager.Users.ToList();
-            
+            return _userManager.Users.ToList();   
         }
         /// <summary>
         /// download user's avatar
