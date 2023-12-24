@@ -1,4 +1,5 @@
 ﻿using Mentohub.Domain.Data.DTO;
+using Mentohub.Domain.Data.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace Mentohub.Domain.Entities
@@ -32,6 +33,8 @@ namespace Mentohub.Domain.Entities
         public List<CourseItem> CourseItems { get; set; }
 
         public List<Comment> Comments { get; set; }
+
+        public List<CourseViews> CourseViews { get; set; }
 
         public CourseDTO ToDTO()
         {

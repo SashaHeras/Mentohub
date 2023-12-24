@@ -36,6 +36,8 @@ namespace Mentohub.Core.Context
 
         public DbSet<Comment> Comments { get; set; }
 
+        public DbSet<CourseViews> CourseViews { get; set; }        
+
         public ProjectContext(DbContextOptions<ProjectContext> options) : base(options)
         {
 
@@ -53,6 +55,7 @@ namespace Mentohub.Core.Context
             modelBuilder.Entity<TaskHistory>().HasKey(c => c.Id);
             modelBuilder.Entity<TestHistory>().HasKey(c => c.Id);
             modelBuilder.Entity<Comment>().HasKey(c => c.Id);
+            modelBuilder.Entity<CourseViews>().HasKey(c => c.ID);
             modelBuilder.Entity<IdentityUserLogin<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserToken<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserRole<string>>().HasKey(ur => new { ur.UserId, ur.RoleId });
@@ -61,6 +64,11 @@ namespace Mentohub.Core.Context
                 .HasOne(t1 => t1.Course)
                 .WithMany(t2 => t2.Comments)
                 .HasForeignKey(t1 => t1.CourseId);
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(t1 => t1.User)
+                .WithMany(t2 => t2.Comments)
+                .HasForeignKey(t1 => t1.UserId);
 
             modelBuilder.Entity<TestHistory>()
                 .HasOne(t1 => t1.Test)
@@ -117,6 +125,16 @@ namespace Mentohub.Core.Context
                 .WithMany(t2 => t2.AnswerHistory)
                 .HasForeignKey(t1 => t1.AnswerId);
 
+            modelBuilder.Entity<CourseViews>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.CourseViews)
+                .HasForeignKey(x => x.CourseID);
+
+            modelBuilder.Entity<CourseViews>()
+                .HasOne(t1 => t1.User)
+                .WithMany(t2 => t2.CourseViews)
+                .HasForeignKey(x => x.UserID);
+
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("AspNetUserRoles");
             modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("AspNetUserLogins");
             modelBuilder.Entity<IdentityRole>().ToTable("AspNetRoles");
@@ -125,7 +143,7 @@ namespace Mentohub.Core.Context
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
-        //    optionsBuilder.UseNpgsql("User ID=admin;Password=root;Host=localhost;Port=5432;Database=mentohub;MinPoolSize=0;MaxPoolSize=100;ConnectionLifetime=0;", builder =>
+        //    optionsBuilder.UseNpgsql("User ID=admin;Password=root;Host=34.118.18.52;Port=5432;Database=mentohub;MinPoolSize=0;MaxPoolSize=100;ConnectionLifetime=0;", builder =>
         //    {
         //        builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
         //    });

@@ -1,4 +1,5 @@
 ﻿using Mentohub.Domain.Data.Entities.Interfaces;
+using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -22,5 +23,9 @@ namespace Mentohub.Domain.Data.Entities
 
         [JsonProperty]
         public DateTime DateOfBirth { get; set; }
+
+        public List<CourseViews> CourseViews { get; set; }
+
+        public List<Comment> Comments { get; set; }
     }
 }

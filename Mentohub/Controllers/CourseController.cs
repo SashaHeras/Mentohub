@@ -3,6 +3,7 @@ using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Mentohub.Core.Services.Interfaces;
+using Microsoft.Azure.Amqp.Framing;
 
 namespace Mentohub.Controllers
 {
@@ -44,6 +45,26 @@ namespace Mentohub.Controllers
         {
             var result = _courseService.GetCourseElements(Id);
             return Json(result);
+        }
+
+        /// <summary>
+        /// View course
+        /// </summary>
+        /// <param name="CourseID"></param>
+        /// <param name="UserID"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<JsonResult> ViewCourse(int CourseID, string UserID)
+        {
+            try
+            {
+                var course = await _courseService.ViewCourse(CourseID, UserID);
+                return Json(new { IsError = false, Data = course, Message = "Success" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, Message = ex.Message });
+            }
         }
     }
 }
