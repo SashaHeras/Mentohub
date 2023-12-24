@@ -13,17 +13,13 @@ namespace Mentohub.Controllers
     [SwaggerTag("AdminController")]
     public class AdminController : Controller
     {
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserManager<CurrentUser> _usermanager;
+        
         private readonly IUserService _userService;
         private readonly ILogger<AdminController> _logger;
 
-        public AdminController(RoleManager<IdentityRole> roleManager,
-            UserManager<CurrentUser> usermanager, IUserService userService,
+        public AdminController(IUserService userService,
             ILogger<AdminController> logger)
         {
-            _roleManager = roleManager;
-            _usermanager = usermanager;
             _userService = userService;
             _logger = logger;
         }
@@ -83,26 +79,12 @@ namespace Mentohub.Controllers
         [SwaggerOperation(Summary ="Edit the list of user's roles")]
         public async Task<IActionResult> EditUserRoles([FromForm]string userId)
         {
-            // получаем пользователя
-            CurrentUser user = await _usermanager.FindByIdAsync(userId);
-            if (user != null)
-            {
-                // получем список ролей пользователя
-                var userRoles = await _usermanager.GetRolesAsync(user);
-                var allRoles = _roleManager.Roles.ToList();
-
-                ChangeRoleDTO model = new ChangeRoleDTO
-                {
-                    UserId = user.Id,
-                    UserEmail = user.Email,
-                    UserRoles = userRoles,
-                    AllRoles = allRoles,
-                };
-
-                return new JsonResult(model);
-            }
-
-            return NotFound();
+            var model = await _userService.GetChangeRoleDTO(userId);
+            if(model == null) { return NoContent(); }
+               return new JsonResult(model)
+               {
+                   StatusCode = 200
+               };
         }
 
         /// <summary>

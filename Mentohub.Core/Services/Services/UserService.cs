@@ -352,7 +352,27 @@ namespace Mentohub.Core.Services.Services
             }
             return false;
         }
+        public async Task<ChangeRoleDTO?> GetChangeRoleDTO(string userId)
+        {
+            CurrentUser user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return null;
+            }
+            // получем список ролей пользователя
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var allRoles = _roleManager.Roles.ToList();
 
+            ChangeRoleDTO model = new ChangeRoleDTO
+            {
+                UserId = user.Id,
+                UserEmail = user.Email,
+                UserRoles = userRoles,
+                AllRoles = allRoles,
+            };
+
+            return model;
+        }
         
     }
 }
