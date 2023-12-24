@@ -1,5 +1,7 @@
 ﻿using Mentohub.Core.AllExceptions;
+using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Repositories;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Microsoft.AspNetCore.Http;
@@ -16,10 +18,10 @@ namespace Mentohub.Controllers
     {
         private readonly ILogger<UserController> _logger;
         private readonly AllException _exception;
-        private readonly UserService _userService;
-        private readonly CRUD_UserRepository _cRUD;
-        public UserController(ILogger<UserController> logger, UserService userService,
-            AllException exception, CRUD_UserRepository cRUD_UserRepository)
+        private readonly IUserService _userService;
+        private readonly ICRUD_UserRepository _cRUD;
+        public UserController(ILogger<UserController> logger, IUserService userService,
+            AllException exception, ICRUD_UserRepository cRUD_UserRepository)
         {
             _logger = logger;
             _userService = userService;
