@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Mentohub.Domain.Data.Entities;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Mentohub.Domain.Entities
@@ -13,10 +14,13 @@ namespace Mentohub.Domain.Entities
 
         public DateTime DateCreation { get; set; }
 
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
 
         public int CourseId { get; set; }
 
         public Course Course { get; set; }
+
+        [ForeignKey("UserId")]
+        public CurrentUser User { get; set; }
     }
 }

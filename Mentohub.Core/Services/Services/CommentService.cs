@@ -50,7 +50,7 @@ namespace Mentohub.Core.Services.Services
                     CourseId = data.CourseId,
                     Text = data.Text,
                     Rating = data.Rating,
-                    UserId = Guid.Parse(data.AuthorId),
+                    UserId = data.AuthorId,
                     DateCreation = DateTime.Now
                 };
 

@@ -22,6 +22,31 @@ namespace Mentohub.Core.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseViews", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CourseID")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ViewDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CourseID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("CourseViews");
+                });
+
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CurrentUser", b =>
                 {
                     b.Property<string>("Id")
@@ -317,6 +342,9 @@ namespace Mentohub.Core.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CourseItemId")
+                        .IsUnique();
+
                     b.ToTable("Lessons");
                 });
 
@@ -388,7 +416,8 @@ namespace Mentohub.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CourseItemId");
+                    b.HasIndex("CourseItemId")
+                        .IsUnique();
 
                     b.ToTable("Tests");
                 });
@@ -413,12 +442,15 @@ namespace Mentohub.Core.Migrations
                     b.Property<double>("TotalMark")
                         .HasColumnType("double precision");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("TestId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TestHistory");
                 });
@@ -564,6 +596,25 @@ namespace Mentohub.Core.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseViews", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Entities.Course", "Course")
+                        .WithMany("CourseViews")
+                        .HasForeignKey("CourseID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mentohub.Domain.Data.Entities.CurrentUser", "User")
+                        .WithMany("CourseViews")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Mentohub.Domain.Entities.AnswerHistory", b =>
                 {
                     b.HasOne("Mentohub.Domain.Entities.TaskAnswer", "TaskAnswer")
@@ -613,6 +664,17 @@ namespace Mentohub.Core.Migrations
                     b.Navigation("Course");
                 });
 
+            modelBuilder.Entity("Mentohub.Domain.Entities.Lesson", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Entities.CourseItem", "CourseItem")
+                        .WithOne("Lesson")
+                        .HasForeignKey("Mentohub.Domain.Entities.Lesson", "CourseItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CourseItem");
+                });
+
             modelBuilder.Entity("Mentohub.Domain.Entities.TaskAnswer", b =>
                 {
                     b.HasOne("Mentohub.Domain.Entities.TestTask", "TestTask")
@@ -646,8 +708,8 @@ namespace Mentohub.Core.Migrations
             modelBuilder.Entity("Mentohub.Domain.Entities.Test", b =>
                 {
                     b.HasOne("Mentohub.Domain.Entities.CourseItem", "CourseItem")
-                        .WithMany()
-                        .HasForeignKey("CourseItemId")
+                        .WithOne("Test")
+                        .HasForeignKey("Mentohub.Domain.Entities.Test", "CourseItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -662,7 +724,15 @@ namespace Mentohub.Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Mentohub.Domain.Data.Entities.CurrentUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Test");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Entities.TestTask", b =>
@@ -676,11 +746,27 @@ namespace Mentohub.Core.Migrations
                     b.Navigation("Test");
                 });
 
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CurrentUser", b =>
+                {
+                    b.Navigation("CourseViews");
+                });
+
             modelBuilder.Entity("Mentohub.Domain.Entities.Course", b =>
                 {
                     b.Navigation("Comments");
 
                     b.Navigation("CourseItems");
+
+                    b.Navigation("CourseViews");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Entities.CourseItem", b =>
+                {
+                    b.Navigation("Lesson")
+                        .IsRequired();
+
+                    b.Navigation("Test")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Entities.TaskAnswer", b =>

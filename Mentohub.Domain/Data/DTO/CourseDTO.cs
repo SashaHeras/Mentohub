@@ -17,6 +17,8 @@ namespace Mentohub.Domain.Data.DTO
 
         public int DefaultTypeId { get; set; }
 
+        public int CourseViews { get; set; }
+
         public int DefaultCourseItemId { get; set; }
 
         public string PicturePath { get; set; }
@@ -41,6 +43,8 @@ namespace Mentohub.Domain.Data.DTO
         public int CourseSubjectId { get; set; }
 
         public DateTime LastEdittingDate { get; set; }
+
+        public List<CommentDTO> Comments { get; set; }
 
         public List<CourseSubjectDTO> SubjectsList { get; set; }
 

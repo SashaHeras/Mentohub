@@ -37,7 +37,10 @@ namespace Mentohub.Core.Repositories.Repositories
 
         public Course FirstOrDefault(Expression<Func<Course, bool>> expression)
         {
-            return GetAll(expression).Include(x => x.Comments).Include(x => x.CourseItems).FirstOrDefault();
+            return GetAll(expression).Include(x => x.Comments)
+                                     .Include(x => x.CourseItems)
+                                     .Include(x=>x.CourseViews)
+                                     .FirstOrDefault();
         }
     }
 }

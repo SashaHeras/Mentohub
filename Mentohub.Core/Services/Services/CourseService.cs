@@ -9,6 +9,8 @@ using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.Helpers;
+using Mentohub.Domain.Data.DTO.Mappers;
+using Mentohub.Domain.Data.Entities;
 using Mentohub.Domain.Data.Enums;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Http;
@@ -28,10 +30,12 @@ namespace Mentohub.Core.Services.Services
         private readonly ICourseTypeRepository _courseTypeRepository;
         private readonly ILessonRepository _lessonRepository;
         private readonly ITestRepository _testRepository;
+        private readonly ISubjectRepository _subjectRepository;
         private readonly ICommentRepository _commentRepository;
 
         private readonly IMediaService _mediaService;
         private readonly ICourseItemService _courseItemService;
+        private readonly ICourseViewService _courseViewsService;
 
         public CourseService(
             ProjectContext context,
@@ -41,7 +45,9 @@ namespace Mentohub.Core.Services.Services
             ICommentRepository commentRepository,
             ILessonRepository lessonRepository,
             ITestRepository testRepository,
+            ISubjectRepository subjectRepository,
             ICourseItemService courseItemService,
+            ICourseViewService courseViewsService,
             IMediaService mediaService)
         {
             this._context = context;
@@ -50,9 +56,11 @@ namespace Mentohub.Core.Services.Services
             _courseTypeRepository = courseTypeRepository;
             _lessonRepository = lessonRepository;
             _courseItemService = courseItemService;
-            _mediaService = mediaService;
             _commentRepository = commentRepository;
             _testRepository = testRepository;
+            _courseViewsService = courseViewsService;
+            _mediaService = mediaService;
+            _subjectRepository = subjectRepository;
         }
 
         public async Task<CourseDTO> Edit(CourseDTO courseDTO)
@@ -236,6 +244,46 @@ namespace Mentohub.Core.Services.Services
             }
 
             return result;
+        }
+
+        public async Task<CourseDTO> ViewCourse(int CourseID, string UserID)
+        {
+            var course = _courseRepository.FirstOrDefault(x => x.Id == CourseID);
+            if(course == null)
+            {
+                throw new Exception("Course not found!");
+            }
+
+            var result = CourseMapper.ToDTO(course);
+
+            var courseView = await _courseViewsService.TryAddUserView(CourseID, UserID);
+            if(courseView != null)
+            {
+                if(course.CourseViews == null)
+                {
+                    course.CourseViews = new List<CourseViews>();
+                }
+
+                course.CourseViews.Add(courseView);
+                _courseRepository.Update(course);
+            }
+
+            result.CourseViews = course.CourseViews.Count;
+            GetAdditionalLists(result);
+
+            return result;
+        }
+
+        private void GetAdditionalLists(CourseDTO course)
+        {
+            course.SubjectsList = _subjectRepository.GetAll()
+               .Select(x => new CourseSubjectDTO()
+               {
+                   Id = x.Id,
+                   Name = x.Name
+               }).ToList();
+
+            course.CourseElementsList = GetCourseElements(course.Id);
         }
     }
 }

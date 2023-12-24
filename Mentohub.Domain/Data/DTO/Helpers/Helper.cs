@@ -40,5 +40,10 @@ namespace Mentohub.Domain.Data.DTO.Helpers
                 return $"{hours} hour{(hours > 1 ? "s" : "")} ago";
             }
         }
+
+        public static DateTime GetStartDateTime(DateTime date)
+        {
+            return new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, 0);
+        }
     }
 }
