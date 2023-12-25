@@ -61,6 +61,7 @@ namespace Mentohub.Core.Services.Services
             {
                 Console.WriteLine($"Error: {ex}");
             }
-        }       
+        } 
+        
     }
 }
