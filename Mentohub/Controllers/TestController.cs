@@ -6,6 +6,7 @@ using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Amqp.Framing;
 using System.Linq.Expressions;
 
 namespace Mentohub.Controllers
@@ -187,9 +188,9 @@ namespace Mentohub.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetTask(int id)
+        public JsonResult GetTask(int ID)
         {
-            var res = _taskService.GetTask(id);
+            var res = _taskService.GetTask(ID);
             return Json(res);
         }
 
@@ -197,48 +198,35 @@ namespace Mentohub.Controllers
         public JsonResult GetAnswersForEditting(int id)
         {
             var result = _answerService.GetAnswers(id);
-
             return Json(result);
         }
 
         [HttpDelete]
-        public JsonResult DeleteTask(int taskId)
+        public JsonResult DeleteTask(int ID)
         {
-            var task = _taskService.GetTask(taskId);            
-            int orderNumber = task.OrderNumber;
-            int testId = task.TestId;
-            var allTasksAfter = _taskService.GetTasksAfter(testId, orderNumber);
-
             try
             {
-                _taskService.DeleteTask(task);
-                _taskService.ResetOrderNumbers(orderNumber, allTasksAfter);
+                _taskService.DeleteTask(ID);
+                return Json(new { IsError = false, Message = "Success" });
             }
             catch (Exception ex)
             {
-                return Json(ex.Message);
+                return Json(new { IsError = true, Message = ex.Message });
             }
-
-            return Json(true);
         }
 
         [HttpPost]
-        public JsonResult DeleteAnswer()
+        public JsonResult DeleteAnswer(int ID)
         {
-            var answerId = Convert.ToInt32(Request.Form["answerId"]);
-            var answer = _answerService.GetAnswer(answerId);
-            var taskId = answer.TaskId; 
-
-            if (answer != null)
+            try
             {
-                _answerService.RemoveAnswer(answer);
-
-                var answers = _answerService.GetAnswers(taskId);
-
-                return Json(answers);
+                _answerService.DeleteAnswer(ID);
+                return Json(new { IsError = false, Message = "Success" });
             }
-
-            return Json(false);
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, Message = ex.Message });
+            }
         }
     }
 }
