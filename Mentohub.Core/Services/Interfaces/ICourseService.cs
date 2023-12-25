@@ -22,6 +22,8 @@ namespace Mentohub.Core.Services.Interfaces
 
         Task<CourseDTO> Edit(CourseDTO courseDTO);
 
+        List<CourseDTO> MostFamoustList();
+
         Task<CourseDTO> ViewCourse(int CourseID, string UserID);
     }
 }

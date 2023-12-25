@@ -1,6 +1,7 @@
 ﻿using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 namespace Mentohub.Domain.Entities
 {
@@ -14,7 +15,7 @@ namespace Mentohub.Domain.Entities
 
         public string? PreviewVideoPath { get; set; }
 
-        public Guid AuthorId { get; set; }
+        public string AuthorId { get; set; }
 
         public bool Checked { get; set; }
 
@@ -29,6 +30,8 @@ namespace Mentohub.Domain.Entities
         public string? LoadPictureName { get; set; }
 
         public DateTime LastEdittingDate { get; set; }
+
+        public CurrentUser Author { get; set; } 
 
         public List<CourseItem> CourseItems { get; set; }
 

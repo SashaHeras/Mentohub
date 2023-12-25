@@ -40,11 +40,10 @@ namespace Mentohub.Controllers
             _taskHistoryRepository = taskHistoryRepository;
         }
 
-        [HttpGet]
-        public JsonResult GetAnswers()
+        [HttpPost]
+        public JsonResult GetAnswers(int ID)
         {
-            int taskId = Convert.ToInt32(Request.Form["task"]);
-            var testAnswers = _answerService.GetAnswers(taskId);
+            var testAnswers = _answerService.GetAnswers(ID);
             return Json(testAnswers);
         }
 

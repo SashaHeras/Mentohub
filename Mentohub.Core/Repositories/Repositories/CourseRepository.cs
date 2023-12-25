@@ -18,11 +18,11 @@ namespace Mentohub.Core.Repositories.Repositories
         /// <summary>
         /// Method returns all course of authod by his id
         /// </summary>
-        /// <param name="uid"></param>
+        /// <param name=")"></param>
         /// <returns></returns>
-        public IQueryable<Course> GetAllAuthorsCourses(Guid uid)
+        public IQueryable<Course> GetAllAuthorsCourses(string ID)
         {
-            return GetAll().Where(c => c.AuthorId == uid);
+            return GetAll().Where(c => c.AuthorId == ID);
         }
 
         /// <summary>

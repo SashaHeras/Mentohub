@@ -71,7 +71,7 @@ namespace Mentohub.Core.Services.Services
                 currentCourse = new Course()
                 {
                     Name = courseDTO.Name,
-                    AuthorId = Guid.Parse(courseDTO.AuthorId),
+                    AuthorId = courseDTO.AuthorId,
                     Checked = false,
                     Rating = 0.00,
                     Price = courseDTO.Price,
@@ -227,7 +227,7 @@ namespace Mentohub.Core.Services.Services
             throw new NotImplementedException();
         }
 
-        public List<CourseDTO> GetUserCourses(Guid userId) {
+        public List<CourseDTO> GetUserCourses(string userId) {
             var result = new List<CourseDTO>();
             var courses = _courseRepository.GetAllAuthorsCourses(userId).ToList();
             foreach(var course in courses)
@@ -284,6 +284,27 @@ namespace Mentohub.Core.Services.Services
                }).ToList();
 
             course.CourseElementsList = GetCourseElements(course.Id);
+        }
+
+        public List<CourseDTO> MostFamoustList()
+        {
+            const int countToTake = 15;
+            var courses = _courseRepository.GetAll()
+                                           .OrderBy(x => x.CourseViews.Count)
+                                           .Take(countToTake)
+                                           .Select(x => new CourseDTO()
+                                           {
+                                               Id = x.Id,
+                                               Name = x.Name,
+                                               CourseViews = x.CourseViews.Count,
+                                               Rating = x.Rating,
+                                               AuthorId = x.AuthorId.ToString(),
+                                               Price = x.Price,
+                                               PicturePath = x.PicturePath,
+                                           })
+                                           .ToList();
+
+            return courses;
         }
     }
 }

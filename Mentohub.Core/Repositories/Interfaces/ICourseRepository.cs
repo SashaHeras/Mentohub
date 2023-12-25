@@ -8,6 +8,6 @@ namespace Mentohub.Core.Repositories.Intefaces
     {
         public Course GetCourse(int courseId);
 
-        public IQueryable<Course> GetAllAuthorsCourses(Guid uid);
+        public IQueryable<Course> GetAllAuthorsCourses(string ID);
     }
 }

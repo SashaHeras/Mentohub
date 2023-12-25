@@ -135,6 +135,11 @@ namespace Mentohub.Core.Context
                 .WithMany(t2 => t2.CourseViews)
                 .HasForeignKey(x => x.UserID);
 
+            modelBuilder.Entity<Course>()
+                .HasOne(t1 => t1.Author)
+                .WithMany(t2 => t2.Courses)
+                .HasForeignKey(x => x.AuthorId);
+
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("AspNetUserRoles");
             modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("AspNetUserLogins");
             modelBuilder.Entity<IdentityRole>().ToTable("AspNetRoles");

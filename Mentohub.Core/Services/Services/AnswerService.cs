@@ -112,21 +112,6 @@ namespace Mentohub.Core.Services.Services
             return _answerRepository.GetCountOfCorrectAnswers(taskId);
         }
 
-        public Dictionary<string, bool> AnswersSpliter(string answers, string _checked)
-        {
-            string[] _answers = answers.Split(',');
-            string[] checkedAns = _checked.Split(',');
-
-            Dictionary<string, bool> result = new Dictionary<string, bool>();
-
-            for (int i = 0; i < _answers.Length; i++)
-            {
-                result.Add(_answers[i].ToString().Replace('|', ','), checkedAns[i] == "true" ? true : false);
-            }
-
-            return result;
-        }
-
         public int PopulateAnswerHistories(List<AnswerDTO> answers, TestTask task, List<AnswerHistory> answerHistories)
         {
             var result = 0;
