@@ -3,6 +3,7 @@ using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -13,15 +14,19 @@ namespace Mentohub.Controllers
     [SwaggerTag("AdminController")]
     public class AdminController : Controller
     {
-        
-        private readonly IUserService _userService;
+ 
+        private readonly UserService _userService;
         private readonly ILogger<AdminController> _logger;
-
-        public AdminController(IUserService userService,
-            ILogger<AdminController> logger)
+        private readonly EmailSender _emailSender;
+        //private readonly IHubContext<SignalRHub> _signalRHub;
+        public AdminController(UserService userService,
+            ILogger<AdminController> logger, EmailSender emailSender
+           /* IHubContext<SignalRHub> signalRHub*/)
         {
             _userService = userService;
             _logger = logger;
+            _emailSender = emailSender;
+            //_signalRHub = signalRHub;
         }
 
         public IActionResult Index()
@@ -117,6 +122,21 @@ namespace Mentohub.Controllers
                     StatusCode = 500 // код статусу, що вказує на помилку
                 };
             }
+        }
+        [HttpPost]
+        [Route("sendEmail")]
+        public async Task<IActionResult> SendEmail([FromForm] string email, [FromForm] string subject, [FromForm] string htmlmessage)
+        {
+            if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(htmlmessage))
+            {
+                await _emailSender.SendEmailAsync(email, subject, htmlmessage);
+                //await _signalRHub.ReceiveEmail(email);
+                return new JsonResult("Email is sent successfully")
+                {
+                    StatusCode = 200
+                };
+            }
+            return new JsonResult("An error occurred while trying to send an email");
         }
     }
 }
