@@ -15,7 +15,8 @@ namespace Mentohub.Core.Repositories.Repositories
 
         public TaskAnswer GetAnswerById(int id)
         {
-            return _context.TaskAnswers.Where(ta => ta.Id == id).FirstOrDefault();
+            return _context.TaskAnswers.Where(ta => ta.Id == id)
+                                       .FirstOrDefault();
         }
 
         public bool DeleteAnswer(TaskAnswer answer)

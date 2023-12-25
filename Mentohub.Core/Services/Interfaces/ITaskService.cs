@@ -21,10 +21,8 @@ namespace Mentohub.Core.Services.Interfaces
 
         TaskDTO Edit(TaskDTO data);
 
-        void ResetOrderNumbers(int order, List<TestTask> allTasksAfter);
-
         List<TestTask> GetTasksAfter(int testId, int order);
 
-        void DeleteTask(TestTask task);
+        void DeleteTask(int ID);
     }
 }

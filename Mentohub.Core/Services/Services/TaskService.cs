@@ -2,17 +2,22 @@
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
+using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Services
 {
     public class TaskService : ITaskService
     {
-        private ITaskRepository _taskRepository;
-        private IAnswerRepository _answerRepository;
+        private readonly ITaskRepository _taskRepository;
+        private readonly IAnswerRepository _answerRepository;
 
-        private IAnswerService _answerService;   
+        private readonly IAnswerService _answerService;
 
-        public TaskService(ITaskRepository taskRepository, IAnswerRepository answerRepository, IAnswerService answerService)
+        public TaskService(
+            ITaskRepository taskRepository, 
+            IAnswerRepository answerRepository, 
+            IAnswerService answerService
+            )
         {
             _taskRepository = taskRepository;
             _answerRepository = answerRepository;
@@ -36,7 +41,7 @@ namespace Mentohub.Core.Services.Services
 
         public TaskDTO Edit(TaskDTO data)
         {
-            if(data.TestId == 0)
+            if (data.TestId == 0)
             {
                 throw new Exception("Unknown test!");
             }
@@ -72,29 +77,16 @@ namespace Mentohub.Core.Services.Services
             return data;
         }
 
-        public async void ResetOrderNumbers(int order, List<TestTask> allTasksAfter)
-        {
-            foreach (var task in allTasksAfter)
-            {
-                task.OrderNumber = order;
-                order++;
-                await _taskRepository.UpdateAsync(task);
-            }
-        }
-
         public List<TestTask> GetTasksAfter(int testId, int order)
         {
             return _taskRepository.GetTasksOfTestBiggerThanOrder(testId, order);
         }
 
-        public void DeleteTask(TestTask task)
-        {
-            var taskAnswers = _answerRepository.GetAnswersByTaskId(task.Id);
-
-            _answerService.RemoveAnswers(taskAnswers);
-            _taskRepository.DeleteTask(task);
-        }
-
+        /// <summary>
+        /// Get list of tesks on test
+        /// </summary>
+        /// <param name="testId"></param>
+        /// <returns></returns>
         public List<TaskDTO> GetTasksList(int testId)
         {
             return _taskRepository.GetTaskByTestId(testId)
@@ -106,6 +98,29 @@ namespace Mentohub.Core.Services.Services
                     TestId = x.TestId,
                     Mark = x.Mark
                 }).ToList();
+        }
+
+        public void DeleteTask(int ID)
+        {
+            var task = GetTask(ID);
+            var allTasksAfter = GetTasksAfter(task.TestId, task.OrderNumber);
+            int currentOrderNumber = task.OrderNumber;
+
+            var taskAnswers = _answerRepository.GetAnswersByTaskId(task.Id);
+
+            _answerService.RemoveAnswers(taskAnswers);
+            _taskRepository.DeleteTask(task);
+
+            if (allTasksAfter.Count > 0)
+            {
+                foreach (var t in allTasksAfter)
+                {
+                    task.OrderNumber = currentOrderNumber;
+                    currentOrderNumber++;
+                }
+
+                _taskRepository.UpdateList(allTasksAfter);
+            }
         }
     }
 }

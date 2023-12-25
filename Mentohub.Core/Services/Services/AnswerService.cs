@@ -194,5 +194,16 @@ namespace Mentohub.Core.Services.Services
 
             return result;
         }
+
+        public void DeleteAnswer(int ID)
+        {
+            var answer = GetAnswer(ID);
+            if (answer == null)
+            {
+                throw new Exception("Answer not found!");
+            }
+
+            _answerRepository.DeleteAnswer(answer);
+        }
     }
 }
