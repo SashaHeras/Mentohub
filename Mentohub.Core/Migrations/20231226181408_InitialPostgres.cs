@@ -58,7 +58,7 @@ namespace Mentohub.Core.Migrations
                     LastName = table.Column<string>(type: "text", nullable: true),
                     Image = table.Column<string>(type: "text", nullable: true),
                     AboutMe = table.Column<string>(type: "text", nullable: true),
-                    DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     UserName = table.Column<string>(type: "text", nullable: true),
                     NormalizedUserName = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: true),
@@ -93,23 +93,6 @@ namespace Mentohub.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Comments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Text = table.Column<string>(type: "text", nullable: false),
-                    Rating = table.Column<int>(type: "integer", nullable: false),
-                    DateCreation = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
-                    CourseId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Comments", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "CourseItemTypes",
                 columns: table => new
                 {
@@ -120,29 +103,6 @@ namespace Mentohub.Core.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_CourseItemTypes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Courses",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    PicturePath = table.Column<string>(type: "text", nullable: false),
-                    PreviewVideoPath = table.Column<string>(type: "text", nullable: true),
-                    AuthorId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Checked = table.Column<bool>(type: "boolean", nullable: false),
-                    Rating = table.Column<double>(type: "double precision", nullable: false),
-                    Price = table.Column<decimal>(type: "numeric", nullable: false),
-                    CourseSubjectId = table.Column<int>(type: "integer", nullable: false),
-                    LoadVideoName = table.Column<string>(type: "text", nullable: true),
-                    LoadPictureName = table.Column<string>(type: "text", nullable: true),
-                    LastEdittingDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Courses", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -169,25 +129,6 @@ namespace Mentohub.Core.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ItemsStatuses", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Lessons",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Theme = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: false),
-                    VideoPath = table.Column<string>(type: "text", nullable: false),
-                    Body = table.Column<string>(type: "text", nullable: false),
-                    DateCreation = table.Column<string>(type: "text", nullable: false),
-                    LoadVideoName = table.Column<string>(type: "text", nullable: true),
-                    UpdateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CourseItemId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Lessons", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -221,6 +162,64 @@ namespace Mentohub.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Courses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    PicturePath = table.Column<string>(type: "text", nullable: false),
+                    PreviewVideoPath = table.Column<string>(type: "text", nullable: true),
+                    AuthorId = table.Column<string>(type: "text", nullable: false),
+                    Checked = table.Column<bool>(type: "boolean", nullable: false),
+                    Rating = table.Column<double>(type: "double precision", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    CourseSubjectId = table.Column<int>(type: "integer", nullable: false),
+                    LoadVideoName = table.Column<string>(type: "text", nullable: true),
+                    LoadPictureName = table.Column<string>(type: "text", nullable: true),
+                    LastEdittingDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Courses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Courses_AspNetUsers_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Text = table.Column<string>(type: "text", nullable: false),
+                    Rating = table.Column<int>(type: "integer", nullable: false),
+                    DateCreation = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    CourseId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Comments_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Comments_Courses_CourseId",
+                        column: x => x.CourseId,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CourseItem",
                 columns: table => new
                 {
@@ -228,7 +227,7 @@ namespace Mentohub.Core.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TypeId = table.Column<int>(type: "integer", nullable: false),
                     CourseId = table.Column<int>(type: "integer", nullable: false),
-                    DateCreation = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DateCreation = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     OrderNumber = table.Column<int>(type: "integer", nullable: false),
                     StatusId = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -239,6 +238,57 @@ namespace Mentohub.Core.Migrations
                         name: "FK_CourseItem_Courses_CourseId",
                         column: x => x.CourseId,
                         principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CourseViews",
+                columns: table => new
+                {
+                    ID = table.Column<Guid>(type: "uuid", nullable: false),
+                    ViewDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    UserID = table.Column<string>(type: "text", nullable: false),
+                    CourseID = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CourseViews", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_CourseViews_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CourseViews_Courses_CourseID",
+                        column: x => x.CourseID,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Lessons",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Theme = table.Column<string>(type: "text", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    VideoPath = table.Column<string>(type: "text", nullable: false),
+                    Body = table.Column<string>(type: "text", nullable: false),
+                    DateCreation = table.Column<string>(type: "text", nullable: false),
+                    LoadVideoName = table.Column<string>(type: "text", nullable: true),
+                    UpdateDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    CourseItemId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lessons", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Lessons_CourseItem_CourseItemId",
+                        column: x => x.CourseItemId,
+                        principalTable: "CourseItem",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -271,13 +321,19 @@ namespace Mentohub.Core.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Mark = table.Column<double>(type: "double precision", nullable: false),
                     TotalMark = table.Column<double>(type: "double precision", nullable: false),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     TestId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TestHistory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TestHistory_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_TestHistory_Tests_TestId",
                         column: x => x.TestId,
@@ -407,9 +463,40 @@ namespace Mentohub.Core.Migrations
                 column: "TaskId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Comments_CourseId",
+                table: "Comments",
+                column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_UserId",
+                table: "Comments",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CourseItem_CourseId",
                 table: "CourseItem",
                 column: "CourseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Courses_AuthorId",
+                table: "Courses",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseViews_CourseID",
+                table: "CourseViews",
+                column: "CourseID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseViews_UserID",
+                table: "CourseViews",
+                column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lessons_CourseItemId",
+                table: "Lessons",
+                column: "CourseItemId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TaskAnswers_TaskId",
@@ -432,9 +519,15 @@ namespace Mentohub.Core.Migrations
                 column: "TestId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TestHistory_UserId",
+                table: "TestHistory",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Tests_CourseItemId",
                 table: "Tests",
-                column: "CourseItemId");
+                column: "CourseItemId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TestTasks_TestId",
@@ -457,9 +550,6 @@ namespace Mentohub.Core.Migrations
                 name: "AspNetUserRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
@@ -470,6 +560,9 @@ namespace Mentohub.Core.Migrations
 
             migrationBuilder.DropTable(
                 name: "CourseSubjects");
+
+            migrationBuilder.DropTable(
+                name: "CourseViews");
 
             migrationBuilder.DropTable(
                 name: "ItemsStatuses");
@@ -503,6 +596,9 @@ namespace Mentohub.Core.Migrations
 
             migrationBuilder.DropTable(
                 name: "Courses");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }

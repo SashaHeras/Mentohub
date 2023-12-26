@@ -83,25 +83,21 @@ namespace Mentohub.Core.Services.Services
                                              .Where(x => x.CourseId == data.CourseID)
                                              .ToList();
 
-            var result = new List<CommentDTO>();
-            foreach (var com in comments)
+            var result = comments.Select(x => new CommentDTO()
             {
-                result.Add(new CommentDTO()
-                {
-                    Text = com.Text,
-                    Rating = com.Rating,
-                    AuthorId = com.UserId.ToString(),
-                    Id = com.Id,
-                    CourseId = com.CourseId,
-                    UserName = "User",
-                    DateAgo = Helper.GetTimeSinceDate(com.DateCreation),
-                    ProfileImagePath = "img_avatar.png"
-                });
-            }
+                Id = x.Id,
+                Text = x.Text,
+                Rating = x.Rating,
+                AuthorId = x.UserId.ToString(),
+                CourseId = x.CourseId,
+                UserName = "User",
+                DateAgo = Helper.GetTimeSinceDate(x.DateCreation),
+                ProfileImagePath = "img_avatar.png"
+            });
 
             result = result.Take(data.CommentsCount).ToList();
 
-            return result;
+            return result.ToList();
         }
     }
 }

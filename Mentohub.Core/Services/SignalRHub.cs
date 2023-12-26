@@ -17,7 +17,7 @@ namespace Mentohub.Core.Services
         }
 
         public async Task ReceiveEmail(MimeMessage email)
-        {            
+        {
             // Отримання ідентифікатора з'єднання користувача
             var connectionId = Context.ConnectionId;
 
