@@ -4,9 +4,13 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MimeKit;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Mentohub.Controllers
 {
+    [Route("api/email")]
+    [ApiController]
+    [SwaggerTag("EmailController")]
     public class EmailController : Controller
     {
         private readonly IHubContext<SignalRHub> _signalRHub;

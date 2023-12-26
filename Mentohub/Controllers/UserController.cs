@@ -28,6 +28,7 @@ namespace Mentohub.Controllers
             _exception = exception;
             _cRUD = cRUD_UserRepository;
         }
+        
         [HttpDelete]
         [Route("deleteUser")]
         [SwaggerOperation(Summary = "Delete a user by ID")]
@@ -118,7 +119,7 @@ namespace Mentohub.Controllers
         [SwaggerResponse(400, "Invalid input")]
         [SwaggerResponse(404, "User not found")]
         public async Task<IActionResult> UpdateUser([FromForm] string userId,
-            [FromForm] EditUserDTO userDTO)
+            [FromForm] UserDTO userDTO)
         {
             try
             {               
@@ -205,16 +206,13 @@ namespace Mentohub.Controllers
         [Route("addRole")]
         [SwaggerOperation(Summary ="add role to user`s roles")]
         public async Task<JsonResult> AddUserRoles([FromForm]string userId,
-            [FromForm]string roleName)
-        {
-            
+            [FromForm]string roleId)
+        {            
             var user=await _cRUD.FindCurrentUserById(userId);
-            _logger.LogInformation(roleName, user.UserName);
             try
             {              
-                if( await _userService.AddRoleToUserListRoles(userId, roleName))
+                if( await _userService.AddRoleToUserListRoles(userId, roleId))
                 {
-
                     var UserDTO = await _userService.GetProfile(userId);
                     return new JsonResult(UserDTO)
                     {

@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Mentohub.Domain.Data.Entities
 {
     [Table("AspNetUsers")]
-    public class CurrentUser : IdentityUser, IItem
+    public class CurrentUser : IdentityUser
     {
         [JsonProperty]
         public string? FirstName { get; set; }
@@ -22,7 +22,7 @@ namespace Mentohub.Domain.Data.Entities
         public string? AboutMe { get; set; }
 
         [JsonProperty]
-        public DateTime DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         public List<CourseViews> CourseViews { get; set; }
 

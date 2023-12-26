@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Mentohub.Domain.Data.DTO
 {
-    public class EditUserDTO:IItem
+    public class EditUserDTO
     {
         //public string? Id { get; set; }
         //public string? Email { get; set; }

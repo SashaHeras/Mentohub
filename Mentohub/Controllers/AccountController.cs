@@ -139,10 +139,13 @@ namespace Mentohub.Core.Repositories.Repositories
 
             return _exception.NotFoundObjectResult("User is not found");
         }
-
+        [HttpPost]
+        [Route("logout")]
+        [SwaggerOperation(Summary = "User logout")]
         public JsonResult LogoutAsync()
         {
-            return new JsonResult(_userService.LogOut());
+            _userService.LogOut();
+            return new JsonResult("The user has logged out of the account");
         }
 
         /// <summary>
