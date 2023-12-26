@@ -166,12 +166,15 @@ namespace Mentohub.Core.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Comments");
                 });
@@ -184,8 +187,9 @@ namespace Mentohub.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("AuthorId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool>("Checked")
                         .HasColumnType("boolean");
@@ -220,6 +224,8 @@ namespace Mentohub.Core.Migrations
                         .HasColumnType("double precision");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
 
                     b.ToTable("Courses");
                 });
@@ -650,7 +656,26 @@ namespace Mentohub.Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Mentohub.Domain.Data.Entities.CurrentUser", "User")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Course");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Entities.Course", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Data.Entities.CurrentUser", "Author")
+                        .WithMany("Courses")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Entities.CourseItem", b =>
@@ -748,7 +773,11 @@ namespace Mentohub.Core.Migrations
 
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CurrentUser", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("CourseViews");
+
+                    b.Navigation("Courses");
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Entities.Course", b =>

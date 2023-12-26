@@ -15,7 +15,7 @@ namespace Mentohub.Controllers
         private readonly ICourseService _courseService;
 
         public HomeController(
-            ILessonRepository lessonRepository, 
+            ILessonRepository lessonRepository,
             ICourseRepository courseRepository,
             ICourseService courseService
             )
@@ -42,22 +42,11 @@ namespace Mentohub.Controllers
             return View(lesson);
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         [HttpGet]
         public JsonResult GetMostFamoustCourseList()
         {
             var courseList = _courseService.MostFamoustList();
             return Json(courseList);
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
