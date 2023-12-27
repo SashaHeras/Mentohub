@@ -14,16 +14,17 @@ namespace Mentohub.Domain.Data.DTO
         [BindNever]
         public string? Name { get; set; }
         [BindNever]
-        public string? Email { get; set; }  
+        public string? Email { get; set; }
+
         public List<string>? UserRoles { get; set; }
-        [BindNever]
-        public string? FirstName { get; set; }
-        [BindNever]
-        public string? LastName { get; set; }
-        [BindNever]
-        public string? AboutMe { get; set; }
-        [BindNever]
-        public DateTime? DateOfBirth { get; set; }
+        
+        public string FirstName { get; set; }
+        
+        public string LastName { get; set; }
+        
+        public string AboutMe { get; set; }
+        
+        public DateTime DateOfBirth { get; set; }
 
     }
 }

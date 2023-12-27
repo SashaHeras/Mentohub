@@ -12,6 +12,7 @@ using Mentohub.Core.Services.Interfaces;
 using Newtonsoft.Json;
 using System.Net.Mail;
 using SmtpClient = MailKit.Net.Smtp.SmtpClient;
+using System.Net;
 
 namespace Mentohub.Core.Services.Services
 {
@@ -29,7 +30,7 @@ namespace Mentohub.Core.Services.Services
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(_configuration["Email:FromName"], _configuration["Email:FromAddress"]));
+            message.From.Add(new MailboxAddress("Mentohub", "mentochub@ukr.net"));
             message.To.Add(new MailboxAddress("Dear customer", email));
             message.Subject = subject;
 
@@ -45,14 +46,18 @@ namespace Mentohub.Core.Services.Services
             {
                 using (var client = new SmtpClient())
                 {
-                    var smtpServer = _configuration["Email:SmtpServer"];
-                    var smtpPort = Convert.ToInt32(_configuration["Email:SmtpPort"]);
-                    var smtpUsername = _configuration["Email:SmtpUsername"];
-                    var smtpPassword = _configuration["Email:SmtpPassword"];
+                    var smtpServer = "smtp.ukr.net";
+                    var smtpPort = 465;
+                    var smtpUsername = "mentochub@ukr.net";
+                    var smtpPassword = "N6740I3aWaYPfABF";
 
-                    await client.ConnectAsync(smtpServer, smtpPort, SecureSocketOptions.Auto);
+                    await client.ConnectAsync(smtpServer, smtpPort, true);
                     //client.CheckCertificateRevocation = false;
-                    await client.AuthenticateAsync(smtpUsername, smtpPassword);
+                    client.Authenticate(new NetworkCredential()
+                    {
+                        Password = smtpPassword,
+                        UserName = smtpUsername
+                    });
                     await client.SendAsync(message);
                     await client.DisconnectAsync(true);
                 }

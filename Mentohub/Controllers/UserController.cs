@@ -106,6 +106,7 @@ namespace Mentohub.Controllers
             }
             
         }
+
         /// <summary>
         /// оновлення інформації про користувача
         /// </summary>
@@ -118,29 +119,26 @@ namespace Mentohub.Controllers
         [SwaggerResponse(200, "User updated successfully")]
         [SwaggerResponse(400, "Invalid input")]
         [SwaggerResponse(404, "User not found")]
-        public async Task<IActionResult> UpdateUser([FromForm] string userId,
-            [FromForm] UserDTO userDTO)
+        public async Task<IActionResult> UpdateUser([FromForm] UserDTO userDTO)
         {
             try
             {               
                 // Логіка оновлення інформації про користувача
-                var updatedUser =await _userService.UpdateUser(userId, userDTO);
-
-            if (updatedUser)
-            {
-                return new JsonResult("User profile is updated")
+                var updatedUser = await _userService.UpdateUser(userDTO);
+                if (updatedUser)
                 {
-                    StatusCode = 200 //профіль користувача успішно оновлено
-                };
-            }
-            else
-            {
-                return new JsonResult("User not found")
+                    return new JsonResult("User profile is updated")
+                    {
+                        StatusCode = 200 //профіль користувача успішно оновлено
+                    };
+                }
+                else
                 {
-                    StatusCode = 404 // Код статусу "Not Found", користувача не знайдено
-                };
-            }
-
+                    return new JsonResult("User not found")
+                    {
+                        StatusCode = 404 // Код статусу "Not Found", користувача не знайдено
+                    };
+                }
             }
             catch(Exception ex)
             {

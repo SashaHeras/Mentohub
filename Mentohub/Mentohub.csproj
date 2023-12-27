@@ -11,6 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Content\**" />
+    <Content Remove="Content\**" />
+    <EmbeddedResource Remove="Content\**" />
+    <None Remove="Content\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AspNetCore.MailKitMailer" Version="1.2.2" />
     <PackageReference Include="MailKit" Version="4.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.21" />
@@ -36,11 +43,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Content\Videos\" />
-    <Folder Include="Content\Pictures\" />
     <Folder Include="Views\Account\" />
     <Folder Include="Views\Admin\" />
-    <Folder Include="Content\Scripts\Test\" />
     <Folder Include="wwwroot\Pictures\" />
     <Folder Include="wwwroot\Videos\" />
     <Folder Include="wwwroot\avatar\" />

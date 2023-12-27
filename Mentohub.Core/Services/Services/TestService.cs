@@ -129,7 +129,9 @@ namespace Mentohub.Core.Services.Services
         {
             Test test = _testRepository.GetTestById(data.Id);
 
-            var sameCourseItems = _courseItemRepository.GetAll().Where(x => x.CourseId == data.CourseID).ToList();
+            var sameCourseItems = _courseItemRepository.GetAll()
+                                                       .Where(x => x.CourseId == data.CourseID)
+                                                       .ToList();
 
             if (test == null)
             {
@@ -158,7 +160,6 @@ namespace Mentohub.Core.Services.Services
             else
             {
                 test.Name = data.Name;
-
                 _testRepository.Update(test);
             }
 

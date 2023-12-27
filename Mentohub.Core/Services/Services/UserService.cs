@@ -120,6 +120,7 @@ namespace Mentohub.Core.Services.Services
         {
             return _userManager.Users.ToList();   
         }
+
         /// <summary>
         /// download user's avatar
         /// </summary>
@@ -171,10 +172,10 @@ namespace Mentohub.Core.Services.Services
             dto.Email = currentUser.Email;
             dto.Name = currentUser.UserName;
             dto.UserRoles = await _userRepository.GetUserRoles(currentUser);
-            dto.LastName= currentUser.LastName;
-            dto.AboutMe= currentUser.AboutMe;
-            dto.DateOfBirth= currentUser.DateOfBirth;
-            dto.FirstName= currentUser.FirstName;
+            dto.LastName = currentUser.LastName;
+            dto.AboutMe = currentUser.AboutMe;
+            dto.DateOfBirth = currentUser.DateOfBirth ?? DateTime.Now;
+            dto.FirstName = currentUser.FirstName;
             return dto;
         }
 
@@ -200,6 +201,7 @@ namespace Mentohub.Core.Services.Services
             }
             return _exciption.NotFoundObject("User is not found");
         }
+
         /// <summary>
         /// вихід з аккаунта
         /// </summary>
@@ -209,34 +211,35 @@ namespace Mentohub.Core.Services.Services
             await _signInManager.SignOutAsync();
             return true;
         }
+
         /// <summary>
-        /// оновлення даних користувача
+        /// 
         /// </summary>
-        /// <param name="avatarFile"></param>
-        /// <param name="model"></param>
+        /// <param name="userDTO"></param>
         /// <returns></returns>
-        public async Task<bool> UpdateUser( string id, UserDTO userDTO)
+        public async Task<bool> UpdateUser(UserDTO userDTO)
         {
-            CurrentUser currentUser = await _userRepository.FindCurrentUserById(id);
-            
+            CurrentUser currentUser = await _userRepository.FindCurrentUserById(userDTO.Id);            
             if (currentUser == null)
             {
                 return false;
             }
+
             currentUser.FirstName = userDTO.FirstName;
             currentUser.LastName = userDTO.LastName;
             currentUser.AboutMe = userDTO.AboutMe;
+
             if (currentUser is IdentityUser identityUser)
             {
                 // Перевірка, чи користувач успадковується від IdentityUser
                 // Якщо так, то оновити дату народження
                 currentUser.DateOfBirth = userDTO.DateOfBirth;
             }
-           
-            var result=await _userManager.UpdateAsync(currentUser);
-            return result.Succeeded;
             
+            var result = await _userManager.UpdateAsync(currentUser);
+            return result.Succeeded;            
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -247,19 +250,24 @@ namespace Mentohub.Core.Services.Services
             CurrentUser user = await _userRepository.FindCurrentUserByName(userName);
             if (user != null)
             {
-                UserDTO userDTO = new UserDTO();
-                userDTO.Id = user.Id;
-                userDTO.Name = user.UserName;
-                userDTO.Email = user.Email;
-                userDTO.AboutMe = user.AboutMe;
-                userDTO.FirstName = user.FirstName;
-                userDTO.LastName = user.LastName;
-                userDTO.DateOfBirth= userDTO.DateOfBirth;
-                userDTO.UserRoles = await _userRepository.GetUserRoles(user);
+                UserDTO userDTO = new UserDTO()
+                {
+                    Id = user.Id,
+                    Name = user.UserName,
+                    Email = user.Email,
+                    AboutMe = user.AboutMe ?? string.Empty,
+                    FirstName = user.FirstName ?? string.Empty,
+                    LastName = user.LastName ?? string.Empty,
+                    DateOfBirth = user.DateOfBirth ?? DateTime.Now,
+                    UserRoles = await _userRepository.GetUserRoles(user)
+                };
+                
                 return userDTO;
             }
+
             return _exciption.NullException(nameof(userName));
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -269,6 +277,7 @@ namespace Mentohub.Core.Services.Services
         {
             return await _userRepository.FindCurrentUserById(id);
         }
+
         /// <summary>
         /// 
         /// </summary>
