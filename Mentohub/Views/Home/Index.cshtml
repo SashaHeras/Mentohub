@@ -1,4 +1,5 @@
 ﻿@using Mentohub.Domain.Entities;
+@model List<Course>
 @{
     ViewData["Title"] = "Home Page";
     int a = 0;
@@ -165,7 +166,7 @@
 
     <div id="courses">
         <div class="grid-container">
-            @foreach (Course c in ViewBag.Courses)
+            @foreach (var c in Model)
             {
                 string url = "https://mystudystorage.blob.core.windows.net/test/" + c.PicturePath;
                 int rating = (int)c.Rating; // convert rating to integer

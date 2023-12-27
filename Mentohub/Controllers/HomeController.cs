@@ -4,6 +4,8 @@ using Mentohub.Core.Services.Interfaces;
 using Mentohub.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 
 namespace Mentohub.Controllers
 {
@@ -27,8 +29,8 @@ namespace Mentohub.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.Courses = _courseRepository.GetAll();
-            return View();
+            var list = _courseRepository.GetAll().ToList();
+            return View(list);
         }
 
         public IActionResult Video()
@@ -40,6 +42,14 @@ namespace Mentohub.Controllers
         {
             var lesson = _lessonRepository.GetLessonById(id);
             return View(lesson);
+        }
+
+        [HttpGet]
+        public JsonResult GetVersion()
+        {
+            var currentAssamblyInfo = Assembly.GetExecutingAssembly();
+            var appVersion = currentAssamblyInfo.GetName().Version;
+            return Json(appVersion);
         }
 
         [HttpGet]

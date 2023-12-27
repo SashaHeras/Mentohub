@@ -30,6 +30,8 @@ namespace Mentohub.Domain.Entities
 
         public DateTime LastEdittingDate { get; set; }
 
+        public CurrentUser Author { get; set; }
+
         public List<CourseItem> CourseItems { get; set; }
 
         public List<Comment> Comments { get; set; }
@@ -50,8 +52,6 @@ namespace Mentohub.Domain.Entities
                 Price = Price,
                 LastEdittingDate = LastEdittingDate
             };
-        }
-
-        
+        }        
     }
 }
