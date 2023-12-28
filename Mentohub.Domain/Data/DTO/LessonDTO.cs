@@ -36,5 +36,9 @@ namespace Mentohub.Domain.Data.DTO
         public string AuthorPicture { get; set; }
 
         public string Authorname { get; set; }
+
+        public int CourseBlockID { get; set; }
+
+        public List<CourseBlockDTO> CourseBlocks { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
@@ -19,6 +20,7 @@ namespace Mentohub.Core.Services.Services
 
         private readonly ICourseRepository _courseRepository;
         private readonly ICourseItemRepository _courseItemRepository;
+        private readonly ICourseBlockRepository _courseBlockRepository;
 
         public LessonService(
             ILessonRepository lessonRepository,
@@ -27,7 +29,8 @@ namespace Mentohub.Core.Services.Services
             ICourseRepository courseRepository,
             ICourseItemRepository courseItemRepository,
             IAzureService azureService,
-            ICourseItemService courseItemService)
+            ICourseItemService courseItemService,
+            ICourseBlockRepository courseBlockRepository)
         {
             _lessonRepository = lessonRepository;
             _courseService = courseService;
@@ -36,29 +39,7 @@ namespace Mentohub.Core.Services.Services
             _courseItemRepository = courseItemRepository;
             _azureService = azureService;
             _courseItemService = courseItemService;
-        }
-
-        public async Task<int> Create(IFormCollection form, LessonDTO createLessonModel)
-        {
-            //string videoName = await _azureService.SaveInAsync(createLessonModel.VideoFile);
-            //CourseItem newCourceItem = await _courseItemService.Create(createLessonModel);
-
-            //Lesson newLesson = new Lesson()
-            //{
-            //    Id = Guid.NewGuid(),
-            //    Theme = createLessonModel.Theme,
-            //    Description = createLessonModel.Description,
-            //    Body = createLessonModel.Body,
-            //    VideoPath = videoName,
-            //    CourseItemId = newCourceItem.Id,
-            //    DateCreation = DateTime.Now.ToShortDateString()
-            //};
-
-            //await _lessonRepository.AddAsync(newLesson);
-
-            //return newCourceItem.CourseId;
-
-            return 0;
+            _courseBlockRepository = courseBlockRepository;
         }
 
         public async Task<int> Edit(IFormCollection form, Lesson lesson)
@@ -139,10 +120,15 @@ namespace Mentohub.Core.Services.Services
             };
         }
 
-        public async Task<LessonDTO> Edit(LessonDTO lesson)
+        public async Task<LessonDTO> Apply(LessonDTO lesson)
         {
             var currentLesson = _lessonRepository.FirstOrDefault(x => x.Id == lesson.Id);
             var currentCourse = _courseRepository.GetCourse(lesson.CourseID);
+            var block = _courseBlockRepository.GetById(lesson.CourseBlockID);
+            if(block == null)
+            {
+                throw new Exception("Unknown block!");
+            }
 
             if (currentLesson == null)
             {
@@ -156,7 +142,8 @@ namespace Mentohub.Core.Services.Services
                         StatusId = (int)e_ItemStatus.OK,
                         DateCreation = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
                         OrderNumber = countCurrentElements + 1,
-                        CourseId = lesson.CourseID
+                        CourseId = lesson.CourseID,
+                        CourseBlockID = block.ID
                     };
 
                     lesson.VideoPath = await _mediaService.SaveFile(lesson.VideoFile);

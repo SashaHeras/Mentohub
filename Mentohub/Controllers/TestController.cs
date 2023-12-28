@@ -55,11 +55,11 @@ namespace Mentohub.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult Edit([FromBody] TestDTO data)
+        public JsonResult Apply([FromBody] TestDTO data)
         {
             try
             {
-                var newTest = _testService.Edit(data);
+                var newTest = _testService.Apply(data);
 
                 return Json(new { IsError = false, Data = newTest, Message = "Success" });
             }
@@ -141,7 +141,7 @@ namespace Mentohub.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> Apply([FromBody] PassTestDTO data)
+        public async Task<JsonResult> Pass([FromBody] PassTestDTO data)
         {
             try
             {
@@ -153,24 +153,6 @@ namespace Mentohub.Controllers
             {
                 return Json(new { IsError = true, Message = ex.Message });
             }
-        }
-
-        [HttpPost]
-        public async Task<JsonResult> SaveTest(int courseID, int? testID, string testName)
-        {
-            var sameCourseItems = _courseItemService.GetCourseItems(courseID);
-
-            Test test = new Test();
-            if (testID != null)
-            {
-                test = await _testService.RenameTest(testID.Value, testName);
-            }
-            else
-            {
-                test = await _testService.CreateNewTest(testName, courseID, sameCourseItems);
-            }
-
-            return Json(test.Id);
         }
 
         public IActionResult EditTest(int id)

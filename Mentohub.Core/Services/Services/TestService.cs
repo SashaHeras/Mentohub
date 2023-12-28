@@ -28,6 +28,7 @@ namespace Mentohub.Core.Services.Services
         private readonly ITestHistoryService _testHistoryService;
         private readonly ITaskHistoryService _taskHistoryService;
         private readonly IAnswerHistoryService _answerHistoryService;
+        private readonly ICourseBlockRepository _courseBlockRepository;
 
         public TestService( 
             ITestRepository testRepository,
@@ -43,6 +44,7 @@ namespace Mentohub.Core.Services.Services
             ITestHistoryRepository testHistoryRepository,
             ITaskService taskService,
             IAnswerService answerService,
+            ICourseBlockRepository courseBlockRepository,
             ProjectContext repositoryContext)
         {
             _testRepository = testRepository;
@@ -59,6 +61,7 @@ namespace Mentohub.Core.Services.Services
             _taskService = taskService;
             _answerService = answerService;
             _userRepository = userRepository;
+            _courseBlockRepository = courseBlockRepository;
         }             
 
         public Test GetTest(int id)
@@ -93,41 +96,15 @@ namespace Mentohub.Core.Services.Services
 
             await _answerHistoryService.SaveAnswersHistory(taskHistories, answerHistories);
         }
-         
-        public async Task<Test> CreateNewTest(string testName, int courseId, IQueryable<CourseItem> sameCourseItems)
-        {
-            CourseItem newCourseItem = new CourseItem()
-            {
-                TypeId = _courseItemService.GetItemTypeByName("Test").Id,
-                CourseId = courseId,
-                DateCreation = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
-                OrderNumber = sameCourseItems.Count() > 0 ? sameCourseItems.Last().OrderNumber + 1 : 1
-            };
-            await _courseItemRepository.AddAsync(newCourseItem);
 
-            Test test = new Test()
-            {
-                Name = testName,
-                CourseItemId = newCourseItem.Id
-            };
-            await _testRepository.AddAsync(test);
-
-            return test;
-        }
-
-        public async Task<Test> RenameTest(int testId, string newName)
-        {
-            Test test = _testRepository.GetById(testId);
-            test.Name = newName;
-
-            await _testRepository.UpdateAsync(test);
-
-            return test;
-        }
-
-        public TestDTO Edit(TestDTO data)
+        public TestDTO Apply(TestDTO data)
         {
             Test test = _testRepository.GetById(data.Id);
+            var block = _courseBlockRepository.GetById(data.CourseBlockID);
+            if(block == null)
+            {
+                throw new Exception("Unknown block!");
+            }
 
             var sameCourseItems = _courseItemRepository.GetAll()
                                                        .Where(x => x.CourseId == data.CourseID)
@@ -141,7 +118,8 @@ namespace Mentohub.Core.Services.Services
                     CourseId = data.CourseID,
                     StatusId = (int)e_ItemStatus.OK,
                     TypeId = (int)e_ItemType.Test,
-                    OrderNumber = sameCourseItems.Count > 0 ? sameCourseItems.Count + 1 : 1
+                    OrderNumber = sameCourseItems.Count > 0 ? sameCourseItems.Count + 1 : 1,
+                    CourseBlockID = data.CourseBlockID
                 };
 
                 _courseItemRepository.Add(newCourseItem);

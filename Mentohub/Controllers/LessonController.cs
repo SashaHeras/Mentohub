@@ -30,87 +30,16 @@ namespace Mentohub.Controllers
         }
 
         /// <summary>
-        /// Main page
-        /// </summary>
-        /// <returns></returns>
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-        /// <summary>
-        /// Page of lesson creation
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public IActionResult CreateLesson(int id)
-        {
-            ViewBag.CourseId = id;
-            return View();
-        }
-
-        /// <summary>
-        /// Method of lesson creation
-        /// </summary>
-        /// <param name="form"></param>
-        /// <param name="createLessonModel"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<IActionResult> Create(IFormCollection form, LessonDTO createLessonModel)
-        {
-            //var data = await _lessonService.Create(form, createLessonModel);
-            return RedirectToAction("CreateCourse", "Course", new { id = 0 });
-        }
-
-        [HttpGet]
-        public IActionResult GoToLesson(int id)
-        {
-            Guid lessonGuid = _lessonService.GetLessonByCourseItem(id).Id;
-            return RedirectToAction("Lesson", new { id = lessonGuid });
-        }
-
-        [HttpGet]
-        public IActionResult Lesson(Guid id)
-        {
-            var data = _lessonService.GetLesson(id);
-            return View(data);
-        }
-
-        [HttpGet]
-        public JsonResult LessonJson(Guid id)
-        {            
-            try
-            {
-                var data = _lessonService.GetLesson(id);
-                return Json(new { IsError = false, Data = data, Message = "" });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { IsError = true, Message = ex.Message });
-            }
-        }
-
-        [HttpGet]
-        [Route("/Lesson/EditLesson/{id}")]
-        public IActionResult EditLesson(int id)
-        {
-            LessonDTO lesson = _lessonService.GetLessonByCourseItem(id);
-
-            return View(lesson);  
-        }
-
-        /// <summary>
         /// Edit/create lesson
         /// </summary>
         /// <param name="lesson"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> Edit(LessonDTO lesson)
+        public async Task<JsonResult> Apply(LessonDTO lesson)
         {
             try
             {
-                var data = await _lessonService.Edit(lesson);
+                var data = await _lessonService.Apply(lesson);
 
                 return Json(new { IsError = false, Data = data, Message = "Success" });
             }
