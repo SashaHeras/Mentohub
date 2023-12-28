@@ -1,4 +1,5 @@
 ﻿using Mentohub.Domain.Data.DTO.Helpers;
+using Mentohub.Domain.Data.Entities;
 using Mentohub.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -42,6 +43,17 @@ namespace Mentohub.Domain.Data.DTO.Mappers
                 AuthorId = comment.UserId,
                 ProfileImagePath = comment.User?.Image ?? string.Empty,
                 DateAgo = Helper.GetTimeSinceDate(comment.DateCreation)
+            };
+        }
+
+        public static CourseBlockDTO ToDTO(CourseBlock block)
+        {
+            return new CourseBlockDTO()
+            {
+                Name = block.Name,
+                CourseID = block.CourseID,
+                OrderNumber = block.OrderNumber,
+                ID = block.ID
             };
         }
     }

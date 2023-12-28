@@ -71,7 +71,7 @@ namespace Mentohub.Core.Services.Services
                 currentCourse = new Course()
                 {
                     Name = courseDTO.Name,
-                    //AuthorId =courseDTO.AuthorId,
+                    AuthorId = courseDTO.AuthorId,
                     Checked = false,
                     Rating = 0.00,
                     Price = courseDTO.Price,

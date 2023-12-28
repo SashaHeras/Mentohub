@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Mentohub.Domain.Data.DTO;
+using Mentohub.Domain.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +10,6 @@ namespace Mentohub.Core.Services.Interfaces
 {
     public interface ICourseBlockService
     {
-
+        public CourseBlockDTO Edit(CourseBlockDTO data);
     }
 }
