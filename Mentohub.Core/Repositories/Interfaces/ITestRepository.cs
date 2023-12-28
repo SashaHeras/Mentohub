@@ -7,6 +7,6 @@ namespace Mentohub.Core.Repositories.Intefaces
     {
         public Test GetTestByCourseItemId(int courseItemId);
 
-        public Test GetTestById(int testId);
+        public Test GetById(int testId);
     }
 }

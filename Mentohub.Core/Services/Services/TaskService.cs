@@ -31,7 +31,7 @@ namespace Mentohub.Core.Services.Services
 
         public TestTask GetTask(int id)
         {
-            return _taskRepository.GetTaskById(id);
+            return _taskRepository.GetById(id);
         }
 
         public async Task<TestTask> UpdateTask(TestTask task)
@@ -41,23 +41,25 @@ namespace Mentohub.Core.Services.Services
 
         public TaskDTO Edit(TaskDTO data)
         {
-            if (data.TestId == 0)
+            if(data == null)
             {
-                throw new Exception("Unknown test!");
+                throw new Exception();
             }
 
-            TestTask task = _taskRepository.GetTaskById(data.Id);
+            TestTask task = _taskRepository.GetById(data.Id);
             int sameTestTasksCount = _taskRepository.GetTaskByTestId(data.TestId).ToList().Count();
             sameTestTasksCount = sameTestTasksCount == 0 ? 1 : sameTestTasksCount + 1;
 
             if (task == null)
             {
-                task = new TestTask();
-                task.TestId = data.TestId;
-                task.Name = data.Name;
-                task.Mark = data.Mark;
-                task.OrderNumber = sameTestTasksCount;
-                task.IsFewAnswersCorrect = false;
+                task = new TestTask()
+                {
+                    TestId = data.TestId,
+                    Name = data.Name,
+                    Mark = data.Mark,
+                    OrderNumber = sameTestTasksCount,
+                    IsFewAnswersCorrect = data.IsFewAnswersCorrect
+                };                
 
                 _taskRepository.Add(task);
             }

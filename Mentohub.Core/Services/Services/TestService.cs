@@ -63,7 +63,7 @@ namespace Mentohub.Core.Services.Services
 
         public Test GetTest(int id)
         {
-            return _testRepository.GetTestById(id);
+            return _testRepository.GetById(id);
         }
 
         public Test GetTestByCourseItem(int courseItemId)
@@ -117,7 +117,7 @@ namespace Mentohub.Core.Services.Services
 
         public async Task<Test> RenameTest(int testId, string newName)
         {
-            Test test = _testRepository.GetTestById(testId);
+            Test test = _testRepository.GetById(testId);
             test.Name = newName;
 
             await _testRepository.UpdateAsync(test);
@@ -127,7 +127,7 @@ namespace Mentohub.Core.Services.Services
 
         public TestDTO Edit(TestDTO data)
         {
-            Test test = _testRepository.GetTestById(data.Id);
+            Test test = _testRepository.GetById(data.Id);
 
             var sameCourseItems = _courseItemRepository.GetAll()
                                                        .Where(x => x.CourseId == data.CourseID)

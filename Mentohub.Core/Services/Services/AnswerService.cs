@@ -51,7 +51,7 @@ namespace Mentohub.Core.Services.Services
 
         public TaskAnswer GetAnswer(int id)
         {
-            return _answerRepository.GetAnswerById(id);
+            return _answerRepository.GetById(id);
         }
 
         public async Task<bool> SavingAnswers(TestTask editedTask, Dictionary<string, bool> answers, string[] ids)
@@ -77,7 +77,7 @@ namespace Mentohub.Core.Services.Services
                     }
                     else
                     {
-                        TaskAnswer updateAnswer = _answerRepository.GetAnswerById(currentAnswerId);
+                        TaskAnswer updateAnswer = _answerRepository.GetById(currentAnswerId);
                         updateAnswer.Name = answer.Key;
                         updateAnswer.IsCorrect = answer.Value;
 
@@ -141,12 +141,12 @@ namespace Mentohub.Core.Services.Services
         public List<AnswerDTO> EditAnswers(List<AnswerDTO> answers)
         {
             List<AnswerDTO> result = new List<AnswerDTO>();
-            var task = _taskRepository.FirstOrDefault(x => x.Id == answers.First().TaskId);
+            var task = _taskRepository.GetById(answers.First().TaskId);
 
             int correctAnswersCnt = 0;
             foreach (var item in answers)
             {
-                var answer = _answerRepository.GetAnswerById(item.Id);
+                var answer = _answerRepository.GetById(item.Id);
                 if (answer != null)
                 {
                     answer.IsCorrect = item.IsChecked;

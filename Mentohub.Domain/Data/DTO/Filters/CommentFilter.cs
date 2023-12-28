@@ -10,6 +10,6 @@ namespace Mentohub.Domain.Data.DTO.Filters
     {
         public int CourseID { get; set; }
 
-        public int CommentsCount { get; set; } = 10;
+        public int CommentsCount { get; set; } = 4;
     }
 }

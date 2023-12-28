@@ -81,7 +81,7 @@ namespace Mentohub.Controllers
             {
                 var newTask = _taskService.Edit(data);
 
-                return Json(new { IsError = false, Data = newTask.Id, Message = "Success" });
+                return Json(new { IsError = false, Data = newTask, Message = "Success" });
             }
             catch (Exception ex)
             {
@@ -214,6 +214,11 @@ namespace Mentohub.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete task answer
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
         [HttpPost]
         public JsonResult DeleteAnswer(int ID)
         {
