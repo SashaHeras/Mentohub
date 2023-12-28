@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Mentohub.Core.Migrations
 {
-    public partial class InitialPostgres : Migration
+    public partial class InialPostgres : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -58,7 +58,7 @@ namespace Mentohub.Core.Migrations
                     LastName = table.Column<string>(type: "text", nullable: true),
                     Image = table.Column<string>(type: "text", nullable: true),
                     AboutMe = table.Column<string>(type: "text", nullable: true),
-                    DateOfBirth = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
                     UserName = table.Column<string>(type: "text", nullable: true),
                     NormalizedUserName = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: true),
@@ -220,23 +220,21 @@ namespace Mentohub.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CourseItem",
+                name: "CourseBlocks",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
+                    ID = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TypeId = table.Column<int>(type: "integer", nullable: false),
-                    CourseId = table.Column<int>(type: "integer", nullable: false),
-                    DateCreation = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    OrderNumber = table.Column<int>(type: "integer", nullable: false),
-                    StatusId = table.Column<int>(type: "integer", nullable: false)
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    CourseID = table.Column<int>(type: "integer", nullable: false),
+                    OrderNumber = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CourseItem", x => x.Id);
+                    table.PrimaryKey("PK_CourseBlocks", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_CourseItem_Courses_CourseId",
-                        column: x => x.CourseId,
+                        name: "FK_CourseBlocks_Courses_CourseID",
+                        column: x => x.CourseID,
                         principalTable: "Courses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -263,6 +261,36 @@ namespace Mentohub.Core.Migrations
                     table.ForeignKey(
                         name: "FK_CourseViews_Courses_CourseID",
                         column: x => x.CourseID,
+                        principalTable: "Courses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CourseItem",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TypeId = table.Column<int>(type: "integer", nullable: false),
+                    CourseId = table.Column<int>(type: "integer", nullable: false),
+                    CourseBlockID = table.Column<int>(type: "integer", nullable: false),
+                    DateCreation = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    OrderNumber = table.Column<int>(type: "integer", nullable: false),
+                    StatusId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CourseItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CourseItem_CourseBlocks_CourseBlockID",
+                        column: x => x.CourseBlockID,
+                        principalTable: "CourseBlocks",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CourseItem_Courses_CourseId",
+                        column: x => x.CourseId,
                         principalTable: "Courses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -473,6 +501,16 @@ namespace Mentohub.Core.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CourseBlocks_CourseID",
+                table: "CourseBlocks",
+                column: "CourseID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CourseItem_CourseBlockID",
+                table: "CourseItem",
+                column: "CourseBlockID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CourseItem_CourseId",
                 table: "CourseItem",
                 column: "CourseId");
@@ -593,6 +631,9 @@ namespace Mentohub.Core.Migrations
 
             migrationBuilder.DropTable(
                 name: "CourseItem");
+
+            migrationBuilder.DropTable(
+                name: "CourseBlocks");
 
             migrationBuilder.DropTable(
                 name: "Courses");

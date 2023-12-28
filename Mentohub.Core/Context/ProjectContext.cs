@@ -36,7 +36,9 @@ namespace Mentohub.Core.Context
 
         public DbSet<Comment> Comments { get; set; }
 
-        public DbSet<CourseViews> CourseViews { get; set; }        
+        public DbSet<CourseViews> CourseViews { get; set; }
+
+        public DbSet<CourseBlock> CourseBlocks { get; set; }
 
         public ProjectContext(DbContextOptions<ProjectContext> options) : base(options)
         {
@@ -55,6 +57,7 @@ namespace Mentohub.Core.Context
             modelBuilder.Entity<TaskHistory>().HasKey(c => c.Id);
             modelBuilder.Entity<TestHistory>().HasKey(c => c.Id);
             modelBuilder.Entity<Comment>().HasKey(c => c.Id);
+            modelBuilder.Entity<CourseBlock>().HasKey(c => c.ID);
             modelBuilder.Entity<CourseViews>().HasKey(c => c.ID);
             modelBuilder.Entity<IdentityUserLogin<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserToken<string>>().HasNoKey();
@@ -64,6 +67,16 @@ namespace Mentohub.Core.Context
                 .HasOne(t1 => t1.Course)
                 .WithMany(t2 => t2.Comments)
                 .HasForeignKey(t1 => t1.CourseId);
+
+            modelBuilder.Entity<CourseBlock>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.CourseBlocks)
+                .HasForeignKey(t1 => t1.CourseID);
+
+            modelBuilder.Entity<CourseItem>()
+                .HasOne(t1 => t1.CourseBlock)
+                .WithMany(t2 => t2.CourseItems)
+                .HasForeignKey(t1 => t1.CourseBlockID);
 
             modelBuilder.Entity<Comment>()
                 .HasOne(t1 => t1.User)

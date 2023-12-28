@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mentohub.Core.Migrations
 {
     [DbContext(typeof(ProjectContext))]
-    [Migration("20231226181408_InitialPostgres")]
-    partial class InitialPostgres
+    [Migration("20231228110734_InialPostgres")]
+    partial class InialPostgres
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,6 +23,31 @@ namespace Mentohub.Core.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseBlock", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("CourseID")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("OrderNumber")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CourseID");
+
+                    b.ToTable("CourseBlocks");
+                });
 
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseViews", b =>
                 {
@@ -63,7 +88,7 @@ namespace Mentohub.Core.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("DateOfBirth")
+                    b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
@@ -240,6 +265,9 @@ namespace Mentohub.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CourseBlockID")
+                        .HasColumnType("integer");
+
                     b.Property<int>("CourseId")
                         .HasColumnType("integer");
 
@@ -256,6 +284,8 @@ namespace Mentohub.Core.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CourseBlockID");
 
                     b.HasIndex("CourseId");
 
@@ -604,6 +634,17 @@ namespace Mentohub.Core.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseBlock", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Entities.Course", "Course")
+                        .WithMany("CourseBlocks")
+                        .HasForeignKey("CourseID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseViews", b =>
                 {
                     b.HasOne("Mentohub.Domain.Entities.Course", "Course")
@@ -682,6 +723,12 @@ namespace Mentohub.Core.Migrations
 
             modelBuilder.Entity("Mentohub.Domain.Entities.CourseItem", b =>
                 {
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseBlock", "CourseBlock")
+                        .WithMany("CourseItems")
+                        .HasForeignKey("CourseBlockID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Mentohub.Domain.Entities.Course", "Course")
                         .WithMany("CourseItems")
                         .HasForeignKey("CourseId")
@@ -689,6 +736,8 @@ namespace Mentohub.Core.Migrations
                         .IsRequired();
 
                     b.Navigation("Course");
+
+                    b.Navigation("CourseBlock");
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Entities.Lesson", b =>
@@ -773,6 +822,11 @@ namespace Mentohub.Core.Migrations
                     b.Navigation("Test");
                 });
 
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseBlock", b =>
+                {
+                    b.Navigation("CourseItems");
+                });
+
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CurrentUser", b =>
                 {
                     b.Navigation("Comments");
@@ -785,6 +839,8 @@ namespace Mentohub.Core.Migrations
             modelBuilder.Entity("Mentohub.Domain.Entities.Course", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("CourseBlocks");
 
                     b.Navigation("CourseItems");
 

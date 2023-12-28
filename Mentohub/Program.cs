@@ -59,6 +59,7 @@ internal class Program
         builder.Services.AddScoped<ICourseViewsRepository, CourseViewsRepository>();
         builder.Services.AddScoped<ICRUD_UserRepository, CRUD_UserRepository>();
         builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+        builder.Services.AddScoped<ICourseBlockRepository, CourseBlockRepository>();
         builder.Services.AddScoped<AllException>();
 
         builder.Services.AddScoped<IAnswerHistoryService, AnswerHistoryService>();
@@ -75,6 +76,7 @@ internal class Program
         builder.Services.AddScoped<ITestService, TestService>();
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<ICourseViewService, CourseViewService>();
+        builder.Services.AddScoped<ICourseBlockService, CourseBlockService>();
         builder.Services.AddTransient<IEmailSender, EmailSender>();
 
         builder.Services.AddEndpointsApiExplorer();

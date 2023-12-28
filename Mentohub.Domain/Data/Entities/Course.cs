@@ -38,6 +38,8 @@ namespace Mentohub.Domain.Entities
 
         public List<CourseViews> CourseViews { get; set; }
 
+        public List<CourseBlock> CourseBlocks { get; set; }
+
         public CourseDTO ToDTO()
         {
             return new CourseDTO
