@@ -108,11 +108,6 @@ namespace Mentohub.Core.Context
                 .WithMany(t2 => t2.AnswerHistory)
                 .HasForeignKey(t1 => t1.TaskHistoryId);
 
-            modelBuilder.Entity<CourseItem>()
-                .HasOne(t1 => t1.Course)
-                .WithMany(t2 => t2.CourseItems)
-                .HasForeignKey(t1 => t1.CourseId);
-
             modelBuilder.Entity<TestTask>()
                 .HasOne(c => c.Test)
                 .WithMany(p => p.TestTasks)

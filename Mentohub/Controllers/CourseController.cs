@@ -66,5 +66,23 @@ namespace Mentohub.Controllers
                 return Json(new { IsError = true, Message = ex.Message });
             }
         }
+
+        /// <summary>
+        /// Get list about what course contains
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult GetCourseInfoList(int ID)
+        {
+            try
+            {
+                return Json(_courseService.GetCourseInfoList(ID));
+            }
+            catch(Exception ex)
+            {
+                return Json(new { IsError = true, Message = ex.Message });
+            }
+        }
     }
 }

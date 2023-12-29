@@ -53,7 +53,8 @@ namespace Mentohub.Domain.Data.DTO.Mappers
                 Name = block.Name,
                 CourseID = block.CourseID,
                 OrderNumber = block.OrderNumber,
-                ID = block.ID
+                ID = block.ID,
+                CourseItems = new List<CourseElementDTO>()
             };
         }
     }

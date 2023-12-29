@@ -8,6 +8,7 @@ namespace Mentohub.Core.Repositories.Repositories
 {
     public class CourseItemRepository : Repository<CourseItem>, ICourseItemRepository
     {
+        #pragma warning disable 8603
         private readonly ProjectContext _context;
 
         public CourseItemRepository(ProjectContext repositoryContext) : base(repositoryContext)
@@ -41,7 +42,12 @@ namespace Mentohub.Core.Repositories.Repositories
 
         public CourseItem First(Expression<Func<CourseItem, bool>> expression)
         {
-            return GetAll(expression).Include(x => x.Course).FirstOrDefault();
+            return GetAll(expression)
+                .Include(x => x.Course)
+                .Include(x => x.Lesson)
+                .Include(x => x.Test)
+                .Include(x => x.CourseBlock)
+                .FirstOrDefault();
         }
     }
 }

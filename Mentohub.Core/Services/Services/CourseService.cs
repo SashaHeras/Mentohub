@@ -29,6 +29,7 @@ namespace Mentohub.Core.Services.Services
         private readonly ICourseItemRepository _courseItemRepository;
         private readonly ICourseTypeRepository _courseTypeRepository;
         private readonly ILessonRepository _lessonRepository;
+        private readonly ICourseBlockRepository _courseBlockRepository;
         private readonly ITestRepository _testRepository;
         private readonly ISubjectRepository _subjectRepository;
         private readonly ICommentRepository _commentRepository;
@@ -48,6 +49,7 @@ namespace Mentohub.Core.Services.Services
             ISubjectRepository subjectRepository,
             ICourseItemService courseItemService,
             ICourseViewService courseViewsService,
+            ICourseBlockRepository courseBlockRepository,
             IMediaService mediaService)
         {
             this._context = context;
@@ -61,6 +63,7 @@ namespace Mentohub.Core.Services.Services
             _courseViewsService = courseViewsService;
             _mediaService = mediaService;
             _subjectRepository = subjectRepository;
+            _courseBlockRepository = courseBlockRepository;
         }
 
         public async Task<CourseDTO> Edit(CourseDTO courseDTO)
@@ -305,6 +308,62 @@ namespace Mentohub.Core.Services.Services
                                            .ToList();
 
             return courses;
+        }
+
+        public List<CourseBlockDTO> GetCourseInfoList(int ID)
+        {
+            var course = _courseRepository.FirstOrDefault(x => x.Id == ID);
+            if(course == null)
+            {
+                throw new Exception("Unknown course!");
+            }
+
+            var itemsIdList = course.CourseItems.Select(x => x.Id).ToList();
+            var courseItems = _courseItemRepository.GetAll(x => itemsIdList.Contains(x.Id))
+                                                   .Include(x=>x.Test)
+                                                   .Include(x => x.Lesson)
+                                                   .ToList();
+
+            var blocks = course.CourseBlocks.Select(x => CourseMapper.ToDTO(x)).ToList();
+            foreach(var bl in blocks)
+            {
+                var currentBlockItems = courseItems.Where(x => x.CourseBlockID == bl.ID).ToList();
+                foreach(var item in currentBlockItems)
+                {
+                    if(item.Test != null)
+                    {
+                        bl.CourseItems.Add(new CourseElementDTO()
+                        {
+                            CourseItemId = item.Test.CourseItemId,
+                            TypeId = (int)e_ItemType.Test,
+                            CourseId = item.CourseId,
+                            DateCreation = item.DateCreation,
+                            OrderNumber = item.OrderNumber,
+                            ElementName = item.Test.Name
+                        });
+
+                        bl.TestCount++;
+                    }
+                    else if(item.Lesson != null)
+                    {
+                        bl.CourseItems.Add(new CourseElementDTO()
+                        {
+                            CourseItemId = item.Lesson.CourseItemId,
+                            TypeId = (int)e_ItemType.Lesson,
+                            CourseId = item.CourseId,
+                            DateCreation = item.DateCreation,
+                            OrderNumber = item.OrderNumber,
+                            ElementName = item.Lesson.Theme
+                        });
+
+                        bl.LessonsCount++;
+                    }
+                }
+            }
+
+            var result = blocks;
+
+            return result;
         }
     }
 }
