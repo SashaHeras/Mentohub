@@ -16,6 +16,11 @@ namespace Mentohub.Domain.Data.Entities.CourseEntities
 
         public string AuthorId { get; set; }
 
+        [MaxLength(200)]
+        public string ShortDescription { get; set; }
+
+        public string Description { get; set; }
+
         public bool Checked { get; set; }
 
         public double Rating { get; set; }

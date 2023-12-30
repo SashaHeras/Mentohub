@@ -88,28 +88,14 @@ namespace Mentohub.Core.Services.Services
                     Checked = false,
                     Rating = 0.00,
                     Price = courseDTO.Price,
+                    ShortDescription = courseDTO.ShortDescription,
+                    Description = courseDTO.Description,
                     CourseSubjectId = (int)courseDTO.CourseSubjectId,
                     LastEdittingDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
                     LanguageID = courseDTO.LanguageId
                 };
 
-                try
-                {
-                    currentCourse.PicturePath = await _mediaService.SaveFile(courseDTO.Picture);
-                }
-                catch(Exception ex)
-                {
-                    throw ex;
-                }
-
-                try
-                {
-                    currentCourse.PreviewVideoPath = await _mediaService.SaveFile(courseDTO.PreviewVideo);
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                await SaveFiles(currentCourse, courseDTO);
 
                 currentCourse.LoadPictureName = courseDTO.Picture.FileName;
                 currentCourse.LoadVideoName = courseDTO.PreviewVideo.FileName;
@@ -122,6 +108,8 @@ namespace Mentohub.Core.Services.Services
                 currentCourse.Checked = courseDTO.Checked;
                 currentCourse.Rating = courseDTO.Rating;
                 currentCourse.Price = courseDTO.Price;
+                currentCourse.Description = courseDTO.Description;
+                currentCourse.ShortDescription = courseDTO.ShortDescription;
                 currentCourse.LastEdittingDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
                 currentCourse.CourseSubjectId = courseDTO.CourseSubjectId;
                 currentCourse.LanguageID = courseDTO.LanguageId;
@@ -173,6 +161,14 @@ namespace Mentohub.Core.Services.Services
             }
 
             return result;
+        }
+
+        private async Task<bool> SaveFiles(Course currentCourse, CourseDTO courseDTO)
+        {
+            currentCourse.PicturePath = await _mediaService.SaveFile(courseDTO.Picture);
+            currentCourse.PreviewVideoPath = await _mediaService.SaveFile(courseDTO.PreviewVideo);
+
+            return true;
         }
 
         /// <summary>
@@ -393,7 +389,5 @@ namespace Mentohub.Core.Services.Services
 
             return result;
         }
-
-
     }
 }

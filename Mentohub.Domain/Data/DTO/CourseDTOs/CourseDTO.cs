@@ -21,6 +21,10 @@ namespace Mentohub.Domain.Data.DTO.CourseDTOs
 
         public int DefaultCourseItemId { get; set; }
 
+        public string ShortDescription { get; set; }
+
+        public string Description { get; set; }
+
         public string PicturePath { get; set; }
 
         public string PreviewVideoPath { get; set; }

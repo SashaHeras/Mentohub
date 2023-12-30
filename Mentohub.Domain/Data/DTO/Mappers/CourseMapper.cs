@@ -24,8 +24,11 @@ namespace Mentohub.Domain.Data.DTO.Mappers
                 PreviewVideoPath = course.PreviewVideoPath,
                 Checked = course.Checked,
                 Rating = course.Rating,
+                ShortDescription = course.ShortDescription,
+                Description = course.Description,
                 Price = course.Price,
                 CourseSubjectId = course.CourseSubjectId,
+                LanguageId = course.LanguageID ?? 0,
                 LastEdittingDate = course.LastEdittingDate,
                 Comments = course.Comments.Select(x=>ToDTO(x)).ToList(),
             };

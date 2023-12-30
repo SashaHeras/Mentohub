@@ -40,6 +40,10 @@ namespace Mentohub.Core.Migrations
                     b.Property<int>("CourseSubjectId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int?>("LanguageID")
                         .HasColumnType("integer");
 
@@ -68,6 +72,11 @@ namespace Mentohub.Core.Migrations
 
                     b.Property<double>("Rating")
                         .HasColumnType("double precision");
+
+                    b.Property<string>("ShortDescription")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.HasKey("Id");
 
