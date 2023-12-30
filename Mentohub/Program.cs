@@ -16,6 +16,8 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.Extensions.Configuration;
 using Mentohub.Core.Services;
+using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
+using Mentohub.Core.Repositories.Repositories.CourseRepositories;
 
 internal class Program
 {
@@ -61,6 +63,7 @@ internal class Program
         builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
         builder.Services.AddScoped<ICourseBlockRepository, CourseBlockRepository>();
         builder.Services.AddScoped<ICourseLanguageRepository, CourseLanguageRepository>();
+        builder.Services.AddScoped<ICourseOverviewRepository, CourseOverviewRepository>();        
         builder.Services.AddScoped<AllException>();
 
         builder.Services.AddScoped<IAnswerHistoryService, AnswerHistoryService>();

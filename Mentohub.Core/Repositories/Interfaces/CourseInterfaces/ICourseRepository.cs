@@ -1,8 +1,9 @@
 ﻿using Mentohub.Core.Infrastructure;
+using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 
-namespace Mentohub.Core.Repositories.Intefaces
+namespace Mentohub.Core.Repositories.Interfaces.CourseInterfaces
 {
     public interface ICourseRepository : ISingletoneService, IRepository<Course>
     {

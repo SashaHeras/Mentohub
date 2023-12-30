@@ -1,14 +1,14 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Intefaces;
-using Mentohub.Core.Repositories.Interfaces;
+using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Mentohub.Core.Repositories.Repositories
+namespace Mentohub.Core.Repositories.Repositories.CourseRepositories
 {
     public class CourseLanguageRepository : Repository<CourseLanguage>, ICourseLanguageRepository
     {
-        #pragma warning disable 8603
+#pragma warning disable 8603
         public CourseLanguageRepository(ProjectContext repositoryContext) : base(repositoryContext)
         {
 

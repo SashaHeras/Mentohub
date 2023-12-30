@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mentohub.Core.Repositories.Interfaces
+namespace Mentohub.Core.Repositories.Interfaces.CourseInterfaces
 {
     public interface ICourseViewsRepository : ISingletoneService, IRepository<CourseViews>
     {

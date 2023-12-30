@@ -1,4 +1,5 @@
 ﻿using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Models;

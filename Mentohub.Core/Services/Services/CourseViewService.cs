@@ -1,5 +1,5 @@
-﻿using Mentohub.Core.Repositories.Intefaces;
-using Mentohub.Core.Repositories.Interfaces;
+﻿using Mentohub.Core.Repositories.Interfaces;
+using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO.Helpers;
 using Mentohub.Domain.Data.Entities.CourseEntities;

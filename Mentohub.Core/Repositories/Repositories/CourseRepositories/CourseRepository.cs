@@ -1,14 +1,14 @@
 ﻿using Mentohub.Core.Context;
-using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace Mentohub.Core.Repositories.Repositories
+namespace Mentohub.Core.Repositories.Repositories.CourseRepositories
 {
     public class CourseRepository : Repository<Course>, ICourseRepository
     {
-        #pragma warning disable 8603
+#pragma warning disable 8603
         private readonly ProjectContext _context;
 
         public CourseRepository(ProjectContext repositoryContext) : base(repositoryContext)

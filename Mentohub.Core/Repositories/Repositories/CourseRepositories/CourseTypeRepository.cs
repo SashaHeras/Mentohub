@@ -1,13 +1,13 @@
 ﻿using Mentohub.Core.Context;
-using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 
-namespace Mentohub.Core.Repositories.Repositories
+namespace Mentohub.Core.Repositories.Repositories.CourseRepositories
 {
     public class CourseTypeRepository : Repository<CourseItemType>, ICourseTypeRepository
     {
         private readonly ProjectContext _context;
-        
+
         public CourseTypeRepository(ProjectContext repositoryContext) : base(repositoryContext)
         {
             _context = repositoryContext;
