@@ -1,4 +1,4 @@
-﻿using Mentohub.Domain.Data.DTO;
+﻿using Mentohub.Domain.Data.DTO.CourseDTOs;
 
 namespace Mentohub.Domain.Data.Entities.CourseEntities
 {

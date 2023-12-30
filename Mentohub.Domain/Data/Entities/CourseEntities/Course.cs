@@ -1,4 +1,4 @@
-﻿using Mentohub.Domain.Data.DTO;
+﻿using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Mentohub.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 

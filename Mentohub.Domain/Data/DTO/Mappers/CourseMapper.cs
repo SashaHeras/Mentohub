@@ -1,4 +1,5 @@
-﻿using Mentohub.Domain.Data.DTO.Helpers;
+﻿using Mentohub.Domain.Data.DTO.CourseDTOs;
+using Mentohub.Domain.Data.DTO.Helpers;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Entities;
 using System;
@@ -64,6 +65,17 @@ namespace Mentohub.Domain.Data.DTO.Mappers
             {
                 Name = lang.Name,
                 ID = lang.Id
+            };
+        }
+
+        public static CourseOverviewDTO ToDTO(CourseOverview overview)
+        {
+            return new CourseOverviewDTO()
+            {
+                ID = overview.ID,
+                Title = overview.Title,
+                CourseID = overview.CourseID,
+                Description = overview.Description,
             };
         }
     }

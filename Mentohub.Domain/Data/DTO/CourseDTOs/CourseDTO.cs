@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mentohub.Domain.Data.DTO
+namespace Mentohub.Domain.Data.DTO.CourseDTOs
 {
     public class CourseDTO
     {

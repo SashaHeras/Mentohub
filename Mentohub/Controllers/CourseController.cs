@@ -1,9 +1,9 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Core.Services.Services;
-using Mentohub.Domain.Data.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Mentohub.Core.Services.Interfaces;
 using Microsoft.Azure.Amqp.Framing;
+using Mentohub.Domain.Data.DTO.CourseDTOs;
 
 namespace Mentohub.Controllers
 {

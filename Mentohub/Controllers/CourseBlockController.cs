@@ -1,6 +1,6 @@
 ﻿using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Services;
-using Mentohub.Domain.Data.DTO;
+using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Amqp.Framing;
 

@@ -81,6 +81,7 @@ internal class Program
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<ICourseViewService, CourseViewService>();
         builder.Services.AddScoped<ICourseBlockService, CourseBlockService>();
+        builder.Services.AddScoped<IOverviewService, OverviewService>();
         builder.Services.AddTransient<IEmailSender, EmailSender>();
 
         builder.Services.AddEndpointsApiExplorer();

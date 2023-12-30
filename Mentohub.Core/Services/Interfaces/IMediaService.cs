@@ -1,5 +1,5 @@
 ﻿using Mentohub.Core.Services.Services;
-using Mentohub.Domain.Data.DTO;
+using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;

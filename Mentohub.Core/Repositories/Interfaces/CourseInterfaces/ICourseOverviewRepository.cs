@@ -13,6 +13,6 @@ namespace Mentohub.Core.Repositories.Interfaces.CourseInterfaces
     {
         public CourseOverview FindById(int id);
 
-        public List<CourseOverview> GetCourseOverviews(int courseID);
+        public IQueryable<CourseOverview> GetCourseOverviews(int courseID);
     }
 }

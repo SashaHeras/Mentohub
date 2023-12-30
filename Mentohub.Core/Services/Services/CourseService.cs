@@ -9,6 +9,7 @@ using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
+using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Mentohub.Domain.Data.DTO.Helpers;
 using Mentohub.Domain.Data.DTO.Mappers;
 using Mentohub.Domain.Data.Entities.CourseEntities;
@@ -392,5 +393,7 @@ namespace Mentohub.Core.Services.Services
 
             return result;
         }
+
+
     }
 }

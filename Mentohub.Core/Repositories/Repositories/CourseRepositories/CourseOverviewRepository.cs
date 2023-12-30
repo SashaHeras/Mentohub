@@ -25,11 +25,10 @@ namespace Mentohub.Core.Repositories.Repositories.CourseRepositories
                            .FirstOrDefault();
         }
 
-        public List<CourseOverview> GetCourseOverviews(int courseID)
+        public IQueryable<CourseOverview> GetCourseOverviews(int courseID)
         {
             return GetAll().Where(x => x.CourseID == courseID)
-                           .Include(x => x.Course)
-                           .ToList();
+                           .Include(x => x.Course);
         }
     }
 }

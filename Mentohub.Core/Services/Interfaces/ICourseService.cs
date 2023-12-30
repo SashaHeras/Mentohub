@@ -1,5 +1,6 @@
 ﻿using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
+using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
