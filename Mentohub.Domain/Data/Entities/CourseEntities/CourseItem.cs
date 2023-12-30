@@ -1,6 +1,6 @@
-﻿using Mentohub.Domain.Data.Entities;
+﻿using Mentohub.Domain.Entities;
 
-namespace Mentohub.Domain.Entities
+namespace Mentohub.Domain.Data.Entities.CourseEntities
 {
     public class CourseItem
     {
@@ -16,7 +16,7 @@ namespace Mentohub.Domain.Entities
         public int OrderNumber { get; set; }
 
         public int StatusId { get; set; }
-        
+
         public Course Course { get; set; }
 
         public CourseBlock CourseBlock { get; set; }

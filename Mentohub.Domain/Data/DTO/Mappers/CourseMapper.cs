@@ -1,5 +1,5 @@
 ﻿using Mentohub.Domain.Data.DTO.Helpers;
-using Mentohub.Domain.Data.Entities;
+using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Entities;
 using System;
 using System.Collections.Generic;

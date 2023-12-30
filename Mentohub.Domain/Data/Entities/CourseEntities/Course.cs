@@ -1,8 +1,8 @@
 ﻿using Mentohub.Domain.Data.DTO;
-using Mentohub.Domain.Data.Entities;
+using Mentohub.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace Mentohub.Domain.Entities
+namespace Mentohub.Domain.Data.Entities.CourseEntities
 {
     public class Course
     {
@@ -42,6 +42,8 @@ namespace Mentohub.Domain.Entities
 
         public List<CourseBlock> CourseBlocks { get; set; }
 
+        public List<CourseOverview> CourseOverviews { get; set; }
+
         public CourseLanguage Language { get; set; }
 
         public CourseDTO ToDTO()
@@ -58,6 +60,6 @@ namespace Mentohub.Domain.Entities
                 Price = Price,
                 LastEdittingDate = LastEdittingDate
             };
-        }        
+        }
     }
 }

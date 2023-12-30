@@ -1,4 +1,5 @@
 ﻿using Mentohub.Domain.Data.Entities;
+using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -18,14 +19,6 @@ namespace Mentohub.Core.Context
 
         public DbSet<TestTask> TestTasks { get; set; }
 
-        public DbSet<Course> Courses { get; set; }
-
-        public DbSet<CourseSubject> CourseSubjects { get; set; }
-
-        public DbSet<CourseItem> CourseItem { get; set; }
-
-        public DbSet<CourseItemType> CourseItemTypes { get; set; }
-
         public DbSet<TestHistory> TestHistory { get; set; }
 
         public DbSet<TaskHistory> TaskHistory { get; set; }
@@ -36,11 +29,25 @@ namespace Mentohub.Core.Context
 
         public DbSet<Comment> Comments { get; set; }
 
+        #region Course
+
+        public DbSet<Course> Courses { get; set; }
+
+        public DbSet<CourseSubject> CourseSubjects { get; set; }
+
+        public DbSet<CourseItem> CourseItem { get; set; }
+
+        public DbSet<CourseItemType> CourseItemTypes { get; set; }
+
         public DbSet<CourseViews> CourseViews { get; set; }
 
         public DbSet<CourseBlock> CourseBlocks { get; set; }
 
         public DbSet<CourseLanguage> CourseLanguages { get; set; }
+
+        public DbSet<CourseOverview> CourseOverviews { get; set; }
+
+        #endregion
 
         public ProjectContext(DbContextOptions<ProjectContext> options) : base(options)
         {
@@ -62,6 +69,7 @@ namespace Mentohub.Core.Context
             modelBuilder.Entity<CourseBlock>().HasKey(c => c.ID);
             modelBuilder.Entity<CourseViews>().HasKey(c => c.ID);
             modelBuilder.Entity<CourseLanguage>().HasKey(c => c.Id);
+            modelBuilder.Entity<CourseOverview>().HasKey(c => c.ID);
             modelBuilder.Entity<IdentityUserLogin<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserToken<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserRole<string>>().HasKey(ur => new { ur.UserId, ur.RoleId });
@@ -156,6 +164,12 @@ namespace Mentohub.Core.Context
                 .WithMany(t2 => t2.Courses)
                 .HasForeignKey(x => x.LanguageID)
                 .IsRequired(false);
+
+            modelBuilder.Entity<CourseOverview>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.CourseOverviews)
+                .HasForeignKey(x => x.CourseID)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("AspNetUserRoles");
             modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("AspNetUserLogins");

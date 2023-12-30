@@ -1,4 +1,4 @@
-﻿using Mentohub.Domain.Data.Entities;
+﻿using Mentohub.Domain.Data.Entities.CourseEntities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

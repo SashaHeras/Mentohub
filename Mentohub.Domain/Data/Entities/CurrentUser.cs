@@ -1,4 +1,5 @@
-﻿using Mentohub.Domain.Data.Entities.Interfaces;
+﻿using Mentohub.Domain.Data.Entities.CourseEntities;
+using Mentohub.Domain.Data.Entities.Interfaces;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;

@@ -3,7 +3,7 @@ using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
-using Mentohub.Domain.Entities;
+using Mentohub.Domain.Data.Entities.CourseEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mentohub.Core.Services.Services

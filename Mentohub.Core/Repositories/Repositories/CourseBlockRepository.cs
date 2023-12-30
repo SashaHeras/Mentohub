@@ -1,7 +1,7 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Interfaces;
-using Mentohub.Domain.Data.Entities;
+using Mentohub.Domain.Data.Entities.CourseEntities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

@@ -4,6 +4,7 @@ using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.Mappers;
 using Mentohub.Domain.Data.Entities;
+using Mentohub.Domain.Data.Entities.CourseEntities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

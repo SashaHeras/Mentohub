@@ -1,5 +1,5 @@
 ﻿using Mentohub.Core.Infrastructure;
-using Mentohub.Domain.Entities;
+using Mentohub.Domain.Data.Entities.CourseEntities;
 
 namespace Mentohub.Core.Repositories.Intefaces
 {

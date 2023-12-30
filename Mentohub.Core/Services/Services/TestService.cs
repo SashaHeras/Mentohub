@@ -5,6 +5,7 @@ using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.Test;
+using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Data.Enums;
 using Mentohub.Domain.Entities;
 using System.Threading.Tasks;

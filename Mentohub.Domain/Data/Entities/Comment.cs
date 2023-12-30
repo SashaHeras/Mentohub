@@ -1,4 +1,5 @@
 ﻿using Mentohub.Domain.Data.Entities;
+using Mentohub.Domain.Data.Entities.CourseEntities;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 

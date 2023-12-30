@@ -1,6 +1,6 @@
 ﻿using Mentohub.Domain.Data.DTO;
 
-namespace Mentohub.Domain.Entities
+namespace Mentohub.Domain.Data.Entities.CourseEntities
 {
     public class CourseSubject
     {

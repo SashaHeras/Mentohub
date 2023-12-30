@@ -1,6 +1,6 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Intefaces;
-using Mentohub.Domain.Entities;
+using Mentohub.Domain.Data.Entities.CourseEntities;
 
 namespace Mentohub.Core.Repositories.Repositories
 {
