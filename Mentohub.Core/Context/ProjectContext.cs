@@ -40,6 +40,8 @@ namespace Mentohub.Core.Context
 
         public DbSet<CourseBlock> CourseBlocks { get; set; }
 
+        public DbSet<CourseLanguage> CourseLanguages { get; set; }
+
         public ProjectContext(DbContextOptions<ProjectContext> options) : base(options)
         {
 
@@ -59,6 +61,7 @@ namespace Mentohub.Core.Context
             modelBuilder.Entity<Comment>().HasKey(c => c.Id);
             modelBuilder.Entity<CourseBlock>().HasKey(c => c.ID);
             modelBuilder.Entity<CourseViews>().HasKey(c => c.ID);
+            modelBuilder.Entity<CourseLanguage>().HasKey(c => c.Id);
             modelBuilder.Entity<IdentityUserLogin<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserToken<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserRole<string>>().HasKey(ur => new { ur.UserId, ur.RoleId });
@@ -147,6 +150,12 @@ namespace Mentohub.Core.Context
                 .HasOne(t1 => t1.Author)
                 .WithMany(t2 => t2.Courses)
                 .HasForeignKey(x => x.AuthorId);
+
+            modelBuilder.Entity<Course>()
+                .HasOne(t1 => t1.Language)
+                .WithMany(t2 => t2.Courses)
+                .HasForeignKey(x => x.LanguageID)
+                .IsRequired(false);
 
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("AspNetUserRoles");
             modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("AspNetUserLogins");

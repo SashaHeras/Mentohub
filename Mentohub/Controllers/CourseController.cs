@@ -22,11 +22,11 @@ namespace Mentohub.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult Edit(CourseDTO data)
+        public JsonResult Apply(CourseDTO data)
         {
             try
             {
-                var course = _courseService.Edit(data);
+                var course = _courseService.Apply(data);
                 return Json(new { IsError = false, Data = course, Message = "Success" });
             }
             catch (Exception ex)

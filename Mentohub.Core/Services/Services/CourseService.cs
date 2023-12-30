@@ -33,6 +33,7 @@ namespace Mentohub.Core.Services.Services
         private readonly ITestRepository _testRepository;
         private readonly ISubjectRepository _subjectRepository;
         private readonly ICommentRepository _commentRepository;
+        private readonly ICourseLanguageRepository _courseLanguageRepository;
 
         private readonly IMediaService _mediaService;
         private readonly ICourseItemService _courseItemService;
@@ -50,6 +51,7 @@ namespace Mentohub.Core.Services.Services
             ICourseItemService courseItemService,
             ICourseViewService courseViewsService,
             ICourseBlockRepository courseBlockRepository,
+            ICourseLanguageRepository courseLanguageRepository,
             IMediaService mediaService)
         {
             this._context = context;
@@ -64,10 +66,17 @@ namespace Mentohub.Core.Services.Services
             _mediaService = mediaService;
             _subjectRepository = subjectRepository;
             _courseBlockRepository = courseBlockRepository;
+            _courseLanguageRepository = courseLanguageRepository;
         }
 
-        public async Task<CourseDTO> Edit(CourseDTO courseDTO)
+        public async Task<CourseDTO> Apply(CourseDTO courseDTO)
         {
+            var lang = _courseLanguageRepository.FindById(courseDTO.LanguageId);
+            if(lang == null)
+            {
+                throw new Exception("Unknown language!");
+            }
+
             var currentCourse = _courseRepository.FirstOrDefault(x => x.Id == courseDTO.Id);
             if(currentCourse == null)
             {
@@ -79,7 +88,8 @@ namespace Mentohub.Core.Services.Services
                     Rating = 0.00,
                     Price = courseDTO.Price,
                     CourseSubjectId = (int)courseDTO.CourseSubjectId,
-                    LastEdittingDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc)
+                    LastEdittingDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
+                    LanguageID = courseDTO.LanguageId
                 };
 
                 try
@@ -113,7 +123,26 @@ namespace Mentohub.Core.Services.Services
                 currentCourse.Price = courseDTO.Price;
                 currentCourse.LastEdittingDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
                 currentCourse.CourseSubjectId = courseDTO.CourseSubjectId;
-                            
+                currentCourse.LanguageID = courseDTO.LanguageId;
+
+                await SaveOrDeleteCourseMedia(currentCourse, courseDTO);
+
+                _courseRepository.Update(currentCourse);
+            }
+
+            courseDTO.Id = currentCourse.Id;
+            courseDTO.LoadVideoName = currentCourse.LoadVideoName;
+            courseDTO.LoadPictureName = currentCourse.LoadPictureName;
+            courseDTO.LastEdittingDate = currentCourse.LastEdittingDate;
+
+            return courseDTO;
+        }
+
+        private async Task<bool> SaveOrDeleteCourseMedia(Course currentCourse, CourseDTO courseDTO)
+        {
+            bool result = true;
+            try
+            {
                 if (currentCourse.LoadPictureName == null || courseDTO.Picture.FileName != currentCourse.LoadPictureName)
                 {
                     if (currentCourse.LoadPictureName == null)
@@ -135,16 +164,14 @@ namespace Mentohub.Core.Services.Services
                     currentCourse.PreviewVideoPath = await _mediaService.SaveFile(courseDTO.PreviewVideo);
                     currentCourse.LoadVideoName = courseDTO.PreviewVideo.FileName;
                 }
-
-                _courseRepository.Update(currentCourse);
+            }
+            catch(Exception ex)
+            {
+                result = false;
+                throw ex;
             }
 
-            courseDTO.Id = currentCourse.Id;
-            courseDTO.LoadVideoName = currentCourse.LoadVideoName;
-            courseDTO.LoadPictureName = currentCourse.LoadPictureName;
-            courseDTO.LastEdittingDate = currentCourse.LastEdittingDate;
-
-            return courseDTO;
+            return result;
         }
 
         /// <summary>

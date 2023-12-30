@@ -24,6 +24,8 @@ namespace Mentohub.Domain.Entities
 
         public int CourseSubjectId { get; set; }
 
+        public int? LanguageID { get; set; }
+
         public string? LoadVideoName { get; set; }
 
         public string? LoadPictureName { get; set; }
@@ -39,6 +41,8 @@ namespace Mentohub.Domain.Entities
         public List<CourseViews> CourseViews { get; set; }
 
         public List<CourseBlock> CourseBlocks { get; set; }
+
+        public CourseLanguage Language { get; set; }
 
         public CourseDTO ToDTO()
         {

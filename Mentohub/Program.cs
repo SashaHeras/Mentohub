@@ -60,6 +60,7 @@ internal class Program
         builder.Services.AddScoped<ICRUD_UserRepository, CRUD_UserRepository>();
         builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
         builder.Services.AddScoped<ICourseBlockRepository, CourseBlockRepository>();
+        builder.Services.AddScoped<ICourseLanguageRepository, CourseLanguageRepository>();
         builder.Services.AddScoped<AllException>();
 
         builder.Services.AddScoped<IAnswerHistoryService, AnswerHistoryService>();

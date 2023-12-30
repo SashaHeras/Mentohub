@@ -57,5 +57,14 @@ namespace Mentohub.Domain.Data.DTO.Mappers
                 CourseItems = new List<CourseElementDTO>()
             };
         }
+
+        public static LanguageDTO ToDTO(CourseLanguage lang)
+        {
+            return new LanguageDTO()
+            {
+                Name = lang.Name,
+                ID = lang.Id
+            };
+        }
     }
 }

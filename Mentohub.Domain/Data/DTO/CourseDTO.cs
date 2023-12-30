@@ -30,6 +30,7 @@ namespace Mentohub.Domain.Data.DTO
         public IFormFile PreviewVideo { get; set; }
 
         public string AuthorId { get; set; }
+
         public string AuthorName { get; set; }
 
         public string LoadPictureName { get; set; }
@@ -42,11 +43,15 @@ namespace Mentohub.Domain.Data.DTO
 
         public int CourseSubjectId { get; set; }
 
+        public List<CourseSubjectDTO> SubjectsList { get; set; }
+
+        public int LanguageId { get; set; }
+
+        public List<LanguageDTO> LanguageList { get; set; }
+
         public DateTime LastEdittingDate { get; set; }
 
         public List<CommentDTO> Comments { get; set; }
-
-        public List<CourseSubjectDTO> SubjectsList { get; set; }
 
         public List<CourseElementDTO> CourseElementsList { get; set; }
     }

@@ -20,7 +20,7 @@ namespace Mentohub.Core.Services.Interfaces
 
         List<CommentDTO> GetCourseComments(int courseID, int count = 10);
 
-        Task<CourseDTO> Edit(CourseDTO courseDTO);
+        Task<CourseDTO> Apply(CourseDTO courseDTO);
 
         List<CourseDTO> MostFamoustList();
 

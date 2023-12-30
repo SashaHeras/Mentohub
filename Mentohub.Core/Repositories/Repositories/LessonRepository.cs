@@ -15,11 +15,6 @@ namespace Mentohub.Core.Repositories.Repositories
             _context = repositoryContext;
         }
 
-        /// <summary>
-        /// Method return Lesson by it`s CourseItemId
-        /// </summary>
-        /// <param name="courseItemId"></param>
-        /// <returns></returns>
         public Lesson GetLessonByCourseItemId(int courseItemId)
         {
             return GetAll().Where(l => l.CourseItemId == courseItemId).FirstOrDefault();

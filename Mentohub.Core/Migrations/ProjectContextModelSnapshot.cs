@@ -47,6 +47,23 @@ namespace Mentohub.Core.Migrations
                     b.ToTable("CourseBlocks");
                 });
 
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseLanguage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CourseLanguages");
+                });
+
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseViews", b =>
                 {
                     b.Property<Guid>("ID")
@@ -222,6 +239,9 @@ namespace Mentohub.Core.Migrations
                     b.Property<int>("CourseSubjectId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("LanguageID")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("LastEdittingDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -251,6 +271,8 @@ namespace Mentohub.Core.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("LanguageID");
 
                     b.ToTable("Courses");
                 });
@@ -716,7 +738,13 @@ namespace Mentohub.Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseLanguage", "Language")
+                        .WithMany("Courses")
+                        .HasForeignKey("LanguageID");
+
                     b.Navigation("Author");
+
+                    b.Navigation("Language");
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Entities.CourseItem", b =>
@@ -823,6 +851,11 @@ namespace Mentohub.Core.Migrations
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseBlock", b =>
                 {
                     b.Navigation("CourseItems");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseLanguage", b =>
+                {
+                    b.Navigation("Courses");
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CurrentUser", b =>
