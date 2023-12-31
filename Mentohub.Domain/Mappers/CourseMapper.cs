@@ -1,7 +1,8 @@
-﻿using Mentohub.Domain.Data.DTO.CourseDTOs;
-using Mentohub.Domain.Data.DTO.Helpers;
+﻿using Mentohub.Domain.Data.DTO;
+using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Entities;
+using Mentohub.Domain.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace Mentohub.Domain.Data.DTO.Mappers
+namespace Mentohub.Domain.Mappers
 {
     public static class CourseMapper
     {
@@ -30,7 +31,7 @@ namespace Mentohub.Domain.Data.DTO.Mappers
                 CourseSubjectId = course.CourseSubjectId,
                 LanguageId = course.LanguageID ?? 0,
                 LastEdittingDate = course.LastEdittingDate,
-                Comments = course.Comments.Select(x=>ToDTO(x)).ToList(),
+                Comments = course.Comments.Select(x => ToDTO(x)).ToList(),
             };
         }
 

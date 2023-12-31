@@ -1,7 +1,7 @@
 ﻿using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
-using Mentohub.Domain.Data.DTO.Filters;
 using Mentohub.Domain.Data.DTO.Helpers;
+using Mentohub.Domain.Data.Filters;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mentohub.Controllers

@@ -2,8 +2,8 @@
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
-using Mentohub.Domain.Data.DTO.Filters;
-using Mentohub.Domain.Data.DTO.Helpers;
+using Mentohub.Domain.Data.Filters;
+using Mentohub.Domain.Data.Helpers;
 using Mentohub.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;

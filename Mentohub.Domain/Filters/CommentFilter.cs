@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mentohub.Domain.Data.DTO.Filters
+namespace Mentohub.Domain.Filters
 {
     public class CommentFilter
     {

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Mentohub.Core.Services;
 using Microsoft.AspNetCore.SignalR;
 using Mentohub.Core.Services.Interfaces;
-using Mentohub.Domain.Data.DTO.Helpers;
+using Mentohub.Domain.Data.Helpers;
 
 namespace Mentohub.Core.Repositories.Repositories
 {

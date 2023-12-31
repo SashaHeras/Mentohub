@@ -1,5 +1,5 @@
 ﻿using Mentohub.Domain.Data.DTO;
-using Mentohub.Domain.Data.DTO.Filters;
+using Mentohub.Domain.Data.Filters;
 using Mentohub.Domain.Entities;
 using System;
 using System.Collections.Generic;

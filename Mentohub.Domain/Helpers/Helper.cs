@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mentohub.Domain.Data.DTO.Helpers
+namespace Mentohub.Domain.Helpers
 {
     public static class Helper
     {
