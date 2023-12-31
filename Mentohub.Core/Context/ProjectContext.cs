@@ -74,35 +74,10 @@ namespace Mentohub.Core.Context
             modelBuilder.Entity<IdentityUserToken<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserRole<string>>().HasKey(ur => new { ur.UserId, ur.RoleId });
 
-            modelBuilder.Entity<Comment>()
-                .HasOne(t1 => t1.Course)
-                .WithMany(t2 => t2.Comments)
-                .HasForeignKey(t1 => t1.CourseId);
-
-            modelBuilder.Entity<CourseBlock>()
-                .HasOne(t1 => t1.Course)
-                .WithMany(t2 => t2.CourseBlocks)
-                .HasForeignKey(t1 => t1.CourseID);
-
-            modelBuilder.Entity<CourseItem>()
-                .HasOne(t1 => t1.CourseBlock)
-                .WithMany(t2 => t2.CourseItems)
-                .HasForeignKey(t1 => t1.CourseBlockID);
-
-            modelBuilder.Entity<Comment>()
-                .HasOne(t1 => t1.User)
-                .WithMany(t2 => t2.Comments)
-                .HasForeignKey(t1 => t1.UserId);
-
             modelBuilder.Entity<TestHistory>()
                 .HasOne(t1 => t1.Test)
                 .WithMany(t2 => t2.TestHistory)
                 .HasForeignKey(t1 => t1.TestId);
-
-            modelBuilder.Entity<CourseItem>()
-                .HasOne(t1 => t1.Course)
-                .WithMany(t2 => t2.CourseItems)
-                .HasForeignKey(t1 => t1.CourseId);
 
             modelBuilder.Entity<TaskHistory>()
                 .HasOne(t1 => t1.TestHistory)
@@ -144,6 +119,8 @@ namespace Mentohub.Core.Context
                 .WithMany(t2 => t2.AnswerHistory)
                 .HasForeignKey(t1 => t1.AnswerId);
 
+            #region Course
+
             modelBuilder.Entity<CourseViews>()
                 .HasOne(t1 => t1.Course)
                 .WithMany(t2 => t2.CourseViews)
@@ -170,6 +147,51 @@ namespace Mentohub.Core.Context
                 .WithMany(t2 => t2.CourseOverviews)
                 .HasForeignKey(x => x.CourseID)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CourseTag>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.CourseTags)
+                .HasForeignKey(x => x.CourseID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CourseTag>()
+                .HasOne(t1 => t1.Tag)
+                .WithMany(t2 => t2.CourseTags)
+                .HasForeignKey(x => x.TagID)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Tag>()
+                .HasOne(t1 => t1.User)
+                .WithMany(t2 => t2.Tags)
+                .HasForeignKey(x => x.UserID)
+                .IsRequired(false);
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.Comments)
+                .HasForeignKey(t1 => t1.CourseId);
+
+            modelBuilder.Entity<CourseBlock>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.CourseBlocks)
+                .HasForeignKey(t1 => t1.CourseID);
+
+            modelBuilder.Entity<CourseItem>()
+                .HasOne(t1 => t1.CourseBlock)
+                .WithMany(t2 => t2.CourseItems)
+                .HasForeignKey(t1 => t1.CourseBlockID);
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(t1 => t1.User)
+                .WithMany(t2 => t2.Comments)
+                .HasForeignKey(t1 => t1.UserId);
+
+            modelBuilder.Entity<CourseItem>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.CourseItems)
+                .HasForeignKey(t1 => t1.CourseId);
+
+            #endregion
 
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("AspNetUserRoles");
             modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("AspNetUserLogins");

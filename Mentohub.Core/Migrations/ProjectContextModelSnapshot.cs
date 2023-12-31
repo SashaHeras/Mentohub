@@ -224,6 +224,27 @@ namespace Mentohub.Core.Migrations
                     b.ToTable("CourseSubjects");
                 });
 
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseTag", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CourseID")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TagID")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CourseID");
+
+                    b.HasIndex("TagID");
+
+                    b.ToTable("CourseTag");
+                });
+
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseViews", b =>
                 {
                     b.Property<Guid>("ID")
@@ -247,6 +268,34 @@ namespace Mentohub.Core.Migrations
                     b.HasIndex("UserID");
 
                     b.ToTable("CourseViews");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.Tag", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserID")
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CurrentUser", b =>
@@ -747,6 +796,25 @@ namespace Mentohub.Core.Migrations
                     b.Navigation("Course");
                 });
 
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseTag", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.Course", "Course")
+                        .WithMany("CourseTags")
+                        .HasForeignKey("CourseID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.Tag", "Tag")
+                        .WithMany("CourseTags")
+                        .HasForeignKey("TagID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Tag");
+                });
+
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseViews", b =>
                 {
                     b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.Course", "Course")
@@ -762,6 +830,15 @@ namespace Mentohub.Core.Migrations
                         .IsRequired();
 
                     b.Navigation("Course");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.Tag", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Data.Entities.CurrentUser", "User")
+                        .WithMany("Tags")
+                        .HasForeignKey("UserID");
 
                     b.Navigation("User");
                 });
@@ -904,6 +981,8 @@ namespace Mentohub.Core.Migrations
 
                     b.Navigation("CourseOverviews");
 
+                    b.Navigation("CourseTags");
+
                     b.Navigation("CourseViews");
                 });
 
@@ -926,6 +1005,11 @@ namespace Mentohub.Core.Migrations
                     b.Navigation("Courses");
                 });
 
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.Tag", b =>
+                {
+                    b.Navigation("CourseTags");
+                });
+
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CurrentUser", b =>
                 {
                     b.Navigation("Comments");
@@ -933,6 +1017,8 @@ namespace Mentohub.Core.Migrations
                     b.Navigation("CourseViews");
 
                     b.Navigation("Courses");
+
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Entities.TaskAnswer", b =>

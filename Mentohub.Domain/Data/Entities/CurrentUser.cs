@@ -28,6 +28,9 @@ namespace Mentohub.Domain.Data.Entities
         public List<CourseViews> CourseViews { get; set; }
 
         public List<Comment> Comments { get; set; }
+
         public List<Course> Courses { get; set; }
+
+        public ICollection<Tag> Tags { get; set; }
     }
 }
