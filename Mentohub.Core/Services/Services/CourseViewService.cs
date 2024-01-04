@@ -2,7 +2,7 @@
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.Entities.CourseEntities;
-using Mentohub.Domain.Data.Helpers;
+using Mentohub.Domain.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
