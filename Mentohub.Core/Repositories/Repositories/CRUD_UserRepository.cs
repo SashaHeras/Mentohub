@@ -14,12 +14,13 @@ using Mentohub.Domain.Data.Entities;
 using Mentohub.Core.AllExceptions;
 using Microsoft.AspNetCore.Routing;
 using Mentohub.Domain.Data.Entities.Interfaces;
-
+using Microsoft.EntityFrameworkCore;
 
 namespace Mentohub.Core.Repositories.Repositories
 {
     public class CRUD_UserRepository : ICRUD_UserRepository
     {
+        #pragma warning disable 8603
         private readonly UserManager<CurrentUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly AllException _exception;
@@ -49,8 +50,20 @@ namespace Mentohub.Core.Repositories.Repositories
             {
                 return _exception.NotFoundObject("Customer is not found");
             }
+
             return user;
         }
+
+        public CurrentUser FindByID(string ID)
+        {
+            return _userManager.Users.Where(x => x.Id == ID)
+                               .Include(x => x.Comments)
+                               .Include(x => x.Courses)
+                               .Include(x => x.CourseViews)
+                               .Include(x => x.Tags)
+                               .FirstOrDefault();
+        }
+
         /// <summary>
         /// пошук користувача по id
         /// </summary>
@@ -63,6 +76,7 @@ namespace Mentohub.Core.Repositories.Repositories
             {
                 return _exception.NotFoundObject("Customer is not found");
             }
+
             return user;
         }
         /// <summary>

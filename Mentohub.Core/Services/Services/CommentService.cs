@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mentohub.Domain.Data.Entities;
 
 namespace Mentohub.Core.Services.Services
 {
@@ -42,6 +43,8 @@ namespace Mentohub.Core.Services.Services
                 throw new Exception("Course was not found!");
             }
 
+            var currentUserID = MentoShyfr.Decrypt(data.AuthorId);
+            var currentUser = _userRepository.FindByID(currentUserID);
             var comment = _commentRepository.FirstOrDefault(x => x.Id == data.Id);
             if(comment == null)
             {
@@ -50,7 +53,7 @@ namespace Mentohub.Core.Services.Services
                     CourseId = data.CourseId,
                     Text = data.Text,
                     Rating = data.Rating,
-                    UserId = data.AuthorId,
+                    UserId = currentUserID,
                     DateCreation = DateTime.Now
                 };
 
@@ -60,16 +63,19 @@ namespace Mentohub.Core.Services.Services
                 }
 
                 course.Comments.Add(comment);
-
-                data.Id = comment.Id;
-                data.DateAgo = Helper.GetTimeSinceDate(comment.DateCreation);
-                data.UserName = "User";
             }
             else
             {
                 comment.Rating = data.Rating;
                 comment.Text = data.Text;
             }
+
+
+            data.Id = comment.Id;
+            data.DateAgo = Helper.GetTimeSinceDate(comment.DateCreation);
+            data.UserName = currentUser.LastName == null || currentUser.FirstName == null ?
+                            currentUser.Email :
+                            currentUser.LastName + currentUser.FirstName.Take(1) + '.';
 
             course.Rating = (course.Comments.Sum(x => x.Rating) / (double)course.Comments.Count());
             _courseRepository.Update(course);
@@ -81,6 +87,7 @@ namespace Mentohub.Core.Services.Services
         {
             var comments = _commentRepository.GetAll()
                                              .Where(x => x.CourseId == data.CourseID)
+                                             .Include(x => x.User)
                                              .ToList();
 
             var result = comments.Select(x => new CommentDTO()
@@ -90,14 +97,21 @@ namespace Mentohub.Core.Services.Services
                 Rating = x.Rating,
                 AuthorId = x.UserId.ToString(),
                 CourseId = x.CourseId,
-                UserName = "User",
+                UserName = UserNameForComment(x.User),
                 DateAgo = Helper.GetTimeSinceDate(x.DateCreation),
-                ProfileImagePath = "img_avatar.png"
+                ProfileImagePath = x.User.Image ?? "img_avatar.png"
             });
 
             result = result.Take(data.CommentsCount).ToList();
 
             return result.ToList();
+        }
+
+        private string UserNameForComment(CurrentUser currentUser)
+        {
+            return currentUser.LastName == null || currentUser.FirstName == null ?
+                            currentUser.Email :
+                            currentUser.LastName + currentUser.FirstName.Take(1) + '.';
         }
     }
 }

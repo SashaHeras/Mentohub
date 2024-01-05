@@ -108,7 +108,7 @@ namespace Mentohub.Core.Repositories.Repositories
         [SwaggerOperation(Summary = "Sign in a user")]
         [SwaggerResponse(200, "User signed in successfully")]
         [SwaggerResponse(401, "Authentication failed")]
-        public async Task<IActionResult> LoginAsync([FromForm] LoginDTO credentials)
+        public async Task<JsonResult> LoginAsync([FromForm] LoginDTO credentials)
         {
             // Логіка аутентифікації користувача
             try
@@ -116,11 +116,11 @@ namespace Mentohub.Core.Repositories.Repositories
                 var authenticatedUser = await _userService.Login(credentials);
                 if (ModelState.IsValid && authenticatedUser != null)
                 {
-                    Response.Cookies.Append("userID", MentoShyfr.Encrypt(authenticatedUser.Id.ToString()));
-                    return new JsonResult(authenticatedUser)
-                    {
-                        StatusCode = 200
-                    };
+                    return Json(new { 
+                        IsError = false, 
+                        UserID = MentoShyfr.Encrypt(authenticatedUser.Id.ToString()), 
+                        Message = "Success" 
+                    });
                 }
             }
             catch(Exception ex)
@@ -137,7 +137,11 @@ namespace Mentohub.Core.Repositories.Repositories
                 };
             }
 
-            return _exception.NotFoundObjectResult("User is not found");
+            return Json(new
+            {
+                IsError = true,
+                Message = "User is not found"
+            });
         }
         [HttpPost]
         [Route("logout")]
