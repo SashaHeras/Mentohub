@@ -2,10 +2,12 @@
 using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities;
+using Mentohub.Domain.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Mentohub.Controllers
 {
@@ -17,7 +19,8 @@ namespace Mentohub.Controllers
         private readonly IUserService _userService;
         private readonly ILogger<AdminController> _logger;
        
-        public AdminController(IUserService userService,
+        public AdminController(
+            IUserService userService,
             ILogger<AdminController> logger
            /* IHubContext<SignalRHub> signalRHub*/)
         {
@@ -37,8 +40,21 @@ namespace Mentohub.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("GetUserList")]
-        public IActionResult GetUserList() => Json(_userService.GetAllUsers());
+        [Route("GetUsersList")]
+        public JsonResult GetUserList()
+        {
+            var usersList = _userService.GetAllUsers().Select(x => new UserDTO()
+            {
+                Id = x.Id,
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                Email = x.Email,
+                EncryptedID = MentoShyfr.Encrypt(x.Id),
+                DateOfBirth = x.DateOfBirth ?? DateTime.MinValue
+            });
+
+            return Json(usersList);
+        }
 
         [HttpGet]
         [Route("GetUser")]

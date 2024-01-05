@@ -23,7 +23,9 @@ namespace Mentohub.Domain.Data.DTO
         public string LastName { get; set; }
         
         public string AboutMe { get; set; }
-        
+
+        public string EncryptedID { get; set; }
+
         public DateTime DateOfBirth { get; set; }
 
     }

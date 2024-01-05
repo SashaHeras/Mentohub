@@ -76,13 +76,15 @@ namespace Mentohub.Core.Services.Services
                 throw new Exception("Unknown language!");
             }
 
+            var currentUserID = MentoShyfr.Decrypt(courseDTO.AuthorId);
+
             var currentCourse = _courseRepository.FirstOrDefault(x => x.Id == courseDTO.Id);
             if(currentCourse == null)
             {
                 currentCourse = new Course()
                 {
                     Name = courseDTO.Name,
-                    AuthorId = courseDTO.AuthorId,
+                    AuthorId = currentUserID,
                     Checked = false,
                     Rating = 0.00,
                     Price = courseDTO.Price,
