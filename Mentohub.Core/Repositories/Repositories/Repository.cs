@@ -28,6 +28,18 @@ namespace Mentohub.Core.Repositories.Repositories
             }
         }
 
+        public IQueryable<TEntity> GetAll(Expression<Func<TEntity, bool>> expression)
+        {
+            try
+            {
+                return repositoryContext.Set<TEntity>().Where(expression);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($" We can`t get entites!!!\n {ex.Message}");
+            }
+        }
+
         #region Simple add/update
 
         public TEntity Add(TEntity entity)
@@ -123,7 +135,7 @@ namespace Mentohub.Core.Repositories.Repositories
 
         #endregion
 
-        public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> expression)
+        public virtual TEntity FirstOrDefault(Expression<Func<TEntity, bool>> expression)
         {
             return repositoryContext.Set<TEntity>().Where(expression).FirstOrDefault();
         }

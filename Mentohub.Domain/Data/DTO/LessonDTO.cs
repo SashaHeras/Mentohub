@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Microsoft.AspNetCore.Http;
 
 namespace Mentohub.Domain.Data.DTO
@@ -36,5 +37,9 @@ namespace Mentohub.Domain.Data.DTO
         public string AuthorPicture { get; set; }
 
         public string Authorname { get; set; }
+
+        public int CourseBlockID { get; set; }
+
+        public List<CourseBlockDTO> CourseBlocks { get; set; }
     }
 }

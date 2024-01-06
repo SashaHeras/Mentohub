@@ -1,6 +1,6 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Domain.Data.DTO;
-using Mentohub.Domain.Entities;
+using Mentohub.Domain.Data.Entities.CourseEntities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

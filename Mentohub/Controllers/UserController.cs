@@ -1,7 +1,10 @@
 ﻿using Mentohub.Core.AllExceptions;
+using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Repositories;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
+using Mentohub.Domain.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -12,46 +15,52 @@ namespace Mentohub.Controllers
     [Route("api/user")]
     [ApiController]
     [SwaggerTag("UserController")]
-    public class UserController : ControllerBase
+    public class UserController : Controller
     {
         private readonly ILogger<UserController> _logger;
         private readonly AllException _exception;
-        private readonly UserService _userService;
-        private readonly CRUD_UserRepository _cRUD;
-        public UserController(ILogger<UserController> logger, UserService userService,
-            AllException exception, CRUD_UserRepository cRUD_UserRepository)
+        private readonly IUserService _userService;
+        private readonly ICRUD_UserRepository _cRUD;
+
+        public UserController(
+            ILogger<UserController> logger, 
+            IUserService userService,
+            AllException exception, 
+            ICRUD_UserRepository cRUD_UserRepository
+        )
         {
             _logger = logger;
             _userService = userService;
             _exception = exception;
             _cRUD = cRUD_UserRepository;
         }
+        
         [HttpDelete]
         [Route("deleteUser")]
-        [SwaggerOperation(Summary = "Delete a user by ID")]
-        
+        [SwaggerOperation(Summary = "Delete a user by ID")]        
         public async Task<IActionResult> DeleteUser([FromForm] string userId)
         {
             // Логіка видалення користувача
             try 
             { 
                 var deletedUser =await _userService.DeleteUser(userId);
-            if (deletedUser)
-            {
-                  _logger.LogInformation("User deleted successfully.");
-                    return new JsonResult("User deleted successfully ")
-                  {
-                    StatusCode = 204 // Код статусу "No Content"
-                  };
-            }
-            else
-            {
-                return new JsonResult("User not found")
+                if (deletedUser)
                 {
-                    StatusCode = 404 // Код статусу "Not Found"
-                };
+                      _logger.LogInformation("User deleted successfully.");
+                        return new JsonResult("User deleted successfully ")
+                      {
+                        StatusCode = 204 // Код статусу "No Content"
+                      };
+                }
+                else
+                {
+                    return new JsonResult("User not found")
+                    {
+                        StatusCode = 404 // Код статусу "Not Found"
+                    };
+                }
             }
-            }catch(Exception ex)
+            catch(Exception ex)
             {
                 var errorResponse = new
                 {
@@ -64,6 +73,7 @@ namespace Mentohub.Controllers
                 };
             }   
         }
+
         /// <summary>
         /// отримання профіля користувача
         /// </summary>
@@ -78,14 +88,15 @@ namespace Mentohub.Controllers
             {
                 var profile = await _userService.GetProfile(id);
                 if (profile != null)
+                {
                     return new JsonResult(profile)
                     {
                         StatusCode = 200
                     };
+                }                    
                 else
                 {
                     return _exception.NotFoundObjectResult("Not Found");
-
                 }
 
             }
@@ -103,6 +114,7 @@ namespace Mentohub.Controllers
             }
             
         }
+
         /// <summary>
         /// оновлення інформації про користувача
         /// </summary>
@@ -115,29 +127,26 @@ namespace Mentohub.Controllers
         [SwaggerResponse(200, "User updated successfully")]
         [SwaggerResponse(400, "Invalid input")]
         [SwaggerResponse(404, "User not found")]
-        public async Task<IActionResult> UpdateUser([FromForm] string userId,
-            [FromForm] EditUserDTO userDTO)
+        public async Task<IActionResult> UpdateUser([FromForm] UserDTO userDTO)
         {
             try
             {               
                 // Логіка оновлення інформації про користувача
-                var updatedUser =await _userService.UpdateUser(userId, userDTO);
-
-            if (updatedUser)
-            {
-                return new JsonResult("User profile is updated")
+                var updatedUser = await _userService.UpdateUser(userDTO);
+                if (updatedUser)
                 {
-                    StatusCode = 200 //профіль користувача успішно оновлено
-                };
-            }
-            else
-            {
-                return new JsonResult("User not found")
+                    return new JsonResult("User profile is updated")
+                    {
+                        StatusCode = 200 //профіль користувача успішно оновлено
+                    };
+                }
+                else
                 {
-                    StatusCode = 404 // Код статусу "Not Found", користувача не знайдено
-                };
-            }
-
+                    return new JsonResult("User not found")
+                    {
+                        StatusCode = 404 // Код статусу "Not Found", користувача не знайдено
+                    };
+                }
             }
             catch(Exception ex)
             {
@@ -150,9 +159,9 @@ namespace Mentohub.Controllers
                 {
                     StatusCode = 500 // код статусу, що вказує на помилку
                 };
-            }
-            
+            }            
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -193,26 +202,24 @@ namespace Mentohub.Controllers
                 };
             }
         }
-       /// <summary>
-       /// додавання ролі користувачу
-       /// </summary>
-       /// <param name="id"></param>
-       /// <param name="roleName"></param>
-       /// <returns></returns>
+
+        /// <summary>
+        /// додавання ролі користувачу
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("addRole")]
         [SwaggerOperation(Summary ="add role to user`s roles")]
         public async Task<JsonResult> AddUserRoles([FromForm]string userId,
-            [FromForm]string roleName)
-        {
-            
+            [FromForm]string roleId)
+        {            
             var user=await _cRUD.FindCurrentUserById(userId);
-            _logger.LogInformation(roleName, user.UserName);
             try
             {              
-                if( await _userService.AddRoleToUserListRoles(userId, roleName))
+                if( await _userService.AddRoleToUserListRoles(userId, roleId))
                 {
-
                     var UserDTO = await _userService.GetProfile(userId);
                     return new JsonResult(UserDTO)
                     {
@@ -238,6 +245,7 @@ namespace Mentohub.Controllers
             }
            
         }
+
         /// <summary>
         /// отримання аватарки
         /// </summary>
@@ -245,20 +253,26 @@ namespace Mentohub.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("getAvatar")]
-        public async Task< IActionResult> GetAvatar(string id)
+        public async Task<IActionResult> GetAvatar(string id)
         {
-                // Отримайте URL аватарки користувача з сервісу
-                string avatarUrl =await _userService.GetAvatarUrl(id);
+            // Отримайте URL аватарки користувача з сервісу
+            string avatarUrl = await _userService.GetAvatarUrl(id);
 
-                if (!string.IsNullOrEmpty(avatarUrl))
-                {
-                    return new JsonResult(new { success = true, avatarUrl });
-                }
- 
+            if (!string.IsNullOrEmpty(avatarUrl))
+            {
+                return new JsonResult(new { success = true, avatarUrl });
+            }
+
             // Якщо аватарка не знайдена або виникла помилка
             return new JsonResult(new { success = false, message = "Error when getting an avatar" });
         }
-        
+
+        [Route("GetEncryptedUserID")]
+        [HttpPost]
+        public JsonResult ShyfrUserID([FromForm] string userID)
+        {
+            return Json(MentoShyfr.Encrypt(userID));
+        }
     }
 }
 

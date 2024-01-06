@@ -1,4 +1,5 @@
 ﻿using Mentohub.Domain.Data.Entities;
+using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -18,14 +19,6 @@ namespace Mentohub.Core.Context
 
         public DbSet<TestTask> TestTasks { get; set; }
 
-        public DbSet<Course> Courses { get; set; }
-
-        public DbSet<CourseSubject> CourseSubjects { get; set; }
-
-        public DbSet<CourseItem> CourseItem { get; set; }
-
-        public DbSet<CourseItemType> CourseItemTypes { get; set; }
-
         public DbSet<TestHistory> TestHistory { get; set; }
 
         public DbSet<TaskHistory> TaskHistory { get; set; }
@@ -35,6 +28,26 @@ namespace Mentohub.Core.Context
         public DbSet<ItemStatus> ItemsStatuses { get; set; }
 
         public DbSet<Comment> Comments { get; set; }
+
+        #region Course
+
+        public DbSet<Course> Courses { get; set; }
+
+        public DbSet<CourseSubject> CourseSubjects { get; set; }
+
+        public DbSet<CourseItem> CourseItem { get; set; }
+
+        public DbSet<CourseItemType> CourseItemTypes { get; set; }
+
+        public DbSet<CourseViews> CourseViews { get; set; }
+
+        public DbSet<CourseBlock> CourseBlocks { get; set; }
+
+        public DbSet<CourseLanguage> CourseLanguages { get; set; }
+
+        public DbSet<CourseOverview> CourseOverviews { get; set; }
+
+        #endregion
 
         public ProjectContext(DbContextOptions<ProjectContext> options) : base(options)
         {
@@ -52,6 +65,11 @@ namespace Mentohub.Core.Context
             modelBuilder.Entity<AnswerHistory>().HasKey(c => c.Id);
             modelBuilder.Entity<TaskHistory>().HasKey(c => c.Id);
             modelBuilder.Entity<TestHistory>().HasKey(c => c.Id);
+            modelBuilder.Entity<Comment>().HasKey(c => c.Id);
+            modelBuilder.Entity<CourseBlock>().HasKey(c => c.ID);
+            modelBuilder.Entity<CourseViews>().HasKey(c => c.ID);
+            modelBuilder.Entity<CourseLanguage>().HasKey(c => c.Id);
+            modelBuilder.Entity<CourseOverview>().HasKey(c => c.ID);
             modelBuilder.Entity<IdentityUserLogin<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserToken<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserRole<string>>().HasKey(ur => new { ur.UserId, ur.RoleId });
@@ -60,11 +78,6 @@ namespace Mentohub.Core.Context
                 .HasOne(t1 => t1.Test)
                 .WithMany(t2 => t2.TestHistory)
                 .HasForeignKey(t1 => t1.TestId);
-
-            modelBuilder.Entity<CourseItem>()
-                .HasOne(t1 => t1.Course)
-                .WithMany(t2 => t2.CourseItems)
-                .HasForeignKey(t1 => t1.CourseId);
 
             modelBuilder.Entity<TaskHistory>()
                 .HasOne(t1 => t1.TestHistory)
@@ -81,11 +94,6 @@ namespace Mentohub.Core.Context
                 .WithMany(t2 => t2.AnswerHistory)
                 .HasForeignKey(t1 => t1.TaskHistoryId);
 
-            modelBuilder.Entity<CourseItem>()
-                .HasOne(t1 => t1.Course)
-                .WithMany(t2 => t2.CourseItems)
-                .HasForeignKey(t1 => t1.CourseId);
-
             modelBuilder.Entity<TestTask>()
                 .HasOne(c => c.Test)
                 .WithMany(p => p.TestTasks)
@@ -96,10 +104,94 @@ namespace Mentohub.Core.Context
                 .WithMany(t2 => t2.TaskAnswers)
                 .HasForeignKey(t1 => t1.TaskId);
 
+            modelBuilder.Entity<Lesson>()
+                .HasOne(t1 => t1.CourseItem)
+                .WithOne(t2 => t2.Lesson)
+                .HasForeignKey<Lesson>(x => x.CourseItemId);
+
+            modelBuilder.Entity<Test>()
+                .HasOne(t1 => t1.CourseItem)
+                .WithOne(t2 => t2.Test)
+                .HasForeignKey<Test>(x => x.CourseItemId);
+
             modelBuilder.Entity<AnswerHistory>()
                 .HasOne(t1 => t1.TaskAnswer)
                 .WithMany(t2 => t2.AnswerHistory)
                 .HasForeignKey(t1 => t1.AnswerId);
+
+            #region Course
+
+            modelBuilder.Entity<CourseViews>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.CourseViews)
+                .HasForeignKey(x => x.CourseID);
+
+            modelBuilder.Entity<CourseViews>()
+                .HasOne(t1 => t1.User)
+                .WithMany(t2 => t2.CourseViews)
+                .HasForeignKey(x => x.UserID);
+
+            modelBuilder.Entity<Course>()
+                .HasOne(t1 => t1.Author)
+                .WithMany(t2 => t2.Courses)
+                .HasForeignKey(x => x.AuthorId);
+
+            modelBuilder.Entity<Course>()
+                .HasOne(t1 => t1.Language)
+                .WithMany(t2 => t2.Courses)
+                .HasForeignKey(x => x.LanguageID)
+                .IsRequired(false);
+
+            modelBuilder.Entity<CourseOverview>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.CourseOverviews)
+                .HasForeignKey(x => x.CourseID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CourseTag>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.CourseTags)
+                .HasForeignKey(x => x.CourseID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CourseTag>()
+                .HasOne(t1 => t1.Tag)
+                .WithMany(t2 => t2.CourseTags)
+                .HasForeignKey(x => x.TagID)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Tag>()
+                .HasOne(t1 => t1.User)
+                .WithMany(t2 => t2.Tags)
+                .HasForeignKey(x => x.UserID)
+                .IsRequired(false);
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.Comments)
+                .HasForeignKey(t1 => t1.CourseId);
+
+            modelBuilder.Entity<CourseBlock>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.CourseBlocks)
+                .HasForeignKey(t1 => t1.CourseID);
+
+            modelBuilder.Entity<CourseItem>()
+                .HasOne(t1 => t1.CourseBlock)
+                .WithMany(t2 => t2.CourseItems)
+                .HasForeignKey(t1 => t1.CourseBlockID);
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(t1 => t1.User)
+                .WithMany(t2 => t2.Comments)
+                .HasForeignKey(t1 => t1.UserId);
+
+            modelBuilder.Entity<CourseItem>()
+                .HasOne(t1 => t1.Course)
+                .WithMany(t2 => t2.CourseItems)
+                .HasForeignKey(t1 => t1.CourseId);
+
+            #endregion
 
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("AspNetUserRoles");
             modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("AspNetUserLogins");
@@ -109,16 +201,7 @@ namespace Mentohub.Core.Context
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
-        //    //"Server=ALLA2021\\SQLEXPRESS01;Database=StudyDB;Trusted_Connection=True;MultipleActiveResultSets=true"
-        //    //"Server=localhost;Database=StudyDB; Trusted_Connection=True;TrustServerCertificate=True"
-        //    //optionsBuilder.UseSqlServer("Server=ALLA2021\\SQLEXPRESS01;Database=StudyDB;Trusted_Connection=True;MultipleActiveResultSets=true", builder =>
-        //    //{
-        //    //    builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
-        //    //});
-        //}
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.UseNpgsql("User ID=admin;Password=root;Host=localhost;Port=5432;Database=mentohub;Pooling=true;MinPoolSize=0;MaxPoolSize=100;ConnectionLifetime=0;", builder =>
+        //    optionsBuilder.UseNpgsql("User ID=admin;Password=root;Host=34.118.18.52;Port=5432;Database=mentohub;MinPoolSize=0;MaxPoolSize=100;ConnectionLifetime=0;", builder =>
         //    {
         //        builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
         //    });

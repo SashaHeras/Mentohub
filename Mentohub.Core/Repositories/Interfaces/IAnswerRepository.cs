@@ -5,7 +5,7 @@ namespace Mentohub.Core.Repositories.Intefaces
 {
     public interface IAnswerRepository : ISingletoneService, IRepository<TaskAnswer>
     {
-        public TaskAnswer GetAnswerById(int id);
+        public TaskAnswer GetById(int id);
 
         public bool DeleteAnswer(TaskAnswer answer);
 

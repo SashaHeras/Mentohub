@@ -22,6 +22,282 @@ namespace Mentohub.Core.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.Course", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AuthorId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Checked")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("CourseSubjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("LanguageID")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("LastEdittingDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("LoadPictureName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LoadVideoName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PicturePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PreviewVideoPath")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<double>("Rating")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("ShortDescription")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("LanguageID");
+
+                    b.ToTable("Courses");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseBlock", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("CourseID")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("OrderNumber")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CourseID");
+
+                    b.ToTable("CourseBlocks");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseBlockID")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("DateCreation")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("OrderNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TypeId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseBlockID");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("CourseItem");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseItemType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CourseItemTypes");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseLanguage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CourseLanguages");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseOverview", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("CourseID")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CourseID");
+
+                    b.ToTable("CourseOverviews");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseSubject", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CourseSubjects");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseTag", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CourseID")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TagID")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CourseID");
+
+                    b.HasIndex("TagID");
+
+                    b.ToTable("CourseTag");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseViews", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CourseID")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ViewDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CourseID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("CourseViews");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.Tag", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserID")
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Tag");
+                });
+
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CurrentUser", b =>
                 {
                     b.Property<string>("Id")
@@ -36,8 +312,8 @@ namespace Mentohub.Core.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("DateOfBirth")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Email")
                         .HasColumnType("text");
@@ -132,7 +408,7 @@ namespace Mentohub.Core.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("DateCreation")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("Rating")
                         .HasColumnType("integer");
@@ -141,124 +417,17 @@ namespace Mentohub.Core.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("Mentohub.Domain.Entities.Course", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<Guid>("AuthorId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("Checked")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("CourseSubjectId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("LastEdittingDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("LoadPictureName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LoadVideoName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string>("PicturePath")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PreviewVideoPath")
-                        .HasColumnType("text");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
-
-                    b.Property<double>("Rating")
-                        .HasColumnType("double precision");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Courses");
-                });
-
-            modelBuilder.Entity("Mentohub.Domain.Entities.CourseItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("DateCreation")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("OrderNumber")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("StatusId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("TypeId")
-                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("CourseItem");
-                });
+                    b.HasIndex("UserId");
 
-            modelBuilder.Entity("Mentohub.Domain.Entities.CourseItemType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CourseItemTypes");
-                });
-
-            modelBuilder.Entity("Mentohub.Domain.Entities.CourseSubject", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CourseSubjects");
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Entities.ItemStatus", b =>
@@ -307,13 +476,16 @@ namespace Mentohub.Core.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("UpdateDate")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("VideoPath")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CourseItemId")
+                        .IsUnique();
 
                     b.ToTable("Lessons");
                 });
@@ -386,7 +558,8 @@ namespace Mentohub.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CourseItemId");
+                    b.HasIndex("CourseItemId")
+                        .IsUnique();
 
                     b.ToTable("Tests");
                 });
@@ -400,7 +573,7 @@ namespace Mentohub.Core.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<double>("Mark")
                         .HasColumnType("double precision");
@@ -411,12 +584,15 @@ namespace Mentohub.Core.Migrations
                     b.Property<double>("TotalMark")
                         .HasColumnType("double precision");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("TestId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TestHistory");
                 });
@@ -562,6 +738,111 @@ namespace Mentohub.Core.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.Course", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Data.Entities.CurrentUser", "Author")
+                        .WithMany("Courses")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.CourseLanguage", "Language")
+                        .WithMany("Courses")
+                        .HasForeignKey("LanguageID");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Language");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseBlock", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.Course", "Course")
+                        .WithMany("CourseBlocks")
+                        .HasForeignKey("CourseID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseItem", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.CourseBlock", "CourseBlock")
+                        .WithMany("CourseItems")
+                        .HasForeignKey("CourseBlockID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.Course", "Course")
+                        .WithMany("CourseItems")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("CourseBlock");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseOverview", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.Course", "Course")
+                        .WithMany("CourseOverviews")
+                        .HasForeignKey("CourseID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseTag", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.Course", "Course")
+                        .WithMany("CourseTags")
+                        .HasForeignKey("CourseID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.Tag", "Tag")
+                        .WithMany("CourseTags")
+                        .HasForeignKey("TagID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseViews", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.Course", "Course")
+                        .WithMany("CourseViews")
+                        .HasForeignKey("CourseID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mentohub.Domain.Data.Entities.CurrentUser", "User")
+                        .WithMany("CourseViews")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.Tag", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Data.Entities.CurrentUser", "User")
+                        .WithMany("Tags")
+                        .HasForeignKey("UserID");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Mentohub.Domain.Entities.AnswerHistory", b =>
                 {
                     b.HasOne("Mentohub.Domain.Entities.TaskAnswer", "TaskAnswer")
@@ -589,15 +870,34 @@ namespace Mentohub.Core.Migrations
                     b.Navigation("TestTask");
                 });
 
-            modelBuilder.Entity("Mentohub.Domain.Entities.CourseItem", b =>
+            modelBuilder.Entity("Mentohub.Domain.Entities.Comment", b =>
                 {
-                    b.HasOne("Mentohub.Domain.Entities.Course", "Course")
-                        .WithMany("CourseItems")
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.Course", "Course")
+                        .WithMany("Comments")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Mentohub.Domain.Data.Entities.CurrentUser", "User")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Course");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Entities.Lesson", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.CourseItem", "CourseItem")
+                        .WithOne("Lesson")
+                        .HasForeignKey("Mentohub.Domain.Entities.Lesson", "CourseItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CourseItem");
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Entities.TaskAnswer", b =>
@@ -632,9 +932,9 @@ namespace Mentohub.Core.Migrations
 
             modelBuilder.Entity("Mentohub.Domain.Entities.Test", b =>
                 {
-                    b.HasOne("Mentohub.Domain.Entities.CourseItem", "CourseItem")
-                        .WithMany()
-                        .HasForeignKey("CourseItemId")
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.CourseItem", "CourseItem")
+                        .WithOne("Test")
+                        .HasForeignKey("Mentohub.Domain.Entities.Test", "CourseItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -649,7 +949,15 @@ namespace Mentohub.Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Mentohub.Domain.Data.Entities.CurrentUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Test");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Entities.TestTask", b =>
@@ -663,9 +971,54 @@ namespace Mentohub.Core.Migrations
                     b.Navigation("Test");
                 });
 
-            modelBuilder.Entity("Mentohub.Domain.Entities.Course", b =>
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.Course", b =>
+                {
+                    b.Navigation("Comments");
+
+                    b.Navigation("CourseBlocks");
+
+                    b.Navigation("CourseItems");
+
+                    b.Navigation("CourseOverviews");
+
+                    b.Navigation("CourseTags");
+
+                    b.Navigation("CourseViews");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseBlock", b =>
                 {
                     b.Navigation("CourseItems");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseItem", b =>
+                {
+                    b.Navigation("Lesson")
+                        .IsRequired();
+
+                    b.Navigation("Test")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseLanguage", b =>
+                {
+                    b.Navigation("Courses");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.Tag", b =>
+                {
+                    b.Navigation("CourseTags");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CurrentUser", b =>
+                {
+                    b.Navigation("Comments");
+
+                    b.Navigation("CourseViews");
+
+                    b.Navigation("Courses");
+
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Entities.TaskAnswer", b =>

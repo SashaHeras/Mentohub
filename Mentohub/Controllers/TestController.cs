@@ -6,7 +6,9 @@ using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Amqp.Framing;
 using System.Linq.Expressions;
+using System.Transactions;
 
 namespace Mentohub.Controllers
 {
@@ -15,35 +17,22 @@ namespace Mentohub.Controllers
         private readonly ITestService _testService;
         private readonly ITaskService _taskService;
         private readonly IAnswerService _answerService;
-        private readonly ICourseItemService _courseItemService;
-
-        private readonly ITestHistoryRepository _testHistoryRepository;
-        private readonly IAnswerHistoryRepository _answerHistoryRepository;
-        private readonly ITaskHistoryRepository _taskHistoryRepository;
 
         public TestController(
             ITestService testService, 
             ITaskService taskService,
-            IAnswerService answerService, 
-            ICourseItemService courseItemService,
-            ITestHistoryRepository testHistoryRepository,
-            IAnswerHistoryRepository answerHistoryRepository,
-            ITaskHistoryRepository taskHistoryRepository)
+            IAnswerService answerService
+        )
         {
             _testService = testService;
             _taskService = taskService;
             _answerService = answerService;
-            _courseItemService = courseItemService;
-            _testHistoryRepository = testHistoryRepository;
-            _answerHistoryRepository = answerHistoryRepository;
-            _taskHistoryRepository = taskHistoryRepository;
         }
 
-        [HttpGet]
-        public JsonResult GetAnswers()
+        [HttpPost]
+        public JsonResult GetAnswers(int ID)
         {
-            int taskId = Convert.ToInt32(Request.Form["task"]);
-            var testAnswers = _answerService.GetAnswers(taskId);
+            var testAnswers = _answerService.GetAnswers(ID);
             return Json(testAnswers);
         }
 
@@ -55,17 +44,17 @@ namespace Mentohub.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult Edit([FromBody] TestDTO data)
+        public JsonResult Apply([FromBody] TestDTO data)
         {
             try
             {
-                var newTest = _testService.Edit(data);
+                var newTest = _testService.Apply(data);
 
                 return Json(new { IsError = false, Data = newTest, Message = "Success" });
             }
             catch (Exception ex)
             {
-                return Json(new { IsError = true, Message = "Error" });
+                return Json(new { IsError = true, Message = ex.Message });
             }
         }
 
@@ -81,11 +70,11 @@ namespace Mentohub.Controllers
             {
                 var newTask = _taskService.Edit(data);
 
-                return Json(new { IsError = false, Data = newTask.Id, Message = "Success" });
+                return Json(new { IsError = false, Data = newTask, Message = "Success" });
             }
             catch (Exception ex)
             {
-                return Json(new { IsError = true, Message = "Error" });
+                return Json(new { IsError = true, Message = ex.Message });
             }
         }
 
@@ -105,7 +94,7 @@ namespace Mentohub.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { IsError = true, Message = "Error" });
+                return Json(new { IsError = true, ex.Message });
             }
         }
 
@@ -141,36 +130,21 @@ namespace Mentohub.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult Apply([FromBody] PassTestDTO data)
+        public async Task<JsonResult> Pass([FromBody] PassTestDTO data)
         {
-            try
+            using(TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                var result = _testService.ApplyTestResult(data);
-
-                return Json(new { IsError = true, Data = result, Message = "Success" });
-            }
-            catch(Exception ex)
-            {
-                return Json(new { IsError = true, Message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        public async Task<JsonResult> SaveTest(int courseID, int? testID, string testName)
-        {
-            var sameCourseItems = _courseItemService.GetCourseItems(courseID);
-
-            Test test = new Test();
-            if (testID != null)
-            {
-                test = await _testService.RenameTest(testID.Value, testName);
-            }
-            else
-            {
-                test = await _testService.CreateNewTest(testName, courseID, sameCourseItems);
-            }
-
-            return Json(test.Id);
+                try
+                {
+                    var result = await _testService.ApplyTestResult(data);
+                    scope.Complete();
+                    return Json(new { IsError = true, Data = result, Message = "Success" });
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { IsError = true, ex.Message });
+                }
+            }            
         }
 
         public IActionResult EditTest(int id)
@@ -187,9 +161,9 @@ namespace Mentohub.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetTask(int id)
+        public JsonResult GetTask(int ID)
         {
-            var res = _taskService.GetTask(id);
+            var res = _taskService.GetTask(ID);
             return Json(res);
         }
 
@@ -197,48 +171,40 @@ namespace Mentohub.Controllers
         public JsonResult GetAnswersForEditting(int id)
         {
             var result = _answerService.GetAnswers(id);
-
             return Json(result);
         }
 
         [HttpDelete]
-        public JsonResult DeleteTask(int taskId)
+        public JsonResult DeleteTask(int ID)
         {
-            var task = _taskService.GetTask(taskId);            
-            int orderNumber = task.OrderNumber;
-            int testId = task.TestId;
-            var allTasksAfter = _taskService.GetTasksAfter(testId, orderNumber);
-
             try
             {
-                _taskService.DeleteTask(task);
-                _taskService.ResetOrderNumbers(orderNumber, allTasksAfter);
+                _taskService.DeleteTask(ID);
+                return Json(new { IsError = false, Message = "Success" });
             }
             catch (Exception ex)
             {
-                return Json(ex.Message);
+                return Json(new { IsError = true, Message = ex.Message });
             }
-
-            return Json(true);
         }
 
+        /// <summary>
+        /// Delete task answer
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
         [HttpPost]
-        public JsonResult DeleteAnswer()
+        public JsonResult DeleteAnswer(int ID)
         {
-            var answerId = Convert.ToInt32(Request.Form["answerId"]);
-            var answer = _answerService.GetAnswer(answerId);
-            var taskId = answer.TaskId; 
-
-            if (answer != null)
+            try
             {
-                _answerService.RemoveAnswer(answer);
-
-                var answers = _answerService.GetAnswers(taskId);
-
-                return Json(answers);
+                _answerService.DeleteAnswer(ID);
+                return Json(new { IsError = false, Message = "Success" });
             }
-
-            return Json(false);
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, Message = ex.Message });
+            }
         }
     }
 }

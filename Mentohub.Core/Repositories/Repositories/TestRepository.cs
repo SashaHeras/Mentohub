@@ -1,11 +1,13 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mentohub.Core.Repositories.Repositories
 {
     public class TestRepository : Repository<Test>, ITestRepository
     {
+        #pragma warning disable 8603
         private readonly ProjectContext _context;
 
         public TestRepository(ProjectContext repositoryContext) : base(repositoryContext)
@@ -13,9 +15,14 @@ namespace Mentohub.Core.Repositories.Repositories
             this._context = repositoryContext;
         }
 
-        public Test GetTestById(int testId)
+        public Test GetById(int testId)
         {
-            return GetAll().Where(t => t.Id == testId).FirstOrDefault();
+            return GetAll()
+                   .Where(t => t.Id == testId)
+                   .Include(x => x.CourseItem)
+                   .Include(x => x.TestHistory)
+                   .Include(x => x.TestTasks)
+                   .FirstOrDefault();
         }
 
         public Test GetTestByCourseItemId(int courseItemId)

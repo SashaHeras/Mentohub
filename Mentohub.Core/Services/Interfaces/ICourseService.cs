@@ -1,6 +1,7 @@
 ﻿using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
-using Mentohub.Domain.Entities;
+using Mentohub.Domain.Data.DTO.CourseDTOs;
+using Mentohub.Domain.Data.Entities.CourseEntities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -20,6 +21,12 @@ namespace Mentohub.Core.Services.Interfaces
 
         List<CommentDTO> GetCourseComments(int courseID, int count = 10);
 
-        Task<CourseDTO> Edit(CourseDTO courseDTO);
+        Task<CourseDTO> Apply(CourseDTO courseDTO);
+
+        List<CourseDTO> MostFamoustList();
+
+        Task<CourseDTO> ViewCourse(int CourseID, string UserID);
+
+        List<CourseBlockDTO> GetCourseInfoList(int ID);
     }
 }

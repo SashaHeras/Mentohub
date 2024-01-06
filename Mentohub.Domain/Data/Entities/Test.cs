@@ -1,4 +1,7 @@
-﻿namespace Mentohub.Domain.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Mentohub.Domain.Data.Entities.CourseEntities;
+
+namespace Mentohub.Domain.Entities
 {
     public class Test
     {
@@ -8,6 +11,7 @@
 
         public int CourseItemId { get; set; }
 
+        [ForeignKey("CourseItemId")]
         public CourseItem CourseItem { get; set; }
 
         public List<TestTask> TestTasks { get; set; }

@@ -28,7 +28,7 @@ namespace Mentohub.Core.Services.Interfaces
 
         int GetCountOfCorrectAnswers(int taskId);
 
-        Dictionary<string, bool> AnswersSpliter(string answers, string _checked);
+        void DeleteAnswer(int ID);
 
         int PopulateAnswerHistories(List<AnswerDTO> answers, TestTask task, List<AnswerHistory> answerHistories);
     }

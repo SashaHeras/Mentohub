@@ -7,7 +7,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>767f3ef4-395d-4abb-80f2-55bfa255b516</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Content\**" />
+    <Content Remove="Content\**" />
+    <EmbeddedResource Remove="Content\**" />
+    <None Remove="Content\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.MailKitMailer" Version="1.2.2" />
@@ -24,8 +32,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
     <PackageReference Include="MimeKit" Version="4.2.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" />
+    <PackageReference Include="Spell.Check" Version="4.0.3.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+    <PackageReference Include="Syncfusion.EJ2.SpellChecker.AspNet.Core" Version="24.1.44" />
     <PackageReference Include="System.Text.Json" Version="7.0.0" />
   </ItemGroup>
 
@@ -35,11 +45,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Content\Videos\" />
-    <Folder Include="Content\Pictures\" />
     <Folder Include="Views\Account\" />
     <Folder Include="Views\Admin\" />
-    <Folder Include="Content\Scripts\Test\" />
     <Folder Include="wwwroot\Pictures\" />
     <Folder Include="wwwroot\Videos\" />
     <Folder Include="wwwroot\avatar\" />

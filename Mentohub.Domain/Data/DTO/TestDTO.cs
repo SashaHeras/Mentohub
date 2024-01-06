@@ -16,10 +16,14 @@ namespace Mentohub.Domain.Data.DTO
         public int CourseItemId { get; set; }
 
         public int CourseID { get; set; }
+
+        public int CourseBlockID { get; set; }
     }
 
     public class PassTestDTO : TestDTO
     {
+        public string UserID { get; set; }
+
         public List<PassTaskDTO> Tasks { get; set; }
     }
 

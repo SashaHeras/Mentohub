@@ -1,23 +1,26 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Core.Repositories.Interfaces;
+using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
-using Mentohub.Domain.Data;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.Test;
+using Mentohub.Domain.Data.Entities.CourseEntities;
+using Mentohub.Domain.Data.Enums;
 using Mentohub.Domain.Entities;
+using Mentohub.Domain.Helpers;
+using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Services
 {
     public class TestService : ITestService
     {
         private readonly ITestRepository _testRepository;
-        private readonly ICourseRepository _courseRepository;
+        private readonly ICRUD_UserRepository _userRepository;
         private readonly ICourseItemRepository _courseItemRepository;
         private readonly ITestHistoryRepository _testHistoryRepository;
-        private readonly IAnswerHistoryRepository _answerHistoryRepository;
-        private readonly ITaskHistoryRepository _taskHistoryRepository;
-        private readonly ProjectContext repositoryContext;
+        private readonly ICourseBlockRepository _courseBlockRepository;
 
         private readonly ITaskService _taskService;
         private readonly IAnswerService _answerService;
@@ -27,19 +30,17 @@ namespace Mentohub.Core.Services.Services
         private readonly IAnswerHistoryService _answerHistoryService;
 
         public TestService( 
-            ITestRepository testRepository, 
-            ICourseItemRepository courseItemRepository,
             ICourseItemService courseItemService, 
             ITestHistoryService testHistoryService,
             ITaskHistoryService taskHistoryService, 
             IAnswerHistoryService answerHistoryService,
-            ICourseRepository courseRepository,
-            ITaskHistoryRepository taskHistoryRepository,
-            IAnswerHistoryRepository answerHistoryRepository,
-            ITestHistoryRepository testHistoryRepository,
             ITaskService taskService,
             IAnswerService answerService,
-            ProjectContext repositoryContext)
+            ITestHistoryRepository testHistoryRepository,
+            ICourseBlockRepository courseBlockRepository,
+            ITestRepository testRepository,
+            ICRUD_UserRepository userRepository,
+            ICourseItemRepository courseItemRepository)
         {
             _testRepository = testRepository;
             _courseItemRepository = courseItemRepository;
@@ -47,18 +48,16 @@ namespace Mentohub.Core.Services.Services
             _testHistoryService = testHistoryService;
             _taskHistoryService = taskHistoryService;
             _answerHistoryService = answerHistoryService;
-            _courseRepository = courseRepository;
-            this.repositoryContext = repositoryContext;
-            _answerHistoryRepository = answerHistoryRepository;
-            _taskHistoryRepository = taskHistoryRepository;
             _testHistoryRepository = testHistoryRepository;
             _taskService = taskService;
             _answerService = answerService;
+            _userRepository = userRepository;
+            _courseBlockRepository = courseBlockRepository;
         }             
 
         public Test GetTest(int id)
         {
-            return _testRepository.GetTestById(id);
+            return _testRepository.GetById(id);
         }
 
         public Test GetTestByCourseItem(int courseItemId)
@@ -88,53 +87,26 @@ namespace Mentohub.Core.Services.Services
 
             await _answerHistoryService.SaveAnswersHistory(taskHistories, answerHistories);
         }
-         
-        public async Task<Test> CreateNewTest(string testName, int courseId, IQueryable<CourseItem> sameCourseItems)
+
+        public TestDTO Apply(TestDTO data)
         {
-            CourseItem newCourseItem = new CourseItem()
-            {
-                TypeId = _courseItemService.GetItemTypeByName("Test").Id,
-                CourseId = courseId,
-                DateCreation = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
-                OrderNumber = sameCourseItems.Count() > 0 ? sameCourseItems.Last().OrderNumber + 1 : 1
-            };
-            await _courseItemRepository.AddAsync(newCourseItem);
+            Test test = _testRepository.GetById(data.Id);
+            var block = _courseBlockRepository.GetById(data.CourseBlockID) ?? throw new Exception("Anknown block!");
 
-            Test test = new Test()
-            {
-                Name = testName,
-                CourseItemId = newCourseItem.Id
-            };
-            await _testRepository.AddAsync(test);
-
-            return test;
-        }
-
-        public async Task<Test> RenameTest(int testId, string newName)
-        {
-            Test test = _testRepository.GetTestById(testId);
-            test.Name = newName;
-
-            await _testRepository.UpdateAsync(test);
-
-            return test;
-        }
-
-        public TestDTO Edit(TestDTO data)
-        {
-            Test test = _testRepository.GetTestById(data.Id);
-
-            var sameCourseItems = _courseItemRepository.GetAll().Where(x => x.CourseId == data.CourseID).ToList();
-
+            var sameCourseItems = _courseItemRepository.GetAll()
+                                                       .Where(x => x.CourseId == data.CourseID)
+                                                       .ToList();
+     
             if (test == null)
             {
-                CourseItem newCourseItem = new CourseItem()
+                CourseItem newCourseItem = new()
                 {
                     DateCreation = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
                     CourseId = data.CourseID,
                     StatusId = (int)e_ItemStatus.OK,
                     TypeId = (int)e_ItemType.Test,
-                    OrderNumber = sameCourseItems.Count > 0 ? sameCourseItems.Count + 1 : 1
+                    OrderNumber = sameCourseItems.Count > 0 ? sameCourseItems.Count + 1 : 1,
+                    CourseBlockID = data.CourseBlockID
                 };
 
                 _courseItemRepository.Add(newCourseItem);
@@ -153,61 +125,64 @@ namespace Mentohub.Core.Services.Services
             else
             {
                 test.Name = data.Name;
-
                 _testRepository.Update(test);
             }
 
             return data;
         }
 
-        public PassTestResultDTO ApplyTestResult(PassTestDTO data)
+        public async Task<PassTestResultDTO> ApplyTestResult(PassTestDTO data)
         {
-            PassTestResultDTO result = new PassTestResultDTO();
-            double mark = 0;
+            var test = GetTest(data.Id) ?? throw new Exception("Test wasn`t found");
 
-            string guid = "5CC5918D-81B7-4A84-BD64-E79FD914EBF7";
+            var currentUserID = MentoShyfr.Decrypt(data.UserID);
+            var currentUser = await _userRepository.FindCurrentUserById(currentUserID) ?? throw new Exception("User not found");
 
-            var test = GetTest(data.Id);
-            if (test == null)
-            {
-                throw new Exception("Test wasn`t found");
-            }
-
-            Guid userID = Guid.Parse(guid);
             var currentTestTasks = _taskService.GetTasks(test.Id).ToList();
-            result.TotalMark = currentTestTasks.Sum(x => x.Mark);
-            result.TestID = test.Id;
 
-            TestHistory testHistory = new TestHistory(currentTestTasks.Sum(x => x.Mark), DateTime.Now, test.Id, userID);
+            PassTestResultDTO result = new PassTestResultDTO() {
+                TotalMark = currentTestTasks.Sum(x => x.Mark),
+                TestID = test.Id
+            };
+
+            TestHistory testHistory = new TestHistory(
+                currentTestTasks.Sum(x => x.Mark), 
+                DateTime.Now, 
+                test.Id, 
+                currentUserID);
+
             testHistory.TaskHistory = new List<TaskHistory>();
 
             var tasks = data.Tasks.ToList();
 
             foreach (var task in tasks)
             {
-                var currentTask = currentTestTasks.FirstOrDefault(x => x.Id == task.ID);
-                if (currentTask == null)
-                {
-                    throw new Exception("Task wasn`t found");
-                }
+                var currentTask = currentTestTasks.FirstOrDefault(x => x.Id == task.ID) 
+                                                   ?? throw new Exception("Task wasn`t found");
 
                 var taskAnswers = _answerService.GetAnswers(task.ID).ToList();
-                int correctCount = taskAnswers.Where(x => x.IsCorrect).Count();
-                int userCorrectCount = 0;
+                if(taskAnswers.Count == 0)
+                {
+                    throw new Exception("Answers weren`t found");
+                }
 
-                TaskHistory taskHistory = new TaskHistory();
-                taskHistory.AnswerHistory = new List<AnswerHistory>();
-                taskHistory.TestHistory = testHistory;
-                taskHistory.TestTask = currentTask;
-                taskHistory.UserMark = 0;
+                int correctCount = taskAnswers.Where(x => x.IsCorrect).Count();
+                TaskHistory taskHistory = new TaskHistory()
+                {
+                    TestHistory = testHistory,
+                    TestTask = currentTask,
+                    UserMark = 0,
+                    AnswerHistory = new List<AnswerHistory>()
+                };
 
                 foreach (var answer in task.Answers)
                 {
-                    AnswerHistory answerHistory = new AnswerHistory();
                     var currentAnswer = taskAnswers.FirstOrDefault(x => x.Id == answer.ID);
 
-                    answerHistory.TaskId = task.ID;
-                    answerHistory.AnswerId = answer.ID;
+                    AnswerHistory answerHistory = new AnswerHistory() {
+                        TaskId = task.ID,
+                        AnswerId = answer.ID
+                    };
 
                     if (currentAnswer.IsCorrect == true && answer.Checked == true)
                     {

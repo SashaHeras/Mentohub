@@ -17,14 +17,10 @@ namespace Mentohub.Core.Services.Interfaces
         Test GetTestByCourseItem(int courseItemId);
 
         void SaveHistory(TestHistory history, List<TaskHistory> taskHistories, List<AnswerHistory> answerHistories);
+                
+        TestDTO Apply(TestDTO test);
 
-        Task<Test> CreateNewTest(string testName, int courseId, IQueryable<CourseItem> sameCourseItems);
-        
-        TestDTO Edit(TestDTO test);
-
-        Task<Test> RenameTest(int testId, string newName);
-
-        PassTestResultDTO ApplyTestResult(PassTestDTO data);
+        Task<PassTestResultDTO> ApplyTestResult(PassTestDTO data);
 
         TestDTO GetTestModel(int courseItemId);
     }

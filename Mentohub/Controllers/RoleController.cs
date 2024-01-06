@@ -1,4 +1,6 @@
-﻿using Mentohub.Core.Repositories.Repositories;
+﻿using Mentohub.Core.Repositories.Interfaces;
+using Mentohub.Core.Repositories.Repositories;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities;
@@ -15,9 +17,9 @@ namespace Mentohub.Controllers
     {
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<CurrentUser> _usermanager;
-        private readonly UserService _userService;
-        private CRUD_UserRepository _cRUD;
-        public RoleController(CRUD_UserRepository cRUD,RoleManager<IdentityRole> roleManager, UserService userService, UserManager<CurrentUser> usermanager)
+        private readonly IUserService _userService;
+        private ICRUD_UserRepository _cRUD;
+        public RoleController(ICRUD_UserRepository cRUD,RoleManager<IdentityRole> roleManager, IUserService userService, UserManager<CurrentUser> usermanager)
         {
             _roleManager = roleManager;
             _usermanager = usermanager;

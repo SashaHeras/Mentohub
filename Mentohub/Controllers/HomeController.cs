@@ -1,8 +1,12 @@
 ﻿using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Repositories.Repositories;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 
 namespace Mentohub.Controllers
 {
@@ -11,16 +15,23 @@ namespace Mentohub.Controllers
         private readonly ILessonRepository _lessonRepository;
         private readonly ICourseRepository _courseRepository;
 
-        public HomeController(ILessonRepository lessonRepository, ICourseRepository courseRepository)
+        private readonly ICourseService _courseService;
+
+        public HomeController(
+            ILessonRepository lessonRepository,
+            ICourseRepository courseRepository,
+            ICourseService courseService
+            )
         {
             _lessonRepository = lessonRepository;
             _courseRepository = courseRepository;
+            _courseService = courseService;
         }
 
         public IActionResult Index()
         {
-            ViewBag.Courses = _courseRepository.GetAll();
-            return View();
+            var list = _courseRepository.GetAll().ToList();
+            return View(list);
         }
 
         public IActionResult Video()
@@ -34,15 +45,19 @@ namespace Mentohub.Controllers
             return View(lesson);
         }
 
-        public IActionResult Privacy()
+        [HttpGet]
+        public JsonResult GetVersion()
         {
-            return View();
+            var currentAssamblyInfo = Assembly.GetExecutingAssembly();
+            var appVersion = currentAssamblyInfo.GetName().Version;
+            return Json(appVersion);
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpGet]
+        public JsonResult GetMostFamoustCourseList()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var courseList = _courseService.MostFamoustList();
+            return Json(courseList);
         }
     }
 }

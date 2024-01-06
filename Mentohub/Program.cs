@@ -16,6 +16,8 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.Extensions.Configuration;
 using Mentohub.Core.Services;
+using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
+using Mentohub.Core.Repositories.Repositories.CourseRepositories;
 
 internal class Program
 {
@@ -37,14 +39,13 @@ internal class Program
 
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-        builder.Services.AddEntityFrameworkNpgsql();
+        //builder.Services.AddEntityFrameworkNpgsql();
         builder.Services.AddDbContextPool<ProjectContext>(
                 options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultPost")));
 
         //builder.Services.AddDbContext<ProjectContext>(options => options.UseSqlServer(
         //        builder.Configuration.GetConnectionString("DefaultConnection")
         //        ));
-
 
         builder.Services.AddScoped<IAnswerHistoryRepository, AnswerHistoryRepository>();
         builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
@@ -57,7 +58,12 @@ internal class Program
         builder.Services.AddScoped<ITestHistoryRepository, TestHistoryRepository>();
         builder.Services.AddScoped<ITestRepository, TestRepository>();
         builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+        builder.Services.AddScoped<ICourseViewsRepository, CourseViewsRepository>();
         builder.Services.AddScoped<ICRUD_UserRepository, CRUD_UserRepository>();
+        builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+        builder.Services.AddScoped<ICourseBlockRepository, CourseBlockRepository>();
+        builder.Services.AddScoped<ICourseLanguageRepository, CourseLanguageRepository>();
+        builder.Services.AddScoped<ICourseOverviewRepository, CourseOverviewRepository>();        
         builder.Services.AddScoped<AllException>();
 
         builder.Services.AddScoped<IAnswerHistoryService, AnswerHistoryService>();
@@ -65,6 +71,7 @@ internal class Program
         builder.Services.AddScoped<IAzureService, AzureService>();
         builder.Services.AddScoped<ICourseItemService, CourseItemService>();
         builder.Services.AddScoped<ICourseService, CourseService>();
+        builder.Services.AddScoped<ICommentService, CommentService>();        
         builder.Services.AddScoped<ILessonService, LessonService>();
         builder.Services.AddScoped<IMediaService, MediaService>();
         builder.Services.AddScoped<ITaskHistoryService, TaskHistoryService>();
@@ -72,8 +79,12 @@ internal class Program
         builder.Services.AddScoped<ITestHistoryService, TestHistoryService>();
         builder.Services.AddScoped<ITestService, TestService>();
         builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<ICourseViewService, CourseViewService>();
+        builder.Services.AddScoped<ICourseBlockService, CourseBlockService>();
+        builder.Services.AddScoped<IOverviewService, OverviewService>();
         builder.Services.AddTransient<IEmailSender, EmailSender>();
 
+        builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSignalR();
         builder.Services.AddSwaggerGen(c =>
         {

@@ -22,13 +22,11 @@ namespace Mentohub.Core.Services
             // Отправка сповіщення про зміну аватарки клієнтам
             await Clients.User(userId).SendAsync("ReceiveAvatarUpdate", avatarUrl);
         }
-        public async Task ReceiveEmail(string email)
+        public async Task ReceiveEmail(MimeMessage email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user != null)
-            {
-                // Отримання ідентифікатора з'єднання користувача
-                var connectionId = Context.ConnectionId;
+            
+            // Отримання ідентифікатора з'єднання користувача
+            var connectionId = Context.ConnectionId;
 
             // Відправка повідомлення конкретному користувачеві
             await Clients.Client(connectionId).SendAsync("EmailReceived", email);

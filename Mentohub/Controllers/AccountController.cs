@@ -9,6 +9,8 @@ using Mentohub.Core.AllExceptions;
 using Microsoft.AspNetCore.Authorization;
 using Mentohub.Core.Services;
 using Microsoft.AspNetCore.SignalR;
+using Mentohub.Core.Services.Interfaces;
+using Mentohub.Domain.Helpers;
 
 namespace Mentohub.Core.Repositories.Repositories
 {
@@ -21,17 +23,17 @@ namespace Mentohub.Core.Repositories.Repositories
 
         private readonly ILogger<AccountController> _logger;
         private readonly AllException _exception;
-        private readonly UserService _userService;
-        private readonly EmailSender _emailSender;
+        private readonly IUserService _userService;
+        private readonly IEmailSender _emailSender;
         private readonly UserManager<CurrentUser> _userManager;
         private readonly IHubContext<SignalRHub> _hubContext;
 
         public AccountController(
             SignInManager<CurrentUser> signInManager,
-            UserService userService,
+            IUserService userService,
             ILogger<AccountController> logger,
             AllException exception,
-            EmailSender emailSender,
+            IEmailSender emailSender,
             UserManager<CurrentUser> userManager, IHubContext<SignalRHub> hubContext)
         {
             _exception = exception;
@@ -54,18 +56,10 @@ namespace Mentohub.Core.Repositories.Repositories
         [HttpPost]
         [Route("register")]
         [SwaggerOperation(Summary = "Реєстрація користувача", Tags = new[] { "Теги" })]
-        
         public async Task<IActionResult> Register([FromForm] RegisterDTO model)
         {
             try
             {
-                // Перевірка наявності користувача з такою самою електронною поштою
-                var existingUser = await _userManager.FindByEmailAsync(model.Email);
-                if (existingUser != null)
-                {
-                    return BadRequest("User with this email already exists.");
-                }
-
                 var createdUser = await _userService.CreateUser(model);
                 if (ModelState.IsValid && createdUser != null)
                 {
@@ -82,13 +76,13 @@ namespace Mentohub.Core.Repositories.Repositories
                     _logger.LogInformation("User created successfully.");
                     return new JsonResult(createdUser)
                     {
-                        StatusCode = 201, 
-                        Value= createdUser
+                        StatusCode = 200
                     };
                 }
             }            
             catch (Exception ex) 
-            { // Обробка помилки та повернення JsonResult із відповідними даними про помилку
+            { 
+                // Обробка помилки та повернення JsonResult із відповідними даними про помилку
                 var errorResponse = new
                 {
                     message = "Error during user registration",
@@ -100,6 +94,7 @@ namespace Mentohub.Core.Repositories.Repositories
                 };
 
             }
+
             return _exception.NotFoundObjectResult("User was not created");
         }
         
@@ -113,40 +108,50 @@ namespace Mentohub.Core.Repositories.Repositories
         [SwaggerOperation(Summary = "Sign in a user")]
         [SwaggerResponse(200, "User signed in successfully")]
         [SwaggerResponse(401, "Authentication failed")]
-        public async Task<IActionResult> LoginAsync([FromForm] LoginDTO credentials)
+        public async Task<JsonResult> LoginAsync([FromForm] LoginDTO credentials)
         {
             // Логіка аутентифікації користувача
             try
             {
-                var authenticatedUser =await _userService.Login(credentials);
-
-               if (ModelState.IsValid && authenticatedUser != null)
-               {
-                 return new JsonResult(authenticatedUser)
-                 {
-                    StatusCode = 200
-                 };
-               }
-
+                var authenticatedUser = await _userService.Login(credentials);
+                if (ModelState.IsValid && authenticatedUser != null)
+                {
+                    return Json(new { 
+                        IsError = false, 
+                        UserID = MentoShyfr.Encrypt(authenticatedUser.Id.ToString()), 
+                        Message = "Success" 
+                    });
+                }
             }
             catch(Exception ex)
             {
                 var errorResponse = new
                 {
                     message = "Error trying to log in user",
-                    error = ex.Message // інформація про помилку
+                    error = ex.Message                              // інформація про помилку
                 };
+
                 return new JsonResult("Authentication failed")
                 {
-                    StatusCode = 401 // Код статусу "Unauthorized"
+                    StatusCode = 401                                // Код статусу "Unauthorized"
                 };
             }
-            return _exception.NotFoundObjectResult("User is not found");
+
+            return Json(new
+            {
+                IsError = true,
+                Message = "User is not found"
+            });
         }
+        [HttpPost]
+        [Route("logout")]
+        [SwaggerOperation(Summary = "User logout")]
         public JsonResult LogoutAsync()
         {
-            return new JsonResult(_userService.LogOut());
+            _userService.LogOut();
+            return new JsonResult("The user has logged out of the account");
         }
+
         /// <summary>
         /// Confirm user's email after registration.
         /// </summary>
@@ -160,11 +165,13 @@ namespace Mentohub.Core.Repositories.Repositories
         {            
             if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
             {
-                return new JsonResult("No data to send");
+                return new JsonResult("No data to send")
+                {
+                    StatusCode = 400
+                }; 
             }
 
             var user = await _userService.GetCurrentUser(userId);
-
             if (user == null)
             {
                 return new JsonResult("User is not found")
@@ -174,21 +181,18 @@ namespace Mentohub.Core.Repositories.Repositories
             }
 
             var result = await _userManager.ConfirmEmailAsync(user, code);
-
-            if (result.Succeeded)
-            {
-                return new JsonResult("Email was confirmed")
-                {
-                    StatusCode = 200
-                };
-            }
-            else
+            if (!result.Succeeded)
             {
                 return new JsonResult("Email was not confirmed")
                 {
                     StatusCode = 400
                 };
-            }           
+            }
+
+            return new JsonResult("Email was confirmed")
+            {
+                StatusCode = 200
+            };
         }
     }
 }

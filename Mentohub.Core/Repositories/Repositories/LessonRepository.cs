@@ -1,11 +1,13 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mentohub.Core.Repositories.Repositories
 {
     public class LessonRepository : Repository<Lesson>, ILessonRepository
     {
+        #pragma warning disable 8603
         private readonly ProjectContext _context;
 
         public LessonRepository(ProjectContext repositoryContext) : base(repositoryContext)
@@ -13,11 +15,6 @@ namespace Mentohub.Core.Repositories.Repositories
             _context = repositoryContext;
         }
 
-        /// <summary>
-        /// Method return Lesson by it`s CourseItemId
-        /// </summary>
-        /// <param name="courseItemId"></param>
-        /// <returns></returns>
         public Lesson GetLessonByCourseItemId(int courseItemId)
         {
             return GetAll().Where(l => l.CourseItemId == courseItemId).FirstOrDefault();
@@ -26,6 +23,14 @@ namespace Mentohub.Core.Repositories.Repositories
         public Lesson GetLessonById(Guid id)
         {
             return GetAll().Where(l => l.Id == id).FirstOrDefault();
+        }
+
+        public Lesson GetById(Guid id)
+        {
+            return GetAll()
+                .Where(l => l.Id == id)
+                .Include(x => x.CourseItem)
+                .FirstOrDefault();
         }
     }
 }

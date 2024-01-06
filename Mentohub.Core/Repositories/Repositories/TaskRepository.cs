@@ -1,11 +1,13 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mentohub.Core.Repositories.Repositories
 {
     public class TaskRepository : Repository<TestTask>, ITaskRepository
     {
+        #pragma warning disable 8603
         private readonly ProjectContext _context;
 
         public TaskRepository(ProjectContext repositoryContext) : base(repositoryContext)
@@ -13,9 +15,14 @@ namespace Mentohub.Core.Repositories.Repositories
             _context = repositoryContext;
         }
 
-        public TestTask GetTaskById(int taskId)
+        public TestTask GetById(int taskId)
         {
-            return GetAll().Where(t => t.Id == taskId).FirstOrDefault();
+            return GetAll()
+                   .Where(t => t.Id == taskId)
+                   .Include(x => x.TaskHistory)
+                   .Include(x => x.TaskAnswers)
+                   .Include(x => x.Test)
+                   .FirstOrDefault();
         }
 
         public List<TestTask> GetTasksOfTestBiggerThanOrder(int testId, int order)
@@ -25,7 +32,7 @@ namespace Mentohub.Core.Repositories.Repositories
 
         public IQueryable<TestTask> GetTaskByTestId(int testId)
         {
-            return GetAll().Where(t=>t.TestId == testId);
+            return GetAll().Where(t => t.TestId == testId);
         }
 
         public bool DeleteTask(TestTask task)

@@ -30,19 +30,16 @@ namespace Mentohub.Core.Services.Services
         private readonly SignInManager<CurrentUser> _signInManager;
         private readonly IHubContext<SignalRHub> _hubContext;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IMediaService _mediaService;
+
         /// <summary>
         /// конструктор сервісу з параметром
         /// </summary>
         /// <param name="cRUD"></param>
-        public UserService(
-            ICRUD_UserRepository cRUD, 
-            UserManager<CurrentUser> userManager,
-            RoleManager<IdentityRole> roleManager, 
-            AllException exciption,
-            ILogger<UserService> logger,
-            SignInManager<CurrentUser> signInManager,
-            IHubContext<SignalRHub> hubContext, 
-            IWebHostEnvironment webHostEnvironment)
+        public UserService(ICRUD_UserRepository cRUD, UserManager<CurrentUser> userManager
+            , RoleManager<IdentityRole> roleManager, AllException exciption,
+            ILogger<UserService> logger, SignInManager<CurrentUser> signInManager,
+            IHubContext<SignalRHub> hubContext, IWebHostEnvironment webHostEnvironment, IMediaService mediaService)
         {
             _userRepository = cRUD;
             _userManager = userManager;
@@ -52,7 +49,9 @@ namespace Mentohub.Core.Services.Services
             _signInManager = signInManager;
             _hubContext = hubContext;
             _webHostEnvironment = webHostEnvironment;
+            _mediaService= mediaService;
         }
+
         /// <summary>
         /// сервіс реєстрації користувача
         /// </summary>
@@ -66,24 +65,31 @@ namespace Mentohub.Core.Services.Services
                 role = new IdentityRole("Customer");
                 await _roleManager.CreateAsync(role);
             }
-                CurrentUser user = new CurrentUser { Email = model.Email, UserName = model.NickName };
-                // добавляем пользователя
-                var result = await _userManager.CreateAsync(user, model.Password);
 
-                if (result.Succeeded && role!=null)
-                {
+            CurrentUser user = new() { 
+                Email = model.Email, 
+                UserName = model.NickName,
+                DateOfBirth = DateTime.MinValue
+            };
+
+            // добавляем пользователя
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded && role != null)
+            {
                 _logger.LogInformation($"Role: {role.Id}, User: {user.Id}");
                 await _userManager.AddToRoleAsync(user, role.Name);
 
                 _logger.LogInformation("User created a new account with password.");
 
-                    //установка куки
-                    await _signInManager.SignInAsync(user, false);
-                    return user;
-                }
-                return _exciption.NotFoundObject("User was not created");
-            
+                //установка куки
+                await _signInManager.SignInAsync(user, false);
+                return user;
+            }
+
+            return _exciption.NotFoundObject("User was not created");            
         }
+
         /// <summary>
         /// сервіс видалення проіфілю користувача
         /// </summary>
@@ -109,43 +115,12 @@ namespace Mentohub.Core.Services.Services
                 return false;
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
-        public async Task<bool> DeleteUserByName(string userName)
-        {
-            CurrentUser user = await _userRepository.FindCurrentUserByName(userName);
-            if (user == null)
-            {
-                return _exciption.RankException("User does not exist");
-            }
-            await _signInManager.SignOutAsync();
-            var result = await _userManager.DeleteAsync(user);
-            if (result.Succeeded)
-            {
-                // Успішно видалено
-                return true;
-            }
-            else
-            {
-                // Помилка при видаленні користувача
-                return false;
-            }
-        }
-        public  IList<string> GetUserRoles(CurrentUser user)
-        {
-           return (IList<string>)_userManager.GetRolesAsync(user);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
+        
         public IList<CurrentUser> GetAllUsers()
         {
-            return  _userManager.Users.ToList();
+            return _userManager.Users.ToList();   
         }
+
         /// <summary>
         /// download user's avatar
         /// </summary>
@@ -158,26 +133,28 @@ namespace Mentohub.Core.Services.Services
             {
                 return _exciption.ArgumentNullException("No file"); // Помилка: відсутні дані файлу.
             }
-
-            // унікальне ім'я для файлу аватарки, за допомогою Guid
-            var uniqueFileName = Guid.NewGuid() + Path.GetExtension(avatar.FileName);
-
-            // Повний шлях до файлу в папці wwwroot/avatar
-            var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "avatar", uniqueFileName);
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await avatar.CopyToAsync(stream);
-            }
-
-            // Оновіть URL аватарки в базі даних
-            var avatarUrl = "/avatar/" + uniqueFileName;
-            // оновлення URL аватарки в базі даних 
+            var avatarUrl=await _mediaService.SaveFile(avatar);
             await _userRepository.UpdateAvatarUrl(userId, avatarUrl);
-
             _logger.LogInformation("avatar is successfully saved");
-            // сповіщення про зміну аватарки користувачу за допомогою SignalR
-            await _hubContext.Clients.User(userId).SendAsync("ReceiveAvatarUpdate", avatarUrl);
+            //// унікальне ім'я для файлу аватарки, за допомогою Guid
+            //var uniqueFileName = Guid.NewGuid() + Path.GetExtension(avatar.FileName);
+
+            //// Повний шлях до файлу в папці wwwroot/avatar
+            //var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "avatar", uniqueFileName);
+
+            //using (var stream = new FileStream(filePath, FileMode.Create))
+            //{
+            //    await avatar.CopyToAsync(stream);
+            //}
+
+            //// Оновіть URL аватарки в базі даних
+            //var avatarUrl = "/avatar/" + uniqueFileName;
+            //// оновлення URL аватарки в базі даних 
+            //await _userRepository.UpdateAvatarUrl(userId, avatarUrl);
+
+            //_logger.LogInformation("avatar is successfully saved");
+            //// сповіщення про зміну аватарки користувачу за допомогою SignalR
+            //await _hubContext.Clients.User(userId).SendAsync("ReceiveAvatarUpdate", avatarUrl);
 
             return avatarUrl;
         }
@@ -195,11 +172,10 @@ namespace Mentohub.Core.Services.Services
             dto.Email = currentUser.Email;
             dto.Name = currentUser.UserName;
             dto.UserRoles = await _userRepository.GetUserRoles(currentUser);
+            dto.LastName = currentUser.LastName;
             dto.AboutMe = currentUser.AboutMe;
-            dto.DateOfBirth = currentUser.DateOfBirth;
+            dto.DateOfBirth = currentUser.DateOfBirth ?? DateTime.Now;
             dto.FirstName = currentUser.FirstName;
-            dto .LastName = currentUser.LastName;
-            dto.Image = currentUser.Image;
             return dto;
         }
 
@@ -225,6 +201,7 @@ namespace Mentohub.Core.Services.Services
             }
             return _exciption.NotFoundObject("User is not found");
         }
+
         /// <summary>
         /// вихід з аккаунта
         /// </summary>
@@ -234,32 +211,35 @@ namespace Mentohub.Core.Services.Services
             await _signInManager.SignOutAsync();
             return true;
         }
+
         /// <summary>
-        /// оновлення даних користувача
+        /// 
         /// </summary>
-        /// <param name="avatarFile"></param>
-        /// <param name="model"></param>
+        /// <param name="userDTO"></param>
         /// <returns></returns>
-        public async Task<bool> UpdateUser( string id, EditUserDTO userDTO)
+        public async Task<bool> UpdateUser(UserDTO userDTO)
         {
-            CurrentUser currentUser = await _userRepository.FindCurrentUserById(id);
-            
+            CurrentUser currentUser = await _userRepository.FindCurrentUserById(userDTO.Id);            
             if (currentUser == null)
             {
                 return false;
             }
+
             currentUser.FirstName = userDTO.FirstName;
             currentUser.LastName = userDTO.LastName;
             currentUser.AboutMe = userDTO.AboutMe;
-            if (currentUser is IdentityUser identityUser)
+
+            // Перевірка, чи користувач успадковується від IdentityUser
+            // Якщо так, то оновити дату народження
+            if (currentUser is IdentityUser)
             {
-                // Перевірка, чи користувач успадковується від IdentityUser
-                // Якщо так, то оновити дату народження
                 currentUser.DateOfBirth = userDTO.DateOfBirth;
             }
-            var result=await _userManager.UpdateAsync(currentUser);
-            return result.Succeeded;
+            
+            var result = await _userManager.UpdateAsync(currentUser);
+            return result.Succeeded;            
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -270,20 +250,24 @@ namespace Mentohub.Core.Services.Services
             CurrentUser user = await _userRepository.FindCurrentUserByName(userName);
             if (user != null)
             {
-                UserDTO userDTO = new UserDTO();
-                userDTO.Id = user.Id;
-                userDTO.Name = user.UserName;
-                userDTO.Email = user.Email;
-                userDTO.UserRoles = await _userRepository.GetUserRoles(user);
-                userDTO.AboutMe=user.AboutMe;
-                userDTO.DateOfBirth=user.DateOfBirth;
-                userDTO.FirstName = user.FirstName;
-                userDTO.LastName = user.LastName;
-                userDTO.Image=user.Image;
+                UserDTO userDTO = new()
+                {
+                    Id = user.Id,
+                    Name = user.UserName,
+                    Email = user.Email,
+                    AboutMe = user.AboutMe ?? string.Empty,
+                    FirstName = user.FirstName ?? string.Empty,
+                    LastName = user.LastName ?? string.Empty,
+                    DateOfBirth = user.DateOfBirth ?? DateTime.Now,
+                    UserRoles = await _userRepository.GetUserRoles(user)
+                };
+                
                 return userDTO;
             }
+
             return _exciption.NullException(nameof(userName));
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -293,32 +277,31 @@ namespace Mentohub.Core.Services.Services
         {
             return await _userRepository.FindCurrentUserById(id);
         }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="user"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
-        public async Task<bool> AddRoleToUserListRoles(string userId, string roleName)
+        public async Task<bool> AddRoleToUserListRoles(string userId, string roleId)
         {
             var user =await _userRepository.FindCurrentUserById(userId);
-            var identityRole = await _roleManager.FindByNameAsync(roleName);
+            var identityRole = await _roleManager.FindByIdAsync(roleId);
             if (identityRole != null&& user!=null)
             {
-                var userRoles=_userManager.GetRolesAsync(user);
-                foreach (var role in await userRoles)
+                var userRoles=await _userManager.GetRolesAsync(user);
+                if(userRoles.ToList().Any(x=>x== identityRole.Name))
                 {
-                    if (role != identityRole.Name)
-                    {
-                        await _userManager.AddToRoleAsync(user, roleName);
-                        return true;
-                    }
-                    else
-                    {
-                        _logger.LogInformation("Role already exists for this user");
-                        return false;
-                    }
+                    _logger.LogInformation("Role already exists for this user");
+                    return false;
                 }
+                else
+                {
+                    await _userManager.AddToRoleAsync(user, identityRole.Name);
+                    return true;
+                }
+                
             }
             return false;
         }
@@ -332,11 +315,13 @@ namespace Mentohub.Core.Services.Services
             var user =await _userRepository.FindCurrentUserById(userId);
             if (user != null && !string.IsNullOrEmpty(user.Image))
             {
-                 return user.Image;         
-            }   
+                
+                 return user.Image; 
+                             
+            }
+            
             // Повернути URL за замовчуванням, якщо користувач не має аватарки.
             return "/wwwroot/avatar/default-avatar.ipg";
-
         }
         /// <summary>
         /// 
@@ -345,8 +330,14 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<List<CurrentUser>> GetAllUsersByRoleName(string roleName)
         {
+            if (string.IsNullOrEmpty(roleName))
+            {
+                throw new Exception("No role name to search!");
+            }
+
             return await _userRepository.GetAllUsers(roleName);
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -362,7 +353,6 @@ namespace Mentohub.Core.Services.Services
             }
             return false;
         }
-
         /// <summary>
         /// 
         /// </summary>
@@ -379,29 +369,30 @@ namespace Mentohub.Core.Services.Services
                     return true;
                 }              
             }
-
             return false;
         }
-        public ChangeRoleDTO EditUserRoles(CurrentUser user)
+        public async Task<ChangeRoleDTO?> GetChangeRoleDTO(string userId)
         {
-            if (user != null)
+            CurrentUser user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
             {
-                // получем список ролей пользователя
-                var userRoles = GetUserRoles(user);
-                var allRoles =_roleManager.Roles.ToList();
-                ChangeRoleDTO model = new ChangeRoleDTO
-                {
-                    UserId = user.Id,
-                    UserEmail = user.Email,
-                    UserRoles = userRoles,
-                    AllRoles = allRoles,
-                };
-                return model;
+                return null;
             }
-            return null /*_exciption.NullObject("Current user does not exist ")*/;
+            // получем список ролей пользователя
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var allRoles = _roleManager.Roles.ToList();
+
+            ChangeRoleDTO model = new ChangeRoleDTO
+            {
+                UserId = user.Id,
+                UserEmail = user.Email,
+                UserRoles = userRoles,
+                AllRoles = allRoles,
+            };
+
+            return model;
         }
-
-
+        
     }
 }
 

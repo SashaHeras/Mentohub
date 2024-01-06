@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Mentohub.Core/Migrations/20231224091836_add_user_views_course.cs
+/Mentohub.Core/Migrations/20231209101829_InitialPostgres.Designer.cs
+/Mentohub.Core/Migrations/20231209101829_InitialPostgres.Designer.cs

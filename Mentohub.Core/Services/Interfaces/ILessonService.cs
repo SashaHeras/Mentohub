@@ -17,7 +17,7 @@ namespace Mentohub.Core.Services.Interfaces
 
         LessonDTO GetLessonByCourseItem(int courseItemId);
 
-        Task<LessonDTO> Edit(LessonDTO lesson);
+        Task<LessonDTO> Apply(LessonDTO lesson);
 
         void Delete(Guid id);
     }

@@ -7,7 +7,7 @@ namespace Mentohub.Core.Repositories.Intefaces
     {
         public IQueryable<TestTask> GetTaskByTestId(int testId);
 
-        public TestTask GetTaskById(int taskId);
+        public TestTask GetById(int taskId);
 
         public List<TestTask> GetTasksOfTestBiggerThanOrder(int testId, int order);
 

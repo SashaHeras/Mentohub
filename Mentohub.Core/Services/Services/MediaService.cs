@@ -2,7 +2,7 @@
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Domain.Entities;
 using Mentohub.Core.Services.Interfaces;
-using Mentohub.Domain.Data.DTO;
+using Mentohub.Domain.Data.DTO.CourseDTOs;
 
 namespace Mentohub.Core.Services.Services
 {

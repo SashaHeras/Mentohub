@@ -1,8 +1,9 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Core.Services.Services;
-using Mentohub.Domain.Data.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Mentohub.Core.Services.Interfaces;
+using Microsoft.Azure.Amqp.Framing;
+using Mentohub.Domain.Data.DTO.CourseDTOs;
 
 namespace Mentohub.Controllers
 {
@@ -21,11 +22,11 @@ namespace Mentohub.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult Edit(CourseDTO data)
+        public JsonResult Apply(CourseDTO data)
         {
             try
             {
-                var course = _courseService.Edit(data);
+                var course = _courseService.Apply(data);
                 return Json(new { IsError = false, Data = course, Message = "Success" });
             }
             catch (Exception ex)
@@ -37,42 +38,48 @@ namespace Mentohub.Controllers
         /// <summary>
         /// Get course elements (tests/lessons)
         /// </summary>
-        /// <param name="courseId"></param>
+        /// <param name="Id"></param>
         /// <returns></returns>
-        [HttpGet]
-        public JsonResult GetCourseElements(int courseId)
+        [HttpPost]
+        public JsonResult GetCourseElements(int Id)
         {
-            var result = _courseService.GetCourseElements(courseId);
+            var result = _courseService.GetCourseElements(Id);
             return Json(result);
         }
 
         /// <summary>
-        /// Get course comments
+        /// View course
         /// </summary>
-        /// <param name="courseId"></param>
-        /// <param name="commentsCount"></param>
-        /// <returns></returns>
-        [HttpGet]
-        public JsonResult GetComments(int courseId, int commentsCount = 10)
-        {
-            var data = _courseService.GetCourseComments(courseId, commentsCount);
-            return Json(data);
-        }
-
-        /// <summary>
-        /// Edit/create comment to course
-        /// </summary>
-        /// <param name="data"></param>
+        /// <param name="CourseID"></param>
+        /// <param name="UserID"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult EditComment([FromBody] CommentDTO data)
+        public async Task<JsonResult> ViewCourse(int CourseID, string UserID)
         {
             try
             {
-                var comment = string.Empty;
-                return Json(new { IsError = false, Data = comment, Message = "Success" });
+                var course = await _courseService.ViewCourse(CourseID, UserID);
+                return Json(new { IsError = false, Data = course, Message = "Success" });
             }
             catch (Exception ex)
+            {
+                return Json(new { IsError = true, Message = ex.Message });
+            }
+        }
+
+        /// <summary>
+        /// Get list about what course contains
+        /// </summary>
+        /// <param name="ID"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult GetCourseInfoList(int ID)
+        {
+            try
+            {
+                return Json(_courseService.GetCourseInfoList(ID));
+            }
+            catch(Exception ex)
             {
                 return Json(new { IsError = true, Message = ex.Message });
             }

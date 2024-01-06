@@ -1,11 +1,13 @@
-﻿using Mentohub.Core.Services;
+﻿using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities;
+using Mentohub.Domain.Helpers;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Swashbuckle.AspNetCore.Annotations;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Mentohub.Controllers
 {
@@ -14,21 +16,17 @@ namespace Mentohub.Controllers
     [SwaggerTag("AdminController")]
     public class AdminController : Controller
     {
-        private readonly RoleManager<IdentityRole> _roleManager;
-        
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
         private readonly ILogger<AdminController> _logger;
-        private readonly EmailSender _emailSender;
-        //private readonly IHubContext<SignalRHub> _signalRHub;
-        public AdminController(RoleManager<IdentityRole> roleManager,
-             UserService userService,
-            ILogger<AdminController> logger, EmailSender emailSender 
+       
+        public AdminController(
+            IUserService userService,
+            ILogger<AdminController> logger
            /* IHubContext<SignalRHub> signalRHub*/)
         {
-            _roleManager = roleManager;
             _userService = userService;
             _logger = logger;
-            _emailSender = emailSender;
+           
             //_signalRHub = signalRHub;
         }
 
@@ -36,58 +34,30 @@ namespace Mentohub.Controllers
         {
             return View();
         }
+
         /// <summary>
-        /// 
+        /// Get list of users
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [Route("userslist")]
-        public IActionResult UserList() => Json(_userService.GetAllUsers());
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <returns></returns>
-        [HttpDelete]
-        [Route("deleteUserByName")]
-        [SwaggerOperation(Summary = "Delete a user by Name")]
-        public async Task<IActionResult> DeleteUser([FromForm] string userName)
+        [Route("GetUsersList")]
+        public JsonResult GetUserList()
         {
-            // Логіка видалення користувача
-            try
+            var usersList = _userService.GetAllUsers().Select(x => new UserDTO()
             {
-                var deletedUser = await _userService.DeleteUserByName(userName);
-                if (deletedUser)
-                {
-                    _logger.LogInformation("User deleted successfully.");
-                    return new JsonResult("User deleted successfully ")
-                    {
-                        StatusCode = 204 // Код статусу "No Content"
-                    };
-                }
-                else
-                {
-                    return new JsonResult("User not found")
-                    {
-                        StatusCode = 404 // Код статусу "Not Found"
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                var errorResponse = new
-                {
-                    message = "Error when deleting a user",
-                    error = ex.Message // інформація про помилку
-                };
-                return new JsonResult(errorResponse)
-                {
-                    StatusCode = 500 // код статусу, що вказує на помилку
-                };
-            }
+                Id = x.Id,
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                Email = x.Email,
+                EncryptedID = MentoShyfr.Encrypt(x.Id),
+                DateOfBirth = x.DateOfBirth ?? DateTime.MinValue
+            });
+
+            return Json(usersList);
         }
+
         [HttpGet]
-        [Route("getUser")]
+        [Route("GetUser")]
         [SwaggerOperation(Summary = "Get information about user")]
         public async Task<IActionResult> GetUser(string userName)
         {
@@ -114,8 +84,10 @@ namespace Mentohub.Controllers
                     StatusCode = 500 // код статусу, що вказує на помилку
                 };
             }
+
             return new JsonResult("Unknown error");
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -126,32 +98,30 @@ namespace Mentohub.Controllers
         [SwaggerOperation(Summary ="Edit the list of user's roles")]
         public async Task<IActionResult> EditUserRoles([FromForm]string userId)
         {
-            // получаем пользователя
-            CurrentUser user = await _userService.GetCurrentUser(userId);
-            var model = _userService.EditUserRoles(user);
-            if(model == null) {return NotFound(); }
-            return new JsonResult(model);
+            var model = await _userService.GetChangeRoleDTO(userId);
+            if(model == null) { return NoContent(); }
+               return new JsonResult(model)
+               {
+                   StatusCode = 200
+               };
         }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="roleName"></param>
         /// <returns></returns>
         [HttpGet]
-        [Route("listOfUsersByRoleName")]
+        [Route("ListOfUsersByRoleName")]
         public async Task<IActionResult> GetUsersByRoleName(string roleName)
         {
             try
             {
-                if(!string.IsNullOrEmpty(roleName)) 
-            {
-                var result =await _userService.GetAllUsersByRoleName(roleName);
+                var result = await _userService.GetAllUsersByRoleName(roleName);
                 return new JsonResult(result)
                 {
                     StatusCode = 200
                 };
-            }
-
             }
             catch (Exception ex)
             {
@@ -160,28 +130,13 @@ namespace Mentohub.Controllers
                     message = "Not found users by this roleName",
                     error = ex.Message // інформація про помилку
                 };
+
                 return new JsonResult(errorResponse)
                 {
                     StatusCode = 500 // код статусу, що вказує на помилку
                 };
             }
-            return new JsonResult("Unknown error");
-
         }
-        [HttpPost]
-        [Route("sendEmail")]
-        public async Task<IActionResult> SendEmail([FromForm]string email, [FromForm] string subject, [FromForm] string htmlmessage)
-        {
-            if(!string.IsNullOrEmpty(email)&&!string.IsNullOrEmpty(htmlmessage)) 
-            { 
-            await _emailSender.SendEmailAsync(email, subject, htmlmessage);
-                //await _signalRHub.ReceiveEmail(email);
-                return new JsonResult("Email is sent successfully")
-                {
-                    StatusCode = 200
-                };      
-            }
-            return new JsonResult("An error occurred while trying to send an email");
-        }
+        
     }
 }

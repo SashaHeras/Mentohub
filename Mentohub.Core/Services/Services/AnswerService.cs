@@ -51,7 +51,7 @@ namespace Mentohub.Core.Services.Services
 
         public TaskAnswer GetAnswer(int id)
         {
-            return _answerRepository.GetAnswerById(id);
+            return _answerRepository.GetById(id);
         }
 
         public async Task<bool> SavingAnswers(TestTask editedTask, Dictionary<string, bool> answers, string[] ids)
@@ -66,7 +66,7 @@ namespace Mentohub.Core.Services.Services
                 {
                     if (int.TryParse(ids[counter], out currentAnswerId) == false)
                     {
-                        TaskAnswer newAnswer = new TaskAnswer()
+                        TaskAnswer newAnswer = new()
                         {
                             Name = answer.Key,
                             IsCorrect = answer.Value,
@@ -77,7 +77,7 @@ namespace Mentohub.Core.Services.Services
                     }
                     else
                     {
-                        TaskAnswer updateAnswer = _answerRepository.GetAnswerById(currentAnswerId);
+                        TaskAnswer updateAnswer = _answerRepository.GetById(currentAnswerId);
                         updateAnswer.Name = answer.Key;
                         updateAnswer.IsCorrect = answer.Value;
 
@@ -112,21 +112,6 @@ namespace Mentohub.Core.Services.Services
             return _answerRepository.GetCountOfCorrectAnswers(taskId);
         }
 
-        public Dictionary<string, bool> AnswersSpliter(string answers, string _checked)
-        {
-            string[] _answers = answers.Split(',');
-            string[] checkedAns = _checked.Split(',');
-
-            Dictionary<string, bool> result = new Dictionary<string, bool>();
-
-            for (int i = 0; i < _answers.Length; i++)
-            {
-                result.Add(_answers[i].ToString().Replace('|', ','), checkedAns[i] == "true" ? true : false);
-            }
-
-            return result;
-        }
-
         public int PopulateAnswerHistories(List<AnswerDTO> answers, TestTask task, List<AnswerHistory> answerHistories)
         {
             var result = 0;
@@ -155,13 +140,13 @@ namespace Mentohub.Core.Services.Services
 
         public List<AnswerDTO> EditAnswers(List<AnswerDTO> answers)
         {
-            List<AnswerDTO> result = new List<AnswerDTO>();
-            var task = _taskRepository.FirstOrDefault(x => x.Id == answers.First().TaskId);
+            List<AnswerDTO> result = new();
+            var task = _taskRepository.GetById(answers.First().TaskId);
 
             int correctAnswersCnt = 0;
             foreach (var item in answers)
             {
-                var answer = _answerRepository.GetAnswerById(item.Id);
+                var answer = _answerRepository.GetById(item.Id);
                 if (answer != null)
                 {
                     answer.IsCorrect = item.IsChecked;
@@ -193,6 +178,12 @@ namespace Mentohub.Core.Services.Services
             _taskRepository.Update(task);
 
             return result;
+        }
+
+        public void DeleteAnswer(int ID)
+        {
+            var answer = GetAnswer(ID) ?? throw new Exception("Answer not found!");
+            _answerRepository.DeleteAnswer(answer);
         }
     }
 }
