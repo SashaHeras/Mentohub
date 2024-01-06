@@ -21,6 +21,7 @@ namespace Mentohub.Controllers
             _signalRHub=signalRHub;
             _emailSender = emailSender;
         }
+
         [HttpPost]
         [Route("sendEmail")]
         public async Task<IActionResult> SendEmail([FromForm] string email, [FromForm] string subject, [FromForm] string htmlmessage)
@@ -34,6 +35,7 @@ namespace Mentohub.Controllers
                     StatusCode = 200
                 };
             }
+
             return new JsonResult("An error occurred while trying to send an email");
         }
         
