@@ -131,10 +131,11 @@ namespace Mentohub.Core.Repositories.Repositories
                     error = ex.Message                              // інформація про помилку
                 };
 
-                return new JsonResult("Authentication failed")
+                return Json(new
                 {
-                    StatusCode = 401                                // Код статусу "Unauthorized"
-                };
+                    IsError = true,
+                    Message = "Authentication failed"
+                });
             }
 
             return Json(new
@@ -143,6 +144,7 @@ namespace Mentohub.Core.Repositories.Repositories
                 Message = "User is not found"
             });
         }
+
         [HttpPost]
         [Route("logout")]
         [SwaggerOperation(Summary = "User logout")]

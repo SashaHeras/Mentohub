@@ -6,6 +6,7 @@ using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities;
 using Mentohub.Domain.Data.Entities.Interfaces;
+using Mentohub.Domain.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -166,16 +167,20 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<UserDTO> GetProfile(string id)
         {
-            UserDTO dto = new UserDTO();
-            CurrentUser currentUser = await _userRepository.FindCurrentUserById(id);
-            dto.Id = currentUser.Id;  
-            dto.Email = currentUser.Email;
-            dto.Name = currentUser.UserName;
-            dto.UserRoles = await _userRepository.GetUserRoles(currentUser);
-            dto.LastName = currentUser.LastName;
-            dto.AboutMe = currentUser.AboutMe;
-            dto.DateOfBirth = currentUser.DateOfBirth ?? DateTime.Now;
-            dto.FirstName = currentUser.FirstName;
+            var currentUserID = MentoShyfr.Decrypt(id);
+            CurrentUser currentUser = await _userRepository.FindCurrentUserById(currentUserID)
+                                                            ?? throw new Exception("Unknown user!");
+            UserDTO dto = new UserDTO() {
+                Id = currentUser.Id,
+                Email = currentUser.Email,
+                Name = currentUser.UserName,
+                UserRoles = await _userRepository.GetUserRoles(currentUser),
+                LastName = currentUser.LastName,
+                AboutMe = currentUser.AboutMe,
+                DateOfBirth = currentUser.DateOfBirth ?? DateTime.Now,
+                FirstName = currentUser.FirstName
+            };            
+
             return dto;
         }
 

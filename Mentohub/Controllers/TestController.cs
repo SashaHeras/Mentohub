@@ -144,7 +144,7 @@ namespace Mentohub.Controllers
                 {
                     return Json(new { IsError = true, ex.Message });
                 }
-            }            
+            }           
         }
 
         public IActionResult EditTest(int id)

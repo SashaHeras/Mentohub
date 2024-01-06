@@ -128,6 +128,7 @@ namespace Mentohub.Core.Repositories.Repositories
                 var roles = await _userManager.GetRolesAsync(user);
                 return roles.ToList();
             }
+
             return new List<string>();
         }
         /// <summary>

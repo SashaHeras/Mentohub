@@ -82,7 +82,7 @@ namespace Mentohub.Controllers
         [HttpGet]
         [Route("getUserProfile")]
         [SwaggerOperation(Summary ="Get user profile")]
-        public async Task<IActionResult>GetUserProfile(string id)
+        public async Task<IActionResult>GetUserProfile([FromForm] string id)
         {
             try
             {
