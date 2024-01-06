@@ -8,6 +8,7 @@ using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Amqp.Framing;
 using System.Linq.Expressions;
+using System.Transactions;
 
 namespace Mentohub.Controllers
 {
@@ -16,28 +17,16 @@ namespace Mentohub.Controllers
         private readonly ITestService _testService;
         private readonly ITaskService _taskService;
         private readonly IAnswerService _answerService;
-        private readonly ICourseItemService _courseItemService;
-
-        private readonly ITestHistoryRepository _testHistoryRepository;
-        private readonly IAnswerHistoryRepository _answerHistoryRepository;
-        private readonly ITaskHistoryRepository _taskHistoryRepository;
 
         public TestController(
             ITestService testService, 
             ITaskService taskService,
-            IAnswerService answerService, 
-            ICourseItemService courseItemService,
-            ITestHistoryRepository testHistoryRepository,
-            IAnswerHistoryRepository answerHistoryRepository,
-            ITaskHistoryRepository taskHistoryRepository)
+            IAnswerService answerService
+        )
         {
             _testService = testService;
             _taskService = taskService;
             _answerService = answerService;
-            _courseItemService = courseItemService;
-            _testHistoryRepository = testHistoryRepository;
-            _answerHistoryRepository = answerHistoryRepository;
-            _taskHistoryRepository = taskHistoryRepository;
         }
 
         [HttpPost]
@@ -65,7 +54,7 @@ namespace Mentohub.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { IsError = true, Message = "Error" });
+                return Json(new { IsError = true, Message = ex.Message });
             }
         }
 
@@ -85,7 +74,7 @@ namespace Mentohub.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { IsError = true, Message = "Error" });
+                return Json(new { IsError = true, Message = ex.Message });
             }
         }
 
@@ -105,7 +94,7 @@ namespace Mentohub.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { IsError = true, Message = "Error" });
+                return Json(new { IsError = true, ex.Message });
             }
         }
 
@@ -143,16 +132,19 @@ namespace Mentohub.Controllers
         [HttpPost]
         public async Task<JsonResult> Pass([FromBody] PassTestDTO data)
         {
-            try
+            using(TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                var result = await _testService.ApplyTestResult(data);
-
-                return Json(new { IsError = true, Data = result, Message = "Success" });
-            }
-            catch(Exception ex)
-            {
-                return Json(new { IsError = true, Message = ex.Message });
-            }
+                try
+                {
+                    var result = await _testService.ApplyTestResult(data);
+                    scope.Complete();
+                    return Json(new { IsError = true, Data = result, Message = "Success" });
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { IsError = true, ex.Message });
+                }
+            }            
         }
 
         public IActionResult EditTest(int id)

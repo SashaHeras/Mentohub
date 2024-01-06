@@ -31,9 +31,9 @@ namespace Mentohub.Core.Repositories.Repositories
                 _context.TaskAnswers.Remove(answer);
                 _context.SaveChanges();
             }
-            catch(Exception ex)
+            catch(Exception)
             {
-                return false;
+                throw;
             }
 
             return true;

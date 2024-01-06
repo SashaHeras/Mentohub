@@ -66,7 +66,7 @@ namespace Mentohub.Core.Services.Services
                 {
                     if (int.TryParse(ids[counter], out currentAnswerId) == false)
                     {
-                        TaskAnswer newAnswer = new TaskAnswer()
+                        TaskAnswer newAnswer = new()
                         {
                             Name = answer.Key,
                             IsCorrect = answer.Value,
@@ -140,7 +140,7 @@ namespace Mentohub.Core.Services.Services
 
         public List<AnswerDTO> EditAnswers(List<AnswerDTO> answers)
         {
-            List<AnswerDTO> result = new List<AnswerDTO>();
+            List<AnswerDTO> result = new();
             var task = _taskRepository.GetById(answers.First().TaskId);
 
             int correctAnswersCnt = 0;
@@ -182,12 +182,7 @@ namespace Mentohub.Core.Services.Services
 
         public void DeleteAnswer(int ID)
         {
-            var answer = GetAnswer(ID);
-            if (answer == null)
-            {
-                throw new Exception("Answer not found!");
-            }
-
+            var answer = GetAnswer(ID) ?? throw new Exception("Answer not found!");
             _answerRepository.DeleteAnswer(answer);
         }
     }

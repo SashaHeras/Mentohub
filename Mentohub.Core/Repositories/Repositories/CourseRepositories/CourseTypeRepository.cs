@@ -6,6 +6,7 @@ namespace Mentohub.Core.Repositories.Repositories.CourseRepositories
 {
     public class CourseTypeRepository : Repository<CourseItemType>, ICourseTypeRepository
     {
+        #pragma warning disable 8603
         private readonly ProjectContext _context;
 
         public CourseTypeRepository(ProjectContext repositoryContext) : base(repositoryContext)

@@ -22,59 +22,44 @@ namespace Mentohub.Core.Services.Services
 {
     public class CourseService : ICourseService
     {
-        private readonly ProjectContext _context;
-
+        #pragma warning disable 8601
         private readonly ICourseRepository _courseRepository;
         private readonly ICourseItemRepository _courseItemRepository;
-        private readonly ICourseTypeRepository _courseTypeRepository;
         private readonly ILessonRepository _lessonRepository;
-        private readonly ICourseBlockRepository _courseBlockRepository;
         private readonly ITestRepository _testRepository;
         private readonly ISubjectRepository _subjectRepository;
         private readonly ICommentRepository _commentRepository;
         private readonly ICourseLanguageRepository _courseLanguageRepository;
 
         private readonly IMediaService _mediaService;
-        private readonly ICourseItemService _courseItemService;
         private readonly ICourseViewService _courseViewsService;
 
         public CourseService(
-            ProjectContext context,
             ICourseRepository courseRepository,
             ICourseItemRepository courseItemRepository,
-            ICourseTypeRepository courseTypeRepository,
             ICommentRepository commentRepository,
             ILessonRepository lessonRepository,
             ITestRepository testRepository,
             ISubjectRepository subjectRepository,
-            ICourseItemService courseItemService,
             ICourseViewService courseViewsService,
-            ICourseBlockRepository courseBlockRepository,
             ICourseLanguageRepository courseLanguageRepository,
             IMediaService mediaService)
         {
-            this._context = context;
             _courseRepository = courseRepository;
             _courseItemRepository = courseItemRepository;
-            _courseTypeRepository = courseTypeRepository;
             _lessonRepository = lessonRepository;
-            _courseItemService = courseItemService;
             _commentRepository = commentRepository;
             _testRepository = testRepository;
             _courseViewsService = courseViewsService;
             _mediaService = mediaService;
             _subjectRepository = subjectRepository;
-            _courseBlockRepository = courseBlockRepository;
             _courseLanguageRepository = courseLanguageRepository;
         }
 
         public async Task<CourseDTO> Apply(CourseDTO courseDTO)
         {
-            var lang = _courseLanguageRepository.FindById(courseDTO.LanguageId);
-            if(lang == null)
-            {
-                throw new Exception("Unknown language!");
-            }
+            var lang = _courseLanguageRepository.FindById(courseDTO.LanguageId)
+                                                 ?? throw new Exception("Unknown language!");
 
             var currentUserID = MentoShyfr.Decrypt(courseDTO.AuthorId);
 
@@ -154,10 +139,9 @@ namespace Mentohub.Core.Services.Services
                     currentCourse.LoadVideoName = courseDTO.PreviewVideo.FileName;
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
-                result = false;
-                throw ex;
+                throw;
             }
 
             return result;
@@ -181,11 +165,8 @@ namespace Mentohub.Core.Services.Services
         public List<CourseElementDTO> GetCourseElements(int Id)
         {
             var result = new List<CourseElementDTO>();
-            var course = _courseRepository.FirstOrDefault(x => x.Id == Id);
-            if(course == null)
-            {
-                throw new Exception("Course not found");
-            }
+            var course = _courseRepository.FirstOrDefault(x => x.Id == Id)
+                                           ?? throw new Exception("Course not found");
 
             var courseItemsIDs = course.CourseItems.Select(x => x.Id).ToList();
             var tests = _testRepository.GetAll(x => courseItemsIDs.Contains(x.CourseItemId)).ToList();
@@ -275,21 +256,15 @@ namespace Mentohub.Core.Services.Services
 
         public async Task<CourseDTO> ViewCourse(int CourseID, string UserID)
         {
-            var course = _courseRepository.FirstOrDefault(x => x.Id == CourseID);
-            if(course == null)
-            {
-                throw new Exception("Course not found!");
-            }
+            var course = _courseRepository.FirstOrDefault(x => x.Id == CourseID) 
+                                           ?? throw new Exception("Course not found!");
 
             var result = CourseMapper.ToDTO(course);
 
             var courseView = await _courseViewsService.TryAddUserView(CourseID, UserID);
             if(courseView != null)
             {
-                if(course.CourseViews == null)
-                {
-                    course.CourseViews = new List<CourseViews>();
-                }
+                course.CourseViews = course.CourseViews == null ? new List<CourseViews>() : course.CourseViews;
 
                 course.CourseViews.Add(courseView);
                 _courseRepository.Update(course);
@@ -336,11 +311,8 @@ namespace Mentohub.Core.Services.Services
 
         public List<CourseBlockDTO> GetCourseInfoList(int ID)
         {
-            var course = _courseRepository.FirstOrDefault(x => x.Id == ID);
-            if(course == null)
-            {
-                throw new Exception("Unknown course!");
-            }
+            var course = _courseRepository.FirstOrDefault(x => x.Id == ID)
+                                           ?? throw new Exception("Unknown course!");
 
             var itemsIdList = course.CourseItems.Select(x => x.Id).ToList();
             var courseItems = _courseItemRepository.GetAll(x => itemsIdList.Contains(x.Id))

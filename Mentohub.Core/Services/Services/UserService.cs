@@ -66,7 +66,7 @@ namespace Mentohub.Core.Services.Services
                 await _roleManager.CreateAsync(role);
             }
 
-            CurrentUser user = new CurrentUser() { 
+            CurrentUser user = new() { 
                 Email = model.Email, 
                 UserName = model.NickName,
                 DateOfBirth = DateTime.MinValue
@@ -229,10 +229,10 @@ namespace Mentohub.Core.Services.Services
             currentUser.LastName = userDTO.LastName;
             currentUser.AboutMe = userDTO.AboutMe;
 
-            if (currentUser is IdentityUser identityUser)
+            // Перевірка, чи користувач успадковується від IdentityUser
+            // Якщо так, то оновити дату народження
+            if (currentUser is IdentityUser)
             {
-                // Перевірка, чи користувач успадковується від IdentityUser
-                // Якщо так, то оновити дату народження
                 currentUser.DateOfBirth = userDTO.DateOfBirth;
             }
             
@@ -250,7 +250,7 @@ namespace Mentohub.Core.Services.Services
             CurrentUser user = await _userRepository.FindCurrentUserByName(userName);
             if (user != null)
             {
-                UserDTO userDTO = new UserDTO()
+                UserDTO userDTO = new()
                 {
                     Id = user.Id,
                     Name = user.UserName,

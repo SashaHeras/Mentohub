@@ -32,8 +32,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
     <PackageReference Include="MimeKit" Version="4.2.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.8" />
+    <PackageReference Include="Spell.Check" Version="4.0.3.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+    <PackageReference Include="Syncfusion.EJ2.SpellChecker.AspNet.Core" Version="24.1.44" />
     <PackageReference Include="System.Text.Json" Version="7.0.0" />
   </ItemGroup>
 
