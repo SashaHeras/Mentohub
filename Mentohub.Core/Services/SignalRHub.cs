@@ -30,9 +30,6 @@ namespace Mentohub.Core.Services
 
             // Відправка повідомлення конкретному користувачеві
             await Clients.Client(connectionId).SendAsync("EmailReceived", email);
-
-            }
-                
         }
     }
 }

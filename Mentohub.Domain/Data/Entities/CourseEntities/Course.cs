@@ -31,6 +31,8 @@ namespace Mentohub.Domain.Data.Entities.CourseEntities
 
         public int? LanguageID { get; set; }
 
+        public int? CourseLevelID { get; set; }
+
         public string? LoadVideoName { get; set; }
 
         public string? LoadPictureName { get; set; }
@@ -52,6 +54,8 @@ namespace Mentohub.Domain.Data.Entities.CourseEntities
         public List<CourseOverview> CourseOverviews { get; set; }
 
         public CourseLanguage Language { get; set; }
+
+        public CourseLevel CourseLevel { get; set; }
 
         public CourseDTO ToDTO()
         {

@@ -121,6 +121,11 @@ namespace Mentohub.Core.Context
 
             #region Course
 
+            modelBuilder.Entity<Course>()
+               .HasOne(t1 => t1.CourseLevel)
+               .WithMany(t2 => t2.Courses)
+               .HasForeignKey(t1 => t1.CourseLevelID);
+
             modelBuilder.Entity<CourseViews>()
                 .HasOne(t1 => t1.Course)
                 .WithMany(t2 => t2.CourseViews)

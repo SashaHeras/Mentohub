@@ -37,6 +37,10 @@ namespace Mentohub.Core.Migrations
                     b.Property<bool>("Checked")
                         .HasColumnType("boolean");
 
+                    b.Property<int?>("CourseLevelID")
+                        .IsRequired()
+                        .HasColumnType("integer");
+
                     b.Property<int>("CourseSubjectId")
                         .HasColumnType("integer");
 
@@ -81,6 +85,8 @@ namespace Mentohub.Core.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("CourseLevelID");
 
                     b.HasIndex("LanguageID");
 
@@ -179,6 +185,20 @@ namespace Mentohub.Core.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("CourseLanguages");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseLevel", b =>
+                {
+                    b.Property<int>("ID")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("CourseLevel");
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseOverview", b =>
@@ -746,11 +766,19 @@ namespace Mentohub.Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.CourseLevel", "CourseLevel")
+                        .WithMany("Courses")
+                        .HasForeignKey("CourseLevelID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.CourseLanguage", "Language")
                         .WithMany("Courses")
                         .HasForeignKey("LanguageID");
 
                     b.Navigation("Author");
+
+                    b.Navigation("CourseLevel");
 
                     b.Navigation("Language");
                 });
@@ -1001,6 +1029,11 @@ namespace Mentohub.Core.Migrations
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseLanguage", b =>
+                {
+                    b.Navigation("Courses");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseLevel", b =>
                 {
                     b.Navigation("Courses");
                 });
