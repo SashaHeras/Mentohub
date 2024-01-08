@@ -87,7 +87,6 @@ namespace Mentohub.Core.Services.Services
         {
             var comments = _commentRepository.GetAll()
                                              .Where(x => x.CourseId == data.CourseID)
-                                             .Include(x => x.User)
                                              .ToList();
 
             var result = comments.Select(x => new CommentDTO()

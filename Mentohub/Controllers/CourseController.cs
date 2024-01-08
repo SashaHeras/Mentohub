@@ -10,10 +10,15 @@ namespace Mentohub.Controllers
     public class CourseController : Controller
     {
         private readonly ICourseService _courseService;
+        private readonly ICourseLevelService _courseLevelService;
 
-        public CourseController(ICourseService service)
+        public CourseController(
+            ICourseService service,
+            ICourseLevelService courseLevelService
+        )
         {
-            _courseService = service;  
+            _courseService = service;
+            _courseLevelService = courseLevelService;
         }
 
         /// <summary>
@@ -83,6 +88,18 @@ namespace Mentohub.Controllers
             {
                 return Json(new { IsError = true, Message = ex.Message });
             }
+        }
+
+        /// <summary>
+        /// Метод отримання списку рівнів
+        /// </summary>
+        /// <returns></returns>
+        [Route("Course/GetLevelsList")]
+        [HttpGet]
+        public JsonResult GetLevelsList()
+        {
+            var levels = _courseLevelService.GetLevelsList();
+            return Json(levels);
         }
     }
 }

@@ -17,12 +17,12 @@ namespace Mentohub.Domain.Data.Entities.CourseEntities
 
         public int StatusId { get; set; }
 
-        public Course Course { get; set; }
+        public virtual Course Course { get; set; }
 
-        public CourseBlock CourseBlock { get; set; }
+        public virtual CourseBlock CourseBlock { get; set; }
 
-        public Lesson Lesson { get; set; }
+        public virtual Lesson Lesson { get; set; }
 
-        public Test Test { get; set; }
+        public virtual Test Test { get; set; }
     }
 }

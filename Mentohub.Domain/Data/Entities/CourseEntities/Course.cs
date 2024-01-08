@@ -39,23 +39,23 @@ namespace Mentohub.Domain.Data.Entities.CourseEntities
 
         public DateTime LastEdittingDate { get; set; }
 
-        public CurrentUser Author { get; set; }
+        public virtual CurrentUser Author { get; set; }
 
-        public List<CourseItem> CourseItems { get; set; }
+        public virtual List<CourseItem> CourseItems { get; set; }
 
-        public ICollection<CourseTag> CourseTags { get; set; }
+        public virtual ICollection<CourseTag> CourseTags { get; set; }
 
-        public List<Comment> Comments { get; set; }
+        public virtual List<Comment> Comments { get; set; }
 
-        public List<CourseViews> CourseViews { get; set; }
+        public virtual List<CourseViews> CourseViews { get; set; }
 
-        public List<CourseBlock> CourseBlocks { get; set; }
+        public virtual List<CourseBlock> CourseBlocks { get; set; }
 
-        public List<CourseOverview> CourseOverviews { get; set; }
+        public virtual List<CourseOverview> CourseOverviews { get; set; }
 
-        public CourseLanguage Language { get; set; }
+        public virtual CourseLanguage Language { get; set; }
 
-        public CourseLevel CourseLevel { get; set; }
+        public virtual CourseLevel CourseLevel { get; set; }
 
         public CourseDTO ToDTO()
         {

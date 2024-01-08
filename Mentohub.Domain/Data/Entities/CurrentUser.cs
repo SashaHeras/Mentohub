@@ -25,12 +25,12 @@ namespace Mentohub.Domain.Data.Entities
         [JsonProperty]
         public DateTime? DateOfBirth { get; set; }
 
-        public List<CourseViews> CourseViews { get; set; }
+        public virtual List<CourseViews> CourseViews { get; set; }
 
-        public List<Comment> Comments { get; set; }
+        public virtual List<Comment> Comments { get; set; }
 
-        public List<Course> Courses { get; set; }
+        public virtual List<Course> Courses { get; set; }
 
-        public ICollection<Tag> Tags { get; set; }
+        public virtual ICollection<Tag> Tags { get; set; }
     }
 }

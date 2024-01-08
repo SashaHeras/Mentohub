@@ -17,13 +17,13 @@ namespace Mentohub.Domain.Entities
 
         public string UserId { get; set; }
 
-        public List<TaskHistory> TaskHistory { get; set; }
+        public virtual List<TaskHistory> TaskHistory { get; set; }
 
         [ForeignKey("TestId")]
-        public Test Test { get; set; }
+        public virtual Test Test { get; set; }
 
         [ForeignKey("UserId")]
-        public CurrentUser User { get; set; }
+        public virtual CurrentUser User { get; set; }
 
         public TestHistory()
         {

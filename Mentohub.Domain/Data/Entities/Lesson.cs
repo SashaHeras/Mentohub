@@ -24,6 +24,6 @@ namespace Mentohub.Domain.Entities
         public int CourseItemId { get; set; }
 
         [ForeignKey("CourseItemId")]
-        public CourseItem CourseItem { get; set; }
+        public virtual CourseItem CourseItem { get; set; }
     }
 }

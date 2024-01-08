@@ -12,8 +12,8 @@
 
         public string? UserID { get; set; }
 
-        public ICollection<CourseTag> CourseTags { get; set; }
+        public virtual ICollection<CourseTag> CourseTags { get; set; }
 
-        public CurrentUser? User { get; set; }
+        public virtual CurrentUser? User { get; set; }
     }
 }

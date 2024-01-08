@@ -17,10 +17,10 @@ namespace Mentohub.Domain.Entities
         public bool IsFewAnswersCorrect { get; set; }
 
         [ForeignKey("TestId")]
-        public Test Test { get; set; }
+        public virtual Test Test { get; set; }
 
-        public List<TaskAnswer> TaskAnswers { get; set; }
+        public virtual List<TaskAnswer> TaskAnswers { get; set; }
 
-        public List<TaskHistory> TaskHistory { get; set; }
+        public virtual List<TaskHistory> TaskHistory { get; set; }
     }
 }

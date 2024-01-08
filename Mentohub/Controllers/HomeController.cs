@@ -1,11 +1,7 @@
 ﻿using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
-using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
-using Mentohub.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 
 namespace Mentohub.Controllers

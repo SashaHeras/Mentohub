@@ -14,9 +14,9 @@ namespace Mentohub.Domain.Entities
         public bool IsCorrect { get; set; }
 
         [ForeignKey("TaskId")]
-        public TestTask TestTask { get; set; }
+        public virtual TestTask TestTask { get; set; }
 
-        public List<AnswerHistory> AnswerHistory { get; set; }
+        public virtual List<AnswerHistory> AnswerHistory { get; set; }
 
         public AnswerDTO ToDTO()
         {

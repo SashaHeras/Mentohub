@@ -16,6 +16,6 @@ namespace Mentohub.Domain.Data.Entities.CourseEntities
 
         public int CourseID { get; set; }
 
-        public Course Course { get; set; }
+        public virtual Course Course { get; set; }
     }
 }

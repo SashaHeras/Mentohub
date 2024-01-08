@@ -14,8 +14,8 @@ namespace Mentohub.Domain.Data.Entities.CourseEntities
 
         public int TagID { get; set; }
 
-        public Course Course { get; set; }
+        public virtual Course Course { get; set; }
 
-        public Tag Tag { get; set; }
+        public virtual Tag Tag { get; set; }
     }
 }

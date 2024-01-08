@@ -47,6 +47,8 @@ namespace Mentohub.Core.Context
 
         public DbSet<CourseOverview> CourseOverviews { get; set; }
 
+        public DbSet<CourseLevel> CourseLevel { get; set; }
+
         #endregion
 
         public ProjectContext(DbContextOptions<ProjectContext> options) : base(options)
@@ -70,6 +72,7 @@ namespace Mentohub.Core.Context
             modelBuilder.Entity<CourseViews>().HasKey(c => c.ID);
             modelBuilder.Entity<CourseLanguage>().HasKey(c => c.Id);
             modelBuilder.Entity<CourseOverview>().HasKey(c => c.ID);
+            modelBuilder.Entity<CourseLevel>().HasKey(c => c.ID);
             modelBuilder.Entity<IdentityUserLogin<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserToken<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserRole<string>>().HasKey(ur => new { ur.UserId, ur.RoleId });

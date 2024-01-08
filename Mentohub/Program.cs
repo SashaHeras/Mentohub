@@ -41,7 +41,8 @@ internal class Program
 
         //builder.Services.AddEntityFrameworkNpgsql();
         builder.Services.AddDbContextPool<ProjectContext>(
-                options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultPost")));
+                options => options.UseLazyLoadingProxies()
+                                  .UseNpgsql(builder.Configuration.GetConnectionString("DefaultPost")));
 
         //builder.Services.AddDbContext<ProjectContext>(options => options.UseSqlServer(
         //        builder.Configuration.GetConnectionString("DefaultConnection")
@@ -63,7 +64,8 @@ internal class Program
         builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
         builder.Services.AddScoped<ICourseBlockRepository, CourseBlockRepository>();
         builder.Services.AddScoped<ICourseLanguageRepository, CourseLanguageRepository>();
-        builder.Services.AddScoped<ICourseOverviewRepository, CourseOverviewRepository>();        
+        builder.Services.AddScoped<ICourseOverviewRepository, CourseOverviewRepository>();
+        builder.Services.AddScoped<ICourseLevelRepository, CourseLevelRepository>();
         builder.Services.AddScoped<AllException>();
 
         builder.Services.AddScoped<IAnswerHistoryService, AnswerHistoryService>();
@@ -82,6 +84,7 @@ internal class Program
         builder.Services.AddScoped<ICourseViewService, CourseViewService>();
         builder.Services.AddScoped<ICourseBlockService, CourseBlockService>();
         builder.Services.AddScoped<IOverviewService, OverviewService>();
+        builder.Services.AddScoped<ICourseLevelService, CourseLevelService>();
         builder.Services.AddTransient<IEmailSender, EmailSender>();
 
         builder.Services.AddEndpointsApiExplorer();
@@ -92,7 +95,6 @@ internal class Program
 
             // теги і описи для контролерів і дій
             c.TagActionsBy(api => new[] { api.GroupName });
-
 
             //параметри дій (HTTP методи)
             c.DocInclusionPredicate((docName, apiDesc) =>

@@ -5,6 +5,7 @@ namespace Mentohub.Core.Repositories.Intefaces
     public interface IRepository<TEntity> where TEntity : class, new()
     {
         public IQueryable<TEntity> GetAll();
+
         public IQueryable<TEntity> GetAll(Expression<Func<TEntity, bool>> expression);
 
         public Task<TEntity> AddAsync(TEntity entity);

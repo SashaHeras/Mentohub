@@ -16,8 +16,8 @@ namespace Mentohub.Domain.Data.Entities.CourseEntities
 
         public int OrderNumber { get; set; }
 
-        public Course Course { get; set; }
+        public virtual Course Course { get; set; }
 
-        public List<CourseItem> CourseItems { get; set; }
+        public virtual List<CourseItem> CourseItems { get; set; }
     }
 }

@@ -15,12 +15,12 @@ namespace Mentohub.Domain.Entities
         public bool IsCorrect { get; set; }
 
         [ForeignKey("TaskHistoryId")]
-        public TaskHistory TaskHistory { get; set; }
+        public virtual TaskHistory TaskHistory { get; set; }
 
         [ForeignKey("TaskId")]
-        public TestTask TestTask { get; set; }
+        public virtual TestTask TestTask { get; set; }
 
         [ForeignKey("AnswerId")]
-        public TaskAnswer TaskAnswer { get; set; }
+        public virtual TaskAnswer TaskAnswer { get; set; }
     }
 }

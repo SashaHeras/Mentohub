@@ -20,9 +20,9 @@ namespace Mentohub.Domain.Data.Entities.CourseEntities
         public int CourseID { get; set; }
 
         [ForeignKey("UserID")]
-        public CurrentUser User { get; set; }
+        public virtual CurrentUser User { get; set; }
 
         [ForeignKey("CourseID")]
-        public Course Course { get; set; }
+        public virtual Course Course { get; set; }
     }
 }
