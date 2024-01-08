@@ -11,8 +11,10 @@ namespace Mentohub.Domain.Data.DTO
     {
         [BindNever]
         public string? Id { get; set; }
+
         [BindNever]
         public string? Name { get; set; }
+
         [BindNever]
         public string? Email { get; set; }
 

@@ -82,7 +82,7 @@ namespace Mentohub.Controllers
         [HttpGet]
         [Route("getUserProfile")]
         [SwaggerOperation(Summary ="Get user profile")]
-        public async Task<IActionResult>GetUserProfile([FromForm] string id)
+        public async Task<IActionResult> GetUserProfile([FromForm] string id)
         {
             try
             {
@@ -98,7 +98,6 @@ namespace Mentohub.Controllers
                 {
                     return _exception.NotFoundObjectResult("Not Found");
                 }
-
             }
             catch(Exception ex) 
             {
@@ -171,11 +170,11 @@ namespace Mentohub.Controllers
         [HttpPost]
         [Route("uploadAvatar")]
         [SwaggerOperation(Summary ="Download user's avatar")]
-        public async Task<JsonResult> UploadAvatar(IFormFile avatar,string id)
+        public async Task<JsonResult> UploadAvatar(IFormFile avatar, string id)
         {
             try
             { 
-                var avatarUrl =await _userService.UploadAvatar(avatar, id);
+                var avatarUrl = await _userService.UploadAvatar(avatar, id);
                 if(avatarUrl != null)
                 {
                       return new JsonResult(avatarUrl)

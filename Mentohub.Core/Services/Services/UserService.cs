@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -119,7 +120,30 @@ namespace Mentohub.Core.Services.Services
         
         public IList<CurrentUser> GetAllUsers()
         {
-            return _userManager.Users.ToList();   
+            return _userManager.Users.ToList();
+        }
+
+        public class SearchUserParams
+        {
+            public string Name { get; set; } = string.Empty;
+        }
+
+        public IList<CurrentUser> GetUsersList(SearchUserParams params_)
+        {
+            if(params_ == null)
+            {
+                params_ = new SearchUserParams();
+            }
+
+            return _userManager.Users.Where(x => (params_.Name == string.Empty ? 
+                    true : 
+                    (
+                        (x.LastName ?? string.Empty).Contains(params_.Name) || 
+                        (x.FirstName ?? string.Empty).Contains(params_.Name) ||
+                        (x.UserName ?? string.Empty).Contains(params_.Name)
+                    )
+                )
+            ).ToList();
         }
 
         /// <summary>
@@ -134,28 +158,13 @@ namespace Mentohub.Core.Services.Services
             {
                 return _exciption.ArgumentNullException("No file"); // Помилка: відсутні дані файлу.
             }
-            var avatarUrl=await _mediaService.SaveFile(avatar);
-            await _userRepository.UpdateAvatarUrl(userId, avatarUrl);
+
+            var avatarUrl = await _mediaService.SaveFile(avatar);
+
+            var currentUserID = MentoShyfr.Decrypt(userId);
+            await _userRepository.UpdateAvatarUrl(currentUserID, avatarUrl);
+
             _logger.LogInformation("avatar is successfully saved");
-            //// унікальне ім'я для файлу аватарки, за допомогою Guid
-            //var uniqueFileName = Guid.NewGuid() + Path.GetExtension(avatar.FileName);
-
-            //// Повний шлях до файлу в папці wwwroot/avatar
-            //var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "avatar", uniqueFileName);
-
-            //using (var stream = new FileStream(filePath, FileMode.Create))
-            //{
-            //    await avatar.CopyToAsync(stream);
-            //}
-
-            //// Оновіть URL аватарки в базі даних
-            //var avatarUrl = "/avatar/" + uniqueFileName;
-            //// оновлення URL аватарки в базі даних 
-            //await _userRepository.UpdateAvatarUrl(userId, avatarUrl);
-
-            //_logger.LogInformation("avatar is successfully saved");
-            //// сповіщення про зміну аватарки користувачу за допомогою SignalR
-            //await _hubContext.Clients.User(userId).SendAsync("ReceiveAvatarUpdate", avatarUrl);
 
             return avatarUrl;
         }
