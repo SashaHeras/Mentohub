@@ -30,6 +30,7 @@ namespace Mentohub.Core.Services.Services
         private readonly ISubjectRepository _subjectRepository;
         private readonly ICommentRepository _commentRepository;
         private readonly ICourseLanguageRepository _courseLanguageRepository;
+        private readonly ICourseLevelRepository _courseLevelRepository;
 
         private readonly IMediaService _mediaService;
         private readonly ICourseViewService _courseViewsService;
@@ -43,7 +44,7 @@ namespace Mentohub.Core.Services.Services
             ISubjectRepository subjectRepository,
             ICourseViewService courseViewsService,
             ICourseLanguageRepository courseLanguageRepository,
-            IMediaService mediaService)
+            IMediaService mediaService, ICourseLevelRepository courseLevelRepository)
         {
             _courseRepository = courseRepository;
             _courseItemRepository = courseItemRepository;
@@ -54,12 +55,16 @@ namespace Mentohub.Core.Services.Services
             _mediaService = mediaService;
             _subjectRepository = subjectRepository;
             _courseLanguageRepository = courseLanguageRepository;
+            _courseLevelRepository = courseLevelRepository;
         }
 
         public async Task<CourseDTO> Apply(CourseDTO courseDTO)
         {
             var lang = _courseLanguageRepository.FindById(courseDTO.LanguageId)
                                                  ?? throw new Exception("Unknown language!");
+
+            var level = _courseLevelRepository.FindById(courseDTO.CourseLevelId)
+                                                ?? throw new Exception("Unknown level!");
 
             var currentUserID = MentoShyfr.Decrypt(courseDTO.AuthorId);
 
@@ -77,7 +82,8 @@ namespace Mentohub.Core.Services.Services
                     Description = courseDTO.Description,
                     CourseSubjectId = (int)courseDTO.CourseSubjectId,
                     LastEdittingDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
-                    LanguageID = courseDTO.LanguageId
+                    LanguageID = courseDTO.LanguageId,
+                    CourseLevelID= courseDTO.CourseLevelId
                 };
 
                 await SaveFiles(currentCourse, courseDTO);
@@ -98,6 +104,7 @@ namespace Mentohub.Core.Services.Services
                 currentCourse.LastEdittingDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
                 currentCourse.CourseSubjectId = courseDTO.CourseSubjectId;
                 currentCourse.LanguageID = courseDTO.LanguageId;
+                currentCourse.CourseLevelID = courseDTO.CourseLevelId;
 
                 await SaveOrDeleteCourseMedia(currentCourse, courseDTO);
 

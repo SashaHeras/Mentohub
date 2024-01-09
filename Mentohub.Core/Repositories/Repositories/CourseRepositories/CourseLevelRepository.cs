@@ -23,7 +23,6 @@ namespace Mentohub.Core.Repositories.Repositories.CourseRepositories
         public CourseLevel FindById(int id)
         {
             return GetAll(x => x.ID == id)
-                   .Include(x => x.Courses)
                    .FirstOrDefault();
         }
     }

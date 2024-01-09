@@ -53,10 +53,16 @@ namespace Mentohub.Domain.Data.DTO.CourseDTOs
 
         public List<LanguageDTO> LanguageList { get; set; }
 
+        public int CourseLevelId { get; set; }
+
+        public List<KeyValuePair<int,string>> CourseLevelList { get; set; }
+
         public DateTime LastEdittingDate { get; set; }
 
         public List<CommentDTO> Comments { get; set; }
 
         public List<CourseElementDTO> CourseElementsList { get; set; }
+
+
     }
 }
