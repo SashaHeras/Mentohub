@@ -1,11 +1,13 @@
 ﻿using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Services.Interfaces;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 
 namespace Mentohub.Controllers
 {
+    [EnableCors("MentoPolicy")]
     public class HomeController : Controller
     {
         private readonly ILessonRepository _lessonRepository;

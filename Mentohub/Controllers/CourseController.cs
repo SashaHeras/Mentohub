@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Mentohub.Core.Services.Interfaces;
 using Microsoft.Azure.Amqp.Framing;
 using Mentohub.Domain.Data.DTO.CourseDTOs;
+using Microsoft.AspNetCore.Cors;
 
 namespace Mentohub.Controllers
 {
+    [EnableCors("MentoPolicy")]
     public class CourseController : Controller
     {
         private readonly ICourseService _courseService;

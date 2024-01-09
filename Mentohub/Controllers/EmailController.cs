@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Mentohub.Core.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -8,6 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Mentohub.Controllers
 {
+    [EnableCors("MentoPolicy")]
     [Route("api/email")]
     [ApiController]
     [SwaggerTag("EmailController")]

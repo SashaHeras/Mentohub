@@ -1,17 +1,15 @@
 ﻿using Mentohub.Core.AllExceptions;
 using Mentohub.Core.Repositories.Interfaces;
-using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
-using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Helpers;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Security.Claims;
 
 namespace Mentohub.Controllers
 {
+    [EnableCors("MentoPolicy")]
     [Route("api/user")]
     [ApiController]
     [SwaggerTag("UserController")]

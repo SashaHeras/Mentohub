@@ -25,13 +25,13 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
         builder.Services.AddControllersWithViews();
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme,
                 options => builder.Configuration.Bind("JwtSettings", options))
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme,
                 options => builder.Configuration.Bind("CookieSettings", options));
+
         builder.Services.AddAuthorization();
         builder.Services.AddIdentity<CurrentUser, IdentityRole>()
             .AddEntityFrameworkStores<ProjectContext>()
@@ -39,14 +39,20 @@ internal class Program
 
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-        //builder.Services.AddEntityFrameworkNpgsql();
         builder.Services.AddDbContextPool<ProjectContext>(
                 options => options.UseLazyLoadingProxies()
                                   .UseNpgsql(builder.Configuration.GetConnectionString("DefaultPost")));
 
-        //builder.Services.AddDbContext<ProjectContext>(options => options.UseSqlServer(
-        //        builder.Configuration.GetConnectionString("DefaultConnection")
-        //        ));
+        builder.Services.AddCors(co =>
+        {
+            co.AddPolicy("MentoPolicy", p =>
+            {
+                p.WithOrigins("http://34.116.248.113", "https://localhost:7236")
+                 .AllowAnyMethod()
+                 .AllowCredentials()
+                 .AllowAnyHeader();
+            });
+        });
 
         builder.Services.AddScoped<IAnswerHistoryRepository, AnswerHistoryRepository>();
         builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
@@ -133,6 +139,7 @@ internal class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
+
         app.UseCors();
         app.UseStaticFiles();
 

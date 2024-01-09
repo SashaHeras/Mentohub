@@ -3,10 +3,12 @@ using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mentohub.Controllers
 {
+    [EnableCors("MentoPolicy")]
     public class LessonController : Controller
     {
         private readonly ILessonService _lessonService;

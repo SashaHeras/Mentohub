@@ -5,6 +5,7 @@ using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Amqp.Framing;
 using System.Linq.Expressions;
@@ -12,6 +13,7 @@ using System.Transactions;
 
 namespace Mentohub.Controllers
 {
+    [EnableCors("MentoPolicy")]
     public class TestController : Controller
     {
         private readonly ITestService _testService;

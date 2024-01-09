@@ -1,10 +1,12 @@
 ﻿using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO.CourseDTOs;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using static MassTransit.ValidationResultExtensions;
 
 namespace Mentohub.Controllers
 {
+    [EnableCors("MentoPolicy")]
     public class CourseOverviewController : Controller
     {
         private readonly IOverviewService _overviewService;

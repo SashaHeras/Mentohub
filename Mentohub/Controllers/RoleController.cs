@@ -4,12 +4,14 @@ using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Mentohub.Controllers
 {
+    [EnableCors("MentoPolicy")]
     [Route("api/role")]
     [ApiController]
     [SwaggerTag("RoleController")]

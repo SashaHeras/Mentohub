@@ -3,9 +3,11 @@ using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Helpers;
 using Mentohub.Domain.Filters;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Cors;
 
 namespace Mentohub.Controllers
 {
+    [EnableCors("MentoPolicy")]
     public class CommentController : Controller
     {
         private readonly ICommentService _commentService;

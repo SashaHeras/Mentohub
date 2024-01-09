@@ -11,9 +11,11 @@ using Mentohub.Core.Services;
 using Microsoft.AspNetCore.SignalR;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Helpers;
+using Microsoft.AspNetCore.Cors;
 
 namespace Mentohub.Core.Repositories.Repositories
 {
+    [EnableCors("MentoPolicy")]
     [Route("api/account")]
     [ApiController]
     [SwaggerTag("AccountController")]
