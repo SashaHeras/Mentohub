@@ -26,6 +26,7 @@ namespace Mentohub.Controllers
             _courseService = courseService;
         }
 
+        [EnableCors]
         public IActionResult Index()
         {
             var list = _courseRepository.GetAll().ToList();

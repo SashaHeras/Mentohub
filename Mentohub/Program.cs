@@ -41,7 +41,8 @@ internal class Program
 
         builder.Services.AddDbContextPool<ProjectContext>(
                 options => options.UseLazyLoadingProxies()
-                                  .UseNpgsql(builder.Configuration.GetConnectionString("DefaultPost")));
+                                  .UseNpgsql(builder.Configuration.GetConnectionString("DefaultPost"))
+        );
 
         builder.Services.AddCors(co =>
         {
@@ -124,8 +125,8 @@ internal class Program
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddControllers();
 
-
         var app = builder.Build();
+
         app.UseAuthentication();
         app.UseSwagger();
         app.UseSwaggerUI(c =>
@@ -140,16 +141,15 @@ internal class Program
             app.UseHsts();
         }
 
-        app.UseCors();
         app.UseStaticFiles();
 
         app.UseDeveloperExceptionPage();
         app.UseHttpsRedirection();
         app.UseRouting();
+        app.UseCors();
         app.UseAuthorization();
         app.UseEndpoints(endpoints =>
         {
-
             endpoints.MapHub<SignalRHub>("/signalRHub");
         });
         app.MapControllerRoute(
