@@ -2,6 +2,7 @@
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Mentohub.Domain.Data.Entities.CourseEntities;
+using Mentohub.Domain.Filters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -28,5 +29,7 @@ namespace Mentohub.Core.Services.Interfaces
         Task<CourseDTO> ViewCourse(int CourseID, string UserID);
 
         List<CourseBlockDTO> GetCourseInfoList(int ID);
+
+        List<CourseDTO> List(SearchFilterModel filter, out int totalCount);
     }
 }

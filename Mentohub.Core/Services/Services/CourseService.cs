@@ -12,6 +12,7 @@ using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Data.Enums;
+using Mentohub.Domain.Filters;
 using Mentohub.Domain.Helpers;
 using Mentohub.Domain.Mappers;
 using Microsoft.EntityFrameworkCore;
@@ -365,6 +366,48 @@ namespace Mentohub.Core.Services.Services
             }
 
             var result = blocks;
+
+            return result;
+        }
+
+        public List<CourseDTO> List(SearchFilterModel filter, out int totalCount)
+        {
+            var coursesList = _courseRepository.GetAll(
+                    x => x.Checked == true &&
+                    filter.Categories.Contains(x.CourseSubjectId) &&
+                    x.Price >= filter.PriceFrom && 
+                    x.Price <= filter.PriceTo &&
+                    (filter.Level == -1 ? true : x.CourseLevelID == filter.Level) &&
+                    (filter.LanguageID == -1 ? true : x.LanguageID == filter.LanguageID) &&
+                    (filter.Rate == -1 ? true : x.Rating > filter.Rate)
+                );
+
+            if(filter.SortOption != 0)
+            {
+                if(filter.SortOption == (int)e_SortOptions.Rate)
+                {
+                    coursesList = coursesList.OrderBy(x => x.Rating);
+                }
+                else if(filter.SortOption == (int)e_SortOptions.Views)
+                {
+                    coursesList = coursesList.OrderBy(x => x.CourseViews.Count);
+                }
+                else if (filter.SortOption == (int)e_SortOptions.DateUp)
+                {
+                    coursesList = coursesList.OrderByDescending(x => x.LastEdittingDate);
+                }
+                else if (filter.SortOption == (int)e_SortOptions.DateDown)
+                {
+                    coursesList = coursesList.OrderBy(x => x.LastEdittingDate);
+                }
+            }
+
+            totalCount = coursesList.Count();
+            var result = coursesList.Skip(filter.Count * filter.CurrentPage)
+                                    .Take(filter.Count)
+                                    .ToList()
+                                    .Select(x => CourseMapper.ToSimpleCourseDTO(x))
+                                    .ToList();
 
             return result;
         }

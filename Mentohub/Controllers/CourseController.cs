@@ -5,6 +5,9 @@ using Mentohub.Core.Services.Interfaces;
 using Microsoft.Azure.Amqp.Framing;
 using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Microsoft.AspNetCore.Cors;
+using Mentohub.Domain.Filters;
+using Mentohub.Domain.Data.DTO.ResultDTO;
+using static MassTransit.ValidationResultExtensions;
 
 namespace Mentohub.Controllers
 {
@@ -102,6 +105,29 @@ namespace Mentohub.Controllers
         {
             var levels = _courseLevelService.GetLevelsList();
             return Json(levels);
+        }
+
+        /// <summary>
+        /// Пошук курсів
+        /// </summary>
+        /// <param name="filterModel"></param>
+        /// <returns></returns>
+        [Route("Course/Table")]
+        [HttpPost]
+        public JsonResult Table([FromBody] SearchFilterModel filterModel)
+        {
+            try
+            {
+                var result = new SearchCourseResult();
+                result.Courses = _courseService.List(filterModel, out int totalCount);
+                result.TotalCount = totalCount;
+
+                return Json(new { IsError = false, Data = result });
+            }
+            catch(Exception ex)
+            {
+                return Json(new { IsError = true, Message = ex.Message });
+            }
         }
     }
 }

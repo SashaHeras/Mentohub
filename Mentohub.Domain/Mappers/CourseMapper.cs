@@ -32,6 +32,38 @@ namespace Mentohub.Domain.Mappers
                 LanguageId = course.LanguageID ?? 0,
                 LastEdittingDate = course.LastEdittingDate,
                 Comments = course.Comments.Select(x => ToDTO(x)).ToList(),
+                CourseViews = course.CourseViews.Count
+            };
+        }
+
+        public static CourseDTO ToSimpleCourseDTO(Course course)
+        {
+            return new CourseDTO()
+            {
+                Id = course.Id,
+                AuthorId = course.AuthorId.ToString(),
+                Name = course.Name,
+                PicturePath = course.PicturePath,
+                PreviewVideoPath = course.PreviewVideoPath,
+                Checked = course.Checked,
+                Rating = course.Rating,
+                ShortDescription = course.ShortDescription,
+                Description = course.Description,
+                Price = course.Price,
+                CourseSubjectId = course.CourseSubjectId,
+                LanguageId = course.LanguageID ?? 0,
+                LastEdittingDate = new DateTime(
+                    course.LastEdittingDate.Year, 
+                    course.LastEdittingDate.Month, 
+                    course.LastEdittingDate.Day, 
+                    course.LastEdittingDate.Hour, 
+                    course.LastEdittingDate.Minute, 
+                    course.LastEdittingDate.Second, 
+                    DateTimeKind.Local),
+                CourseViews = course.CourseViews.Count,
+                CommentsCount = course.Comments.Count,
+                AuthorName = course.Author.LastName + " " + course.Author.FirstName.Remove(1).ToString() + ".",
+                Tags = course.CourseTags.Select(x => x.Tag).Select(x => ToDTO(x)).ToList(),
             };
         }
 
@@ -60,6 +92,18 @@ namespace Mentohub.Domain.Mappers
                 OrderNumber = block.OrderNumber,
                 ID = block.ID,
                 CourseItems = new List<CourseElementDTO>()
+            };
+        }
+
+        public static TagDTO ToDTO(Tag tag)
+        {
+            return new TagDTO()
+            {
+                Name = tag.Name,
+                UserID = tag.UserID,
+                Enabled = tag.Enabled,
+                Created = tag.Created,
+                ID = tag.ID
             };
         }
 

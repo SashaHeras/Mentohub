@@ -59,10 +59,14 @@ namespace Mentohub.Domain.Data.DTO.CourseDTOs
 
         public DateTime LastEdittingDate { get; set; }
 
+        public string Date { get; set; }
+
+        public int CommentsCount { get; set; }
+
         public List<CommentDTO> Comments { get; set; }
 
+        public List<TagDTO> Tags { get; set; }
+
         public List<CourseElementDTO> CourseElementsList { get; set; }
-
-
     }
 }

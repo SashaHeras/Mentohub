@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mentohub.Domain.Data.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,12 +11,20 @@ namespace Mentohub.Domain.Filters
     {
         public List<int> Categories { get; set; } = new List<int>();
 
-        public int LanguageID { get; set; }
+        public int LanguageID { get; set; } = -1;
 
-        public double Rate { get; set; }
+        public double Rate { get; set; } = -1;
 
-        public int PriceFrom { get; set; }
+        public int Level { get; set; } = -1;
 
-        public int PriceTo { get; set; }
+        public int PriceFrom { get; set; } = 0;
+
+        public int PriceTo { get; set; } = 500;
+
+        public int CurrentPage { get; set; } = 0;
+
+        public int Count { get; set; } = 10;
+
+        public int SortOption { get; set; } = (int)e_SortOptions.None;
     }
 }
