@@ -41,6 +41,8 @@ namespace Mentohub.Domain.Data.Entities.CourseEntities
 
         public virtual CurrentUser Author { get; set; }
 
+        public virtual CourseSubject Category { get; set; }
+
         public virtual List<CourseItem> CourseItems { get; set; }
 
         public virtual ICollection<CourseTag> CourseTags { get; set; }

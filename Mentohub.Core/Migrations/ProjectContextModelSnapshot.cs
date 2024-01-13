@@ -88,6 +88,8 @@ namespace Mentohub.Core.Migrations
 
                     b.HasIndex("CourseLevelID");
 
+                    b.HasIndex("CourseSubjectId");
+
                     b.HasIndex("LanguageID");
 
                     b.ToTable("Courses");
@@ -772,11 +774,19 @@ namespace Mentohub.Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.CourseSubject", "Category")
+                        .WithMany("Courses")
+                        .HasForeignKey("CourseSubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.CourseLanguage", "Language")
                         .WithMany("Courses")
                         .HasForeignKey("LanguageID");
 
                     b.Navigation("Author");
+
+                    b.Navigation("Category");
 
                     b.Navigation("CourseLevel");
 
@@ -1034,6 +1044,11 @@ namespace Mentohub.Core.Migrations
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseLevel", b =>
+                {
+                    b.Navigation("Courses");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseSubject", b =>
                 {
                     b.Navigation("Courses");
                 });

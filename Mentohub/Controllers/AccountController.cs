@@ -73,7 +73,7 @@ namespace Mentohub.Core.Repositories.Repositories
 
                     // Відправляємо лист для підтвердження email
                     await _emailSender.SendEmailAsync(model.Email, "Confirm your email",
-                        $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
+                        $"<div class=\"container\" style=\"background-color: #C7FF80\">\r\n        <h1 style=\"font-size: 48px; text-align: center\">Welcome to Mentohub!</h1>\r\n        <p>Congratulations! Your user registration has been approved. You can now access your account and start exploring our services.</p>\r\n        <p>If you have any questions or need assistance, feel free to contact our support team.</p>\r\n        <p>Thank you for choosing our platform!</p>\r\n        <a href=\"{callbackUrl}\" class=\"button\">Login to Your Account</a>\r\n");
 
                     _logger.LogInformation("User created successfully.");
                     return new JsonResult(createdUser)

@@ -68,6 +68,7 @@ namespace Mentohub.Core.Context
             modelBuilder.Entity<TaskHistory>().HasKey(c => c.Id);
             modelBuilder.Entity<TestHistory>().HasKey(c => c.Id);
             modelBuilder.Entity<Comment>().HasKey(c => c.Id);
+            modelBuilder.Entity<CourseSubject>().HasKey(c => c.Id);
             modelBuilder.Entity<CourseBlock>().HasKey(c => c.ID);
             modelBuilder.Entity<CourseViews>().HasKey(c => c.ID);
             modelBuilder.Entity<CourseLanguage>().HasKey(c => c.Id);
@@ -128,6 +129,11 @@ namespace Mentohub.Core.Context
                .HasOne(t1 => t1.CourseLevel)
                .WithMany(t2 => t2.Courses)
                .HasForeignKey(t1 => t1.CourseLevelID);
+
+            modelBuilder.Entity<Course>()
+               .HasOne(t1 => t1.Category)
+               .WithMany(t2 => t2.Courses)
+               .HasForeignKey(t1 => t1.CourseSubjectId);            
 
             modelBuilder.Entity<CourseViews>()
                 .HasOne(t1 => t1.Course)
