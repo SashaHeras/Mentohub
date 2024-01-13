@@ -374,9 +374,16 @@ namespace Mentohub.Core.Services.Services
         {
             var coursesList = _courseRepository.GetAll(
                     x => x.Checked == true &&
-                    filter.Categories.Contains(x.CourseSubjectId) &&
                     x.Price >= filter.PriceFrom && 
                     x.Price <= filter.PriceTo &&
+                    (filter.SearchText == string.Empty ? true : 
+                        (
+                            x.Name.Contains(filter.SearchText) || 
+                            x.CourseTags.Select(x => x.Tag.Name).Contains(filter.SearchText) ||
+                            x.Category.Name.Contains(filter.SearchText)
+                        )
+                    ) &&
+                    (filter.CategoryID == -1 ? true : x.CourseSubjectId == filter.CategoryID) &&
                     (filter.Level == -1 ? true : x.CourseLevelID == filter.Level) &&
                     (filter.LanguageID == -1 ? true : x.LanguageID == filter.LanguageID) &&
                     (filter.Rate == -1 ? true : x.Rating > filter.Rate)

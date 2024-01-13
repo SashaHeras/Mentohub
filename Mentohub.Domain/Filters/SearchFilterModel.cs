@@ -9,7 +9,9 @@ namespace Mentohub.Domain.Filters
 {
     public class SearchFilterModel
     {
-        public List<int> Categories { get; set; } = new List<int>();
+        public string SearchText { get; set; } = string.Empty;
+
+        public int CategoryID { get; set; } = -1;
 
         public int LanguageID { get; set; } = -1;
 
