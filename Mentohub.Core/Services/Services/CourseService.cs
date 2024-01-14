@@ -31,7 +31,7 @@ namespace Mentohub.Core.Services.Services
         private readonly ISubjectRepository _subjectRepository;
         private readonly ICommentRepository _commentRepository;
         private readonly ICourseLanguageRepository _courseLanguageRepository;
-        private readonly ICourseLevelRepository _courseLevelRepository;
+        private readonly ICourseLevelRepository _courseLevelRepository;     
 
         private readonly IMediaService _mediaService;
         private readonly ICourseViewService _courseViewsService;
@@ -45,7 +45,8 @@ namespace Mentohub.Core.Services.Services
             ISubjectRepository subjectRepository,
             ICourseViewService courseViewsService,
             ICourseLanguageRepository courseLanguageRepository,
-            IMediaService mediaService, ICourseLevelRepository courseLevelRepository)
+            IMediaService mediaService, 
+            ICourseLevelRepository courseLevelRepository)
         {
             _courseRepository = courseRepository;
             _courseItemRepository = courseItemRepository;

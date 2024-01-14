@@ -16,14 +16,20 @@ namespace Mentohub.Controllers
     {
         private readonly ICourseService _courseService;
         private readonly ICourseLevelService _courseLevelService;
+        private readonly ICourseSubjectService _courseSubjectService;
+        private readonly ICourseLanguageService _courseLanguageService;        
 
         public CourseController(
             ICourseService service,
-            ICourseLevelService courseLevelService
+            ICourseLevelService courseLevelService,
+            ICourseSubjectService courseSubjectService,
+            ICourseLanguageService courseLanguageService
         )
         {
             _courseService = service;
             _courseLevelService = courseLevelService;
+            _courseSubjectService = courseSubjectService;
+            _courseLanguageService = courseLanguageService;
         }
 
         /// <summary>
@@ -43,18 +49,6 @@ namespace Mentohub.Controllers
             {
                 return Json(new { IsError = true, Message = ex.Message });
             }
-        }
-
-        /// <summary>
-        /// Get course elements (tests/lessons)
-        /// </summary>
-        /// <param name="Id"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public JsonResult GetCourseElements(int Id)
-        {
-            var result = _courseService.GetCourseElements(Id);
-            return Json(result);
         }
 
         /// <summary>
@@ -96,18 +90,6 @@ namespace Mentohub.Controllers
         }
 
         /// <summary>
-        /// Метод отримання списку рівнів
-        /// </summary>
-        /// <returns></returns>
-        [Route("Course/GetLevelsList")]
-        [HttpGet]
-        public JsonResult GetLevelsList()
-        {
-            var levels = _courseLevelService.GetLevelsList();
-            return Json(levels);
-        }
-
-        /// <summary>
         /// Пошук курсів
         /// </summary>
         /// <param name="filterModel"></param>
@@ -128,6 +110,54 @@ namespace Mentohub.Controllers
             {
                 return Json(new { IsError = true, Message = ex.Message });
             }
+        }
+
+
+        /// <summary>
+        /// Get course elements (tests/lessons)
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult GetCourseElements(int Id)
+        {
+            var result = _courseService.GetCourseElements(Id);
+            return Json(result);
+        }
+
+        /// <summary>
+        /// Get list of categories
+        /// </summary>
+        /// <returns></returns>
+        [Route("Course/GetCategoriesList")]
+        [HttpGet]
+        public JsonResult GetCategoriesList()
+        {
+            return Json(_courseSubjectService.SubjectsList());
+        }
+
+        /// <summary>
+        /// Get list of languages to course
+        /// </summary>
+        /// <returns></returns>
+        [Route("Course/GetLanguagesList")]
+        [HttpGet]
+        public JsonResult GetLanguagesList()
+        {
+            return Json(_courseLanguageService.GetLanguagesList());
+        }
+
+
+        /// <summary>
+        /// Метод отримання списку рівнів
+        /// </summary>
+        /// <returns></returns>
+        [Route("Course/GetLevelsList")]
+        [HttpGet]
+        public JsonResult GetLevelsList()
+        {
+            var levels = _courseLevelService.GetLevelsList();
+            return Json(levels);
         }
     }
 }
