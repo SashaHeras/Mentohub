@@ -26,8 +26,6 @@ namespace Mentohub.Core.Services.Services
                                      .Select(x => new KeyValuePair<int, string>(x.Id, x.Name))
                                      .ToList();
 
-            res.Add(new KeyValuePair<int, string>(-1, "Будь-яка"));
-
             return res.OrderBy(x => x.Key).ToList();
         }
     }

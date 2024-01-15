@@ -35,6 +35,9 @@ namespace Mentohub.Core.Services.Services
 
         private readonly IMediaService _mediaService;
         private readonly ICourseViewService _courseViewsService;
+        private readonly ICourseSubjectService _courseSubjectService;
+        private readonly ICourseLanguageService _courseLanguageService;
+        private readonly ICourseLevelService _courseLevelService;
 
         public CourseService(
             ICourseRepository courseRepository,
@@ -46,7 +49,10 @@ namespace Mentohub.Core.Services.Services
             ICourseViewService courseViewsService,
             ICourseLanguageRepository courseLanguageRepository,
             IMediaService mediaService, 
-            ICourseLevelRepository courseLevelRepository)
+            ICourseLevelRepository courseLevelRepository,
+            ICourseSubjectService courseSubjectService,
+            ICourseLanguageService courseLanguageService,
+            ICourseLevelService courseLevelService)
         {
             _courseRepository = courseRepository;
             _courseItemRepository = courseItemRepository;
@@ -58,6 +64,9 @@ namespace Mentohub.Core.Services.Services
             _subjectRepository = subjectRepository;
             _courseLanguageRepository = courseLanguageRepository;
             _courseLevelRepository = courseLevelRepository;
+            _courseSubjectService = courseSubjectService;
+            _courseLanguageService = courseLanguageService;
+            _courseLevelService = courseLevelService;
         }
 
         public async Task<CourseDTO> Apply(CourseDTO courseDTO)
@@ -418,6 +427,21 @@ namespace Mentohub.Core.Services.Services
                                     .ToList();
 
             return result;
+        }
+    
+        public SearchCourseFilterData InitSearchFilterData()
+        {
+            var filter = new SearchCourseFilterData();
+            filter.Categories = _courseSubjectService.SubjectsList();
+            filter.Categories.Insert(0, new KeyValuePair<int, string>(-1, "Будь-який"));
+
+            filter.Languages = _courseLanguageService.GetLanguagesList();
+            filter.Languages.Insert(0, new KeyValuePair<int, string>(-1, "Будь-яка"));
+
+            filter.Levels = _courseLevelService.GetLevelsList();
+            filter.Levels.Insert(0, new KeyValuePair<int, string>(-1, "Будь-який"));
+
+            return filter;
         }
     }
 }

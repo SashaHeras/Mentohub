@@ -14,22 +14,13 @@ namespace Mentohub.Controllers
     [EnableCors("MentoPolicy")]
     public class CourseController : Controller
     {
-        private readonly ICourseService _courseService;
-        private readonly ICourseLevelService _courseLevelService;
-        private readonly ICourseSubjectService _courseSubjectService;
-        private readonly ICourseLanguageService _courseLanguageService;        
+        private readonly ICourseService _courseService;      
 
         public CourseController(
-            ICourseService service,
-            ICourseLevelService courseLevelService,
-            ICourseSubjectService courseSubjectService,
-            ICourseLanguageService courseLanguageService
+            ICourseService service
         )
         {
             _courseService = service;
-            _courseLevelService = courseLevelService;
-            _courseSubjectService = courseSubjectService;
-            _courseLanguageService = courseLanguageService;
         }
 
         /// <summary>
@@ -38,11 +29,11 @@ namespace Mentohub.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult Apply(CourseDTO data)
+        public async Task<JsonResult> Apply(CourseDTO data)
         {
             try
             {
-                var course = _courseService.Apply(data);
+                var course = await _courseService.Apply(data);
                 return Json(new { IsError = false, Data = course, Message = "Success" });
             }
             catch (Exception ex)
@@ -112,7 +103,6 @@ namespace Mentohub.Controllers
             }
         }
 
-
         /// <summary>
         /// Get course elements (tests/lessons)
         /// </summary>
@@ -126,38 +116,13 @@ namespace Mentohub.Controllers
         }
 
         /// <summary>
-        /// Get list of categories
+        /// Generate filters for search course page
         /// </summary>
         /// <returns></returns>
-        [Route("Course/GetCategoriesList")]
         [HttpGet]
-        public JsonResult GetCategoriesList()
+        public JsonResult GetSearchFilters()
         {
-            return Json(_courseSubjectService.SubjectsList());
-        }
-
-        /// <summary>
-        /// Get list of languages to course
-        /// </summary>
-        /// <returns></returns>
-        [Route("Course/GetLanguagesList")]
-        [HttpGet]
-        public JsonResult GetLanguagesList()
-        {
-            return Json(_courseLanguageService.GetLanguagesList());
-        }
-
-
-        /// <summary>
-        /// Метод отримання списку рівнів
-        /// </summary>
-        /// <returns></returns>
-        [Route("Course/GetLevelsList")]
-        [HttpGet]
-        public JsonResult GetLevelsList()
-        {
-            var levels = _courseLevelService.GetLevelsList();
-            return Json(levels);
+            return Json(_courseService.InitSearchFilterData());
         }
     }
 }
