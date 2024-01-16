@@ -4,6 +4,10 @@ using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Domain.Entities;
 using Mentohub.Core.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting.Server;
+using Azure.Storage.Blobs;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Azure;
+using System.IO;
 
 namespace Mentohub.Core.Services.Services
 {
@@ -73,6 +77,58 @@ namespace Mentohub.Core.Services.Services
             catch (Exception ex)
             {
                 return false;
+            }
+        }
+
+        public async Task<IFormFile> CopyVideoFromBlob(string name)
+        {
+            var blobServiceClient = new BlobServiceClient(_connectionString);
+            var blobContainerClient = blobServiceClient.GetBlobContainerClient("test");
+            var blobClient = blobContainerClient.GetBlobClient(name);
+
+            try
+            {
+                var response = await blobClient.DownloadAsync();
+                string fileName = string.Empty;
+
+                using (var fileStream = File.OpenWrite(name + ".mp4"))
+                {
+                    await response.Value.Content.CopyToAsync(fileStream);
+                    fileName = fileStream.Name;
+
+                    fileStream.Close();
+                }
+
+                var obj = CreateFormFile(fileName);
+
+                return obj;
+            }
+            catch (RequestFailedException ex)
+            {
+                Console.WriteLine($"Error getting blob: {ex.Message}");
+            }
+
+            return null;
+        }
+
+        public IFormFile CreateFormFile(string filePath)
+        {
+            // Open the video file using a FileStream
+            using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+            {
+                // Create a MemoryStream to store the file contents
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    // Copy the file contents to the MemoryStream
+                    fileStream.CopyTo(memoryStream);
+
+                    // Create an IFormFile object using the MemoryStream
+                    return new FormFile(memoryStream, 0, memoryStream.Length, "videoFile", Path.GetFileName(filePath))
+                    {
+                        Headers = new HeaderDictionary(),
+                        ContentType = "video/mp4"
+                    };
+                }
             }
         }
     }

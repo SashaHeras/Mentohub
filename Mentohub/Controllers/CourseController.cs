@@ -14,13 +14,16 @@ namespace Mentohub.Controllers
     [EnableCors("MentoPolicy")]
     public class CourseController : Controller
     {
-        private readonly ICourseService _courseService;      
+        private readonly ICourseService _courseService;
+        private readonly IAzureService _azureService;
 
         public CourseController(
-            ICourseService service
+            ICourseService service,
+            IAzureService azureService
         )
         {
             _courseService = service;
+            _azureService = azureService;
         }
 
         /// <summary>
@@ -135,6 +138,12 @@ namespace Mentohub.Controllers
         public JsonResult GetAuthorsTopCourses(string authorID)
         {
             return Json(_courseService.GetAuthorsToCourses(authorID));
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetVideo([FromForm] string name)
+        {
+            return Json(await _azureService.CopyVideoFromBlob(name));
         }
     }
 }
