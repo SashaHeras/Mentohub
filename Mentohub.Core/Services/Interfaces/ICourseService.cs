@@ -33,5 +33,7 @@ namespace Mentohub.Core.Services.Interfaces
         List<CourseDTO> List(SearchFilterModel filter, out int totalCount);
 
         SearchCourseFilterData InitSearchFilterData();
+
+        List<CourseDTO> GetAuthorsToCourses(string authorID);
     }
 }

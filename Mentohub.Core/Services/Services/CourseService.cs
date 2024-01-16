@@ -443,5 +443,19 @@ namespace Mentohub.Core.Services.Services
 
             return filter;
         }
+
+        public List<CourseDTO> GetAuthorsToCourses(string authorID)
+        {
+            var userID = MentoShyfr.Decrypt(authorID);
+            var courses = _courseRepository.GetAll(x => x.AuthorId == userID)
+                                           .ToList();
+                                           
+            var result = courses.Select(x => CourseMapper.ToDTO(x))
+                                .OrderBy(x => x.Rating)
+                                .Take(6)
+                                .ToList();
+
+            return result;
+        }
     }
 }

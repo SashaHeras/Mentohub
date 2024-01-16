@@ -124,5 +124,17 @@ namespace Mentohub.Controllers
         {
             return Json(_courseService.InitSearchFilterData());
         }
+
+        /// <summary>
+        /// Get authors top 6 courses
+        /// </summary>
+        /// <param name="authorID"></param>
+        /// <returns></returns>
+        [Route("Course/GetAuthorsTopCourses")]
+        [HttpPost]
+        public JsonResult GetAuthorsTopCourses(string authorID)
+        {
+            return Json(_courseService.GetAuthorsToCourses(authorID));
+        }
     }
 }
