@@ -14,23 +14,53 @@ namespace Mentohub.Controllers
         private readonly ICourseRepository _courseRepository;
 
         private readonly ICourseService _courseService;
+        private readonly IAzureService _azureService;
 
         public HomeController(
             ILessonRepository lessonRepository,
             ICourseRepository courseRepository,
-            ICourseService courseService
+            ICourseService courseService,
+            IAzureService azureService
             )
         {
             _lessonRepository = lessonRepository;
             _courseRepository = courseRepository;
             _courseService = courseService;
+            _azureService = azureService;
         }
 
-        [EnableCors]
         public IActionResult Index()
         {
-            var list = _courseRepository.GetAll().ToList();
-            return View(list);
+            var videoBytes = ConvertIFormFileToBytes("C:\\Users\\acsel\\source\\repos\\Mentohub\\Mentohub\\125.mp4");
+
+            // Convert the byte array to a base64 string
+            var base64Video = Convert.ToBase64String(videoBytes);
+
+            ViewBag.Base64Video = base64Video;
+            ViewBag.VideoLength = videoBytes.Length;
+
+            return View();
+        }
+
+        public JsonResult Load()
+        {
+            return Json(true);
+        }
+
+        // Helper method to convert IFormFile to byte array
+        private byte[] ConvertIFormFileToBytes(string fileName)
+        {
+            using (FileStream fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+            {
+                // Create a MemoryStream to store the file contents
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    // Copy the file contents to the MemoryStream
+                    fileStream.CopyTo(memoryStream);
+
+                    return memoryStream.ToArray();
+                }
+            }
         }
 
         public IActionResult Video()

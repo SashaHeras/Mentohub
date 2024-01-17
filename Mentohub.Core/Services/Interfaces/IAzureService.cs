@@ -15,5 +15,7 @@ namespace Mentohub.Core.Services.Interfaces
         Task<bool> DeleteFromAzure(string name);
 
         Task<IFormFile> CopyVideoFromBlob(string name);
+
+        IFormFile CreateFormFile(string filePath);
     }
 }
