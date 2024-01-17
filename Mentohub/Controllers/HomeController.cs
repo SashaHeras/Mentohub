@@ -31,13 +31,13 @@ namespace Mentohub.Controllers
 
         public IActionResult Index()
         {
-            var videoBytes = ConvertIFormFileToBytes("C:\\Users\\acsel\\source\\repos\\Mentohub\\Mentohub\\125.mp4");
+            //var videoBytes = ConvertIFormFileToBytes("C:\\Users\\acsel\\source\\repos\\Mentohub\\Mentohub\\125.mp4");
 
-            // Convert the byte array to a base64 string
-            var base64Video = Convert.ToBase64String(videoBytes);
+            //// Convert the byte array to a base64 string
+            //var base64Video = Convert.ToBase64String(videoBytes);
 
-            ViewBag.Base64Video = base64Video;
-            ViewBag.VideoLength = videoBytes.Length;
+            //ViewBag.Base64Video = base64Video;
+            //ViewBag.VideoLength = videoBytes.Length;
 
             return View();
         }

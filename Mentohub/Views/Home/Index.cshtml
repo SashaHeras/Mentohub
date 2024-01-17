@@ -158,16 +158,16 @@
 }
 
 <partial name="/Views/Partial/Header.cshtml" />
-<form action="Home/Load" class="dropzone" id="myDropzone">
+<!--<form action="Home/Load" class="dropzone" id="myDropzone">
     
-</form>
+</form>-->
 
 <script>
     // Get the base64 string from ViewBag
-    var base64Video = '@Html.Raw(ViewBag.Base64Video)';
-    var lengthVideo = @ViewBag.VideoLength;
+    //var base64Video = '@Html.Raw(ViewBag.Base64Video)';
+    //var lengthVideo = @ViewBag.VideoLength;
 
-    document.addEventListener("DOMContentLoaded", function () {
-        new Dz().initDropzone(base64Video, lengthVideo);
-    });
+    //document.addEventListener("DOMContentLoaded", function () {
+    //    new Dz().initDropzone(base64Video, lengthVideo);
+    //});
 </script>
