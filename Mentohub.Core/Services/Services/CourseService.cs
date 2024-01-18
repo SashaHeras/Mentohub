@@ -10,6 +10,7 @@ using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.CourseDTOs;
+using Mentohub.Domain.Data.Entities;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Data.Enums;
 using Mentohub.Domain.Filters;
@@ -32,6 +33,7 @@ namespace Mentohub.Core.Services.Services
         private readonly ICommentRepository _commentRepository;
         private readonly ICourseLanguageRepository _courseLanguageRepository;
         private readonly ICourseLevelRepository _courseLevelRepository;
+        private readonly ICRUD_UserRepository _cRUD_UserRepository;
 
         private readonly IMediaService _mediaService;
         private readonly ICourseViewService _courseViewsService;
@@ -45,7 +47,9 @@ namespace Mentohub.Core.Services.Services
             ISubjectRepository subjectRepository,
             ICourseViewService courseViewsService,
             ICourseLanguageRepository courseLanguageRepository,
-            IMediaService mediaService, ICourseLevelRepository courseLevelRepository)
+            IMediaService mediaService, ICourseLevelRepository courseLevelRepository,
+            ICRUD_UserRepository cRUD_UserRepository)
+            
         {
             _courseRepository = courseRepository;
             _courseItemRepository = courseItemRepository;
@@ -57,6 +61,8 @@ namespace Mentohub.Core.Services.Services
             _subjectRepository = subjectRepository;
             _courseLanguageRepository = courseLanguageRepository;
             _courseLevelRepository = courseLevelRepository;
+            _cRUD_UserRepository = cRUD_UserRepository;
+
         }
 
         public async Task<CourseDTO> Apply(CourseDTO courseDTO)
@@ -417,6 +423,36 @@ namespace Mentohub.Core.Services.Services
                                     .ToList();
 
             return result;
+        }
+
+        public AuthorInfoDTO GetAuthorInfoDTO(string encriptId)
+        {
+           var authorId= MentoShyfr.Decrypt(encriptId);
+            if(authorId == null) 
+            {
+                throw new Exception("Id not found");
+            }
+            CurrentUser author = _cRUD_UserRepository.FindByID(authorId);
+            var authorInfoDTO = new AuthorInfoDTO();
+            authorInfoDTO.Id= encriptId;
+            authorInfoDTO.Image=author.Image;
+            authorInfoDTO.FirstName=author.FirstName;
+            authorInfoDTO.LastName=author.LastName;
+            authorInfoDTO.AboutMe=author.AboutMe;
+            authorInfoDTO.CountOfStudents = 0;
+            var courses = _courseRepository.GetAllAuthorsCourses(authorId).ToList();
+            double averageRating ;
+            if (courses == null) 
+            {
+                averageRating = 0.0;
+            }
+            else 
+            {
+                averageRating = courses.Average(c => c.Rating);
+            }
+            authorInfoDTO.AvarageRating = averageRating;
+
+            return authorInfoDTO;
         }
     }
 }

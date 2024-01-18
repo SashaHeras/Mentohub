@@ -129,5 +129,24 @@ namespace Mentohub.Controllers
                 return Json(new { IsError = true, Message = ex.Message });
             }
         }
+        /// <summary>
+        /// Information about author
+        /// </summary>
+        /// <param name="encriptId"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("Course/AuthorInfo")]
+        public JsonResult GetAuthorInfo([FromForm] string encriptId)
+        {
+            try
+            {
+                var result=_courseService.GetAuthorInfoDTO(encriptId);
+                return Json(result);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, Message = ex.Message });
+            }
+        }
     }
 }

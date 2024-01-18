@@ -93,6 +93,7 @@ internal class Program
         builder.Services.AddScoped<IOverviewService, OverviewService>();
         builder.Services.AddScoped<ICourseLevelService, CourseLevelService>();
         builder.Services.AddTransient<IEmailSender, EmailSender>();
+        builder.Services.AddHttpClient<IPrivatBankService, PrivatBankService>();
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSignalR();

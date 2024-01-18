@@ -31,5 +31,7 @@ namespace Mentohub.Core.Services.Interfaces
         List<CourseBlockDTO> GetCourseInfoList(int ID);
 
         List<CourseDTO> List(SearchFilterModel filter, out int totalCount);
+
+        AuthorInfoDTO GetAuthorInfoDTO(string encriptId);
     }
 }
