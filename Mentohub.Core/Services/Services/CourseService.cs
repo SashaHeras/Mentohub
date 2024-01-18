@@ -54,8 +54,7 @@ namespace Mentohub.Core.Services.Services
             ICourseLevelRepository courseLevelRepository,
             ICourseSubjectService courseSubjectService,
             ICourseLanguageService courseLanguageService,
-            ICourseLevelService courseLevelService)
-            IMediaService mediaService, ICourseLevelRepository courseLevelRepository,
+            ICourseLevelService courseLevelService,
             ICRUD_UserRepository cRUD_UserRepository)
             
         {
