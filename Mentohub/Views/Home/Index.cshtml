@@ -158,55 +158,16 @@
 }
 
 <partial name="/Views/Partial/Header.cshtml" />
-<div class="body">
-    <div id="sales">
-    </div>
-    <div id="filters">
-    </div>
-
-    <div id="courses">
-        @* <div class="grid-container">
-            @foreach (var c in Model)
-            {
-                string url = "https://mystudystorage.blob.core.windows.net/test/" + c.PicturePath;
-                int rating = (int)c.Rating; // convert rating to integer
-                double fraction = c.Rating - rating; // get the fractional part of the rating
-
-                <div class="grid-item">
-                    <div class="listElement">
-                        <div class="image-box">
-                            <img class="myImg" src="@url" alt="Title">
-                        </div>
-                        <div class="course-name-block">
-                            <a class="courseName" href="/Course/Index/@c.Id">@c.Name</a>
-                        </div>
-                        <div class="raiting" style="font-size: 16px;">
-                            @for (int i = 1; i <= 5; i++)
-                            {
-                                @if (i <= rating) // fill the stars up to the integer part of the rating
-                                {
-                                    <i class="bi bi-star-fill"></i>
-                                }
-                                else if (i == rating + 1 && fraction > 0) // fill the last star partially if there is a fractional part
-                                {
-                                    <i class="bi bi-star-half"></i>
-                                }
-                                else // leave the remaining stars empty
-                                {
-                                    <i class="bi bi-star"></i>
-                                }
-                            }
-                        </div>
-                        <div>
-                            <div>$@c.Price.ToString().Replace(',','.')</div>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div> *@
-    </div>
-</div>
+<!--<form action="Home/Load" class="dropzone" id="myDropzone">
+    
+</form>-->
 
 <script>
+    // Get the base64 string from ViewBag
+    //var base64Video = '@Html.Raw(ViewBag.Base64Video)';
+    //var lengthVideo = @ViewBag.VideoLength;
 
+    //document.addEventListener("DOMContentLoaded", function () {
+    //    new Dz().initDropzone(base64Video, lengthVideo);
+    //});
 </script>

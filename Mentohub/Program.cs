@@ -92,6 +92,8 @@ internal class Program
         builder.Services.AddScoped<ICourseBlockService, CourseBlockService>();
         builder.Services.AddScoped<IOverviewService, OverviewService>();
         builder.Services.AddScoped<ICourseLevelService, CourseLevelService>();
+        builder.Services.AddScoped<ICourseSubjectService, CourseSubjectService>();
+        builder.Services.AddScoped<ICourseLanguageService, CourseLanguageService>();
         builder.Services.AddTransient<IEmailSender, EmailSender>();
         builder.Services.AddHttpClient<IPrivatBankService, PrivatBankService>();
 

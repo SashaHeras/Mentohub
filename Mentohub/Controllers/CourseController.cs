@@ -15,15 +15,15 @@ namespace Mentohub.Controllers
     public class CourseController : Controller
     {
         private readonly ICourseService _courseService;
-        private readonly ICourseLevelService _courseLevelService;
+        private readonly IAzureService _azureService;
 
         public CourseController(
             ICourseService service,
-            ICourseLevelService courseLevelService
+            IAzureService azureService
         )
         {
             _courseService = service;
-            _courseLevelService = courseLevelService;
+            _azureService = azureService;
         }
 
         /// <summary>
@@ -32,29 +32,17 @@ namespace Mentohub.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult Apply(CourseDTO data)
+        public async Task<JsonResult> Apply(CourseDTO data)
         {
             try
             {
-                var course = _courseService.Apply(data);
+                var course = await _courseService.Apply(data);
                 return Json(new { IsError = false, Data = course, Message = "Success" });
             }
             catch (Exception ex)
             {
                 return Json(new { IsError = true, Message = ex.Message });
             }
-        }
-
-        /// <summary>
-        /// Get course elements (tests/lessons)
-        /// </summary>
-        /// <param name="Id"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public JsonResult GetCourseElements(int Id)
-        {
-            var result = _courseService.GetCourseElements(Id);
-            return Json(result);
         }
 
         /// <summary>
@@ -96,18 +84,6 @@ namespace Mentohub.Controllers
         }
 
         /// <summary>
-        /// Метод отримання списку рівнів
-        /// </summary>
-        /// <returns></returns>
-        [Route("Course/GetLevelsList")]
-        [HttpGet]
-        public JsonResult GetLevelsList()
-        {
-            var levels = _courseLevelService.GetLevelsList();
-            return Json(levels);
-        }
-
-        /// <summary>
         /// Пошук курсів
         /// </summary>
         /// <param name="filterModel"></param>
@@ -128,6 +104,46 @@ namespace Mentohub.Controllers
             {
                 return Json(new { IsError = true, Message = ex.Message });
             }
+        }
+
+        /// <summary>
+        /// Get course elements (tests/lessons)
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public JsonResult GetCourseElements(int Id)
+        {
+            var result = _courseService.GetCourseElements(Id);
+            return Json(result);
+        }
+
+        /// <summary>
+        /// Generate filters for search course page
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public JsonResult GetSearchFilters()
+        {
+            return Json(_courseService.InitSearchFilterData());
+        }
+
+        /// <summary>
+        /// Get authors top 6 courses
+        /// </summary>
+        /// <param name="authorID"></param>
+        /// <returns></returns>
+        [Route("Course/GetAuthorsTopCourses")]
+        [HttpPost]
+        public JsonResult GetAuthorsTopCourses(string authorID)
+        {
+            return Json(_courseService.GetAuthorsToCourses(authorID));
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetVideo([FromForm] string name)
+        {
+            return Json(await _azureService.CopyVideoFromBlob(name));
         }
         /// <summary>
         /// Information about author

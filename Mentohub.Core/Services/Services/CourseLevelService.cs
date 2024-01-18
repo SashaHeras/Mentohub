@@ -22,9 +22,11 @@ namespace Mentohub.Core.Services.Services
 
         public List<KeyValuePair<int, string>> GetLevelsList()
         {
-            return _courseLevelRepository.GetAll()
-                                         .Select(x => new KeyValuePair<int, string>(x.ID, x.Name))
-                                         .ToList();
+            var res = _courseLevelRepository.GetAll()
+                                            .Select(x => new KeyValuePair<int, string>(x.ID, x.Name))
+                                            .ToList();
+
+            return res.OrderBy(x => x.Key).ToList();
         }
     }
 }

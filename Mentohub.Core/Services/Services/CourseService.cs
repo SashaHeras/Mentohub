@@ -37,6 +37,9 @@ namespace Mentohub.Core.Services.Services
 
         private readonly IMediaService _mediaService;
         private readonly ICourseViewService _courseViewsService;
+        private readonly ICourseSubjectService _courseSubjectService;
+        private readonly ICourseLanguageService _courseLanguageService;
+        private readonly ICourseLevelService _courseLevelService;
 
         public CourseService(
             ICourseRepository courseRepository,
@@ -47,6 +50,11 @@ namespace Mentohub.Core.Services.Services
             ISubjectRepository subjectRepository,
             ICourseViewService courseViewsService,
             ICourseLanguageRepository courseLanguageRepository,
+            IMediaService mediaService, 
+            ICourseLevelRepository courseLevelRepository,
+            ICourseSubjectService courseSubjectService,
+            ICourseLanguageService courseLanguageService,
+            ICourseLevelService courseLevelService)
             IMediaService mediaService, ICourseLevelRepository courseLevelRepository,
             ICRUD_UserRepository cRUD_UserRepository)
             
@@ -63,6 +71,9 @@ namespace Mentohub.Core.Services.Services
             _courseLevelRepository = courseLevelRepository;
             _cRUD_UserRepository = cRUD_UserRepository;
 
+            _courseSubjectService = courseSubjectService;
+            _courseLanguageService = courseLanguageService;
+            _courseLevelService = courseLevelService;
         }
 
         public async Task<CourseDTO> Apply(CourseDTO courseDTO)
@@ -421,6 +432,35 @@ namespace Mentohub.Core.Services.Services
                                     .ToList()
                                     .Select(x => CourseMapper.ToSimpleCourseDTO(x))
                                     .ToList();
+
+            return result;
+        }
+    
+        public SearchCourseFilterData InitSearchFilterData()
+        {
+            var filter = new SearchCourseFilterData();
+            filter.Categories = _courseSubjectService.SubjectsList();
+            filter.Categories.Insert(0, new KeyValuePair<int, string>(-1, "Будь-який"));
+
+            filter.Languages = _courseLanguageService.GetLanguagesList();
+            filter.Languages.Insert(0, new KeyValuePair<int, string>(-1, "Будь-яка"));
+
+            filter.Levels = _courseLevelService.GetLevelsList();
+            filter.Levels.Insert(0, new KeyValuePair<int, string>(-1, "Будь-який"));
+
+            return filter;
+        }
+
+        public List<CourseDTO> GetAuthorsToCourses(string authorID)
+        {
+            var userID = MentoShyfr.Decrypt(authorID);
+            var courses = _courseRepository.GetAll(x => x.AuthorId == userID)
+                                           .ToList();
+                                           
+            var result = courses.Select(x => CourseMapper.ToDTO(x))
+                                .OrderBy(x => x.Rating)
+                                .Take(6)
+                                .ToList();
 
             return result;
         }
