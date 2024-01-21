@@ -54,6 +54,14 @@ namespace Mentohub.Core.Context
 
         #endregion
 
+        public DbSet<Order> Order { get; set; }
+
+        public DbSet<OrderItem> OrderItem { get; set; }
+
+        public DbSet<OrderPayment> OrderPayment { get; set; }
+
+        public DbSet<Currency> Currency { get; set; }
+
         public ProjectContext(DbContextOptions<ProjectContext> options) : base(options)
         {
 
