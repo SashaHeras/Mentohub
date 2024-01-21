@@ -1,4 +1,5 @@
 ﻿using Mentohub.Domain.Data.DTO.CourseDTOs;
+using Mentohub.Domain.Data.Entities.Order;
 using Mentohub.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
@@ -60,6 +61,8 @@ namespace Mentohub.Domain.Data.Entities.CourseEntities
         public virtual CourseLevel CourseLevel { get; set; }
 
         public virtual ICollection<UserCourse> UserCourses { get; set; }
+
+        public virtual ICollection<OrderItem> OrderItems { get; set; }
 
         public CourseDTO ToDTO()
         {

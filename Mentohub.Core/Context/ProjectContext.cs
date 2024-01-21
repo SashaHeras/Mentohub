@@ -1,5 +1,6 @@
 ﻿using Mentohub.Domain.Data.Entities;
 using Mentohub.Domain.Data.Entities.CourseEntities;
+using Mentohub.Domain.Data.Entities.Order;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -126,16 +127,6 @@ namespace Mentohub.Core.Context
                 .WithMany(t2 => t2.AnswerHistory)
                 .HasForeignKey(t1 => t1.AnswerId);
 
-            //modelBuilder.Entity<UserCourse>()
-            // .HasOne(uc => uc.СurrentUser)
-            // .WithMany(u => u.UserCourses)
-            // .HasForeignKey(uc => uc.UserId);
-
-            //modelBuilder.Entity<UserCourse>()
-            //.HasOne(uc => uc.Course)
-            //.WithMany(u => u.UserCourses)
-            //.HasForeignKey(uc => uc.CourseId);
-
             #region Course
 
             modelBuilder.Entity<Course>()
@@ -217,6 +208,45 @@ namespace Mentohub.Core.Context
                 .HasOne(t1 => t1.Course)
                 .WithMany(t2 => t2.CourseItems)
                 .HasForeignKey(t1 => t1.CourseId);
+
+            #endregion
+
+            #region Payment
+
+            modelBuilder.Entity<OrderPayment>()
+               .HasOne(t1 => t1.Currency)
+               .WithMany(t2 => t2.OrderPayments)
+               .HasForeignKey(t1 => t1.CurrencyID);
+
+            modelBuilder.Entity<OrderPayment>()
+               .HasOne(t1 => t1.Order)
+               .WithMany(t2 => t2.OrderPayments)
+               .HasForeignKey(t1 => t1.OrderID);
+
+            modelBuilder.Entity<OrderItem>()
+               .HasOne(t1 => t1.Order)
+               .WithMany(t2 => t2.OrderItems)
+               .HasForeignKey(t1 => t1.OrderID);
+
+            modelBuilder.Entity<UserCourse>()
+               .HasOne(t1 => t1.OrderItem)
+               .WithOne(t2 => t2.UserCourse)
+               .HasForeignKey<UserCourse>(t1 => t1.OrderItemId);
+
+            modelBuilder.Entity<UserCourse>()
+               .HasOne(t1 => t1.OrderPayment)
+               .WithMany(t2 => t2.UserCourses)
+               .HasForeignKey(t1 => t1.OrderPaymentId);
+
+            modelBuilder.Entity<Order>()
+               .HasOne(t1 => t1.User)
+               .WithMany(t2 => t2.Orders)
+               .HasForeignKey(t1 => t1.UserID);
+
+            modelBuilder.Entity<OrderItem>()
+               .HasOne(t1 => t1.Course)
+               .WithMany(t2 => t2.OrderItems)
+               .HasForeignKey(t1 => t1.CourseID);
 
             #endregion
 

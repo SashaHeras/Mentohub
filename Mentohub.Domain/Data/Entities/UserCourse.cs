@@ -1,4 +1,5 @@
 ﻿using Mentohub.Domain.Data.Entities.CourseEntities;
+using Mentohub.Domain.Data.Entities.Order;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,14 +14,25 @@ namespace Mentohub.Domain.Data.Entities
     {
         [Key]
         public int Id { get; set; }
+
         public DateTime Created { get; set; }
+
         [ForeignKey("Course")]
         public int CourseId { get; set; }
+
         public virtual Course Course { get; set; }
+
         [ForeignKey("User")]
         public string UserId { get; set; }
+
         public virtual CurrentUser? СurrentUser { get; set; }
+
         public int OrderItemId { get; set; }
-        public string? OrderPaymentId { get; set; }
+
+        public string OrderPaymentId { get; set; }
+
+        public virtual OrderPayment OrderPayment { get; set; }
+
+        public virtual OrderItem OrderItem { get; set; }
     }
 }

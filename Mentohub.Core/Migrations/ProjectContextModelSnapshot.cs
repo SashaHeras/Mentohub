@@ -387,6 +387,172 @@ namespace Mentohub.Core.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.Order.Currency", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Currency");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.Order.Order", b =>
+                {
+                    b.Property<string>("ID")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<decimal?>("DiscountSum")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime?>("Ordered")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<decimal?>("SubTotal")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Order");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.Order.OrderItem", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("CourseID")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal?>("Discount")
+                        .HasColumnType("numeric");
+
+                    b.Property<bool?>("HasDiscount")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("OrderID")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Pos")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal?>("SubTotal")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CourseID");
+
+                    b.HasIndex("OrderID");
+
+                    b.ToTable("OrderItem");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.Order.OrderPayment", b =>
+                {
+                    b.Property<string>("ID")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("CurrencyID")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("OrderID")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("CurrencyID");
+
+                    b.HasIndex("OrderID");
+
+                    b.ToTable("OrderPayment");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.UserCourse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("OrderItemId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("OrderPaymentId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("СurrentUserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("OrderItemId")
+                        .IsUnique();
+
+                    b.HasIndex("OrderPaymentId");
+
+                    b.HasIndex("СurrentUserId");
+
+                    b.ToTable("UserCourses");
+                });
+
             modelBuilder.Entity("Mentohub.Domain.Entities.AnswerHistory", b =>
                 {
                     b.Property<int>("Id")
@@ -881,6 +1047,88 @@ namespace Mentohub.Core.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.Order.Order", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Data.Entities.CurrentUser", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.Order.OrderItem", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.Course", "Course")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("CourseID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mentohub.Domain.Data.Entities.Order.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.Order.OrderPayment", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Data.Entities.Order.Currency", "Currency")
+                        .WithMany("OrderPayments")
+                        .HasForeignKey("CurrencyID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mentohub.Domain.Data.Entities.Order.Order", "Order")
+                        .WithMany("OrderPayments")
+                        .HasForeignKey("OrderID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Currency");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.UserCourse", b =>
+                {
+                    b.HasOne("Mentohub.Domain.Data.Entities.CourseEntities.Course", "Course")
+                        .WithMany("UserCourses")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mentohub.Domain.Data.Entities.Order.OrderItem", "OrderItem")
+                        .WithOne("UserCourse")
+                        .HasForeignKey("Mentohub.Domain.Data.Entities.UserCourse", "OrderItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mentohub.Domain.Data.Entities.Order.OrderPayment", "OrderPayment")
+                        .WithMany("UserCourses")
+                        .HasForeignKey("OrderPaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Mentohub.Domain.Data.Entities.CurrentUser", "СurrentUser")
+                        .WithMany("UserCourses")
+                        .HasForeignKey("СurrentUserId");
+
+                    b.Navigation("Course");
+
+                    b.Navigation("OrderItem");
+
+                    b.Navigation("OrderPayment");
+
+                    b.Navigation("СurrentUser");
+                });
+
             modelBuilder.Entity("Mentohub.Domain.Entities.AnswerHistory", b =>
                 {
                     b.HasOne("Mentohub.Domain.Entities.TaskAnswer", "TaskAnswer")
@@ -1022,6 +1270,10 @@ namespace Mentohub.Core.Migrations
                     b.Navigation("CourseTags");
 
                     b.Navigation("CourseViews");
+
+                    b.Navigation("OrderItems");
+
+                    b.Navigation("UserCourses");
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Data.Entities.CourseEntities.CourseBlock", b =>
@@ -1066,7 +1318,33 @@ namespace Mentohub.Core.Migrations
 
                     b.Navigation("Courses");
 
+                    b.Navigation("Orders");
+
                     b.Navigation("Tags");
+
+                    b.Navigation("UserCourses");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.Order.Currency", b =>
+                {
+                    b.Navigation("OrderPayments");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.Order.Order", b =>
+                {
+                    b.Navigation("OrderItems");
+
+                    b.Navigation("OrderPayments");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.Order.OrderItem", b =>
+                {
+                    b.Navigation("UserCourse");
+                });
+
+            modelBuilder.Entity("Mentohub.Domain.Data.Entities.Order.OrderPayment", b =>
+                {
+                    b.Navigation("UserCourses");
                 });
 
             modelBuilder.Entity("Mentohub.Domain.Entities.TaskAnswer", b =>
