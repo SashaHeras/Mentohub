@@ -59,6 +59,8 @@ namespace Mentohub.Domain.Data.Entities.CourseEntities
 
         public virtual CourseLevel CourseLevel { get; set; }
 
+        public virtual ICollection<UserCourse> UserCourses { get; set; }
+
         public CourseDTO ToDTO()
         {
             return new CourseDTO

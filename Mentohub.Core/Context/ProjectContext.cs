@@ -29,6 +29,8 @@ namespace Mentohub.Core.Context
 
         public DbSet<Comment> Comments { get; set; }
 
+        public DbSet<UserCourse> UserCourses { get; set; }
+
         #region Course
 
         public DbSet<Course> Courses { get; set; }
@@ -74,6 +76,7 @@ namespace Mentohub.Core.Context
             modelBuilder.Entity<CourseLanguage>().HasKey(c => c.Id);
             modelBuilder.Entity<CourseOverview>().HasKey(c => c.ID);
             modelBuilder.Entity<CourseLevel>().HasKey(c => c.ID);
+            modelBuilder.Entity<UserCourse>().HasKey(uc => uc.Id);
             modelBuilder.Entity<IdentityUserLogin<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserToken<string>>().HasNoKey();
             modelBuilder.Entity<IdentityUserRole<string>>().HasKey(ur => new { ur.UserId, ur.RoleId });
@@ -122,6 +125,16 @@ namespace Mentohub.Core.Context
                 .HasOne(t1 => t1.TaskAnswer)
                 .WithMany(t2 => t2.AnswerHistory)
                 .HasForeignKey(t1 => t1.AnswerId);
+
+            //modelBuilder.Entity<UserCourse>()
+            // .HasOne(uc => uc.СurrentUser)
+            // .WithMany(u => u.UserCourses)
+            // .HasForeignKey(uc => uc.UserId);
+
+            //modelBuilder.Entity<UserCourse>()
+            //.HasOne(uc => uc.Course)
+            //.WithMany(u => u.UserCourses)
+            //.HasForeignKey(uc => uc.CourseId);
 
             #region Course
 

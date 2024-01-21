@@ -32,5 +32,6 @@ namespace Mentohub.Domain.Data.Entities
         public virtual List<Course> Courses { get; set; }
 
         public virtual ICollection<Tag> Tags { get; set; }
+        public virtual  ICollection<UserCourse>? UserCourses { get; set; }
     }
 }
