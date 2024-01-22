@@ -1,16 +1,10 @@
 ﻿using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
-using Mentohub.Core.Services.Interfaces.CourseInterfaces;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO.CourseDTOs;
-using Mentohub.Domain.Data.Entities;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Mappers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Mentohub.Core.Services.Services.CourseServices
+namespace Mentohub.Core.Services.Services
 {
     public class CourseBlockService : ICourseBlockService
     {

@@ -1,19 +1,15 @@
-﻿using Mentohub.Core.Context;
-using Mentohub.Core.Repositories.Intefaces;
+﻿using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
-using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
-using Mentohub.Core.Services.Interfaces.CourseInterfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.Test;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Data.Enums;
 using Mentohub.Domain.Entities;
 using Mentohub.Domain.Helpers;
-using System.Threading.Tasks;
 
-namespace Mentohub.Core.Services.Services.TestServices
+namespace Mentohub.Core.Services.Services
 {
     public class TestService : ITestService
     {

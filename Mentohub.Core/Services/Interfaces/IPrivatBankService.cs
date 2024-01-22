@@ -1,9 +1,4 @@
-﻿using Mentohub.Domain.PayMent;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Mentohub.Domain.PayMentAlla;
 
 namespace Mentohub.Core.Services.Interfaces
 {

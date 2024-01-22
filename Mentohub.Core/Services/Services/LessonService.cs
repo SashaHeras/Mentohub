@@ -1,14 +1,11 @@
 ﻿using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
-using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
-using Mentohub.Core.Services.Interfaces.CourseInterfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Data.Enums;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Mentohub.Core.Services.Services
 {

@@ -1,10 +1,5 @@
 ﻿using Mentohub.Core.Services.Interfaces;
-using Mentohub.Domain.PayMent;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Mentohub.Domain.PayMentAlla;
 using System.Xml.Serialization;
 
 namespace Mentohub.Core.Services.Services

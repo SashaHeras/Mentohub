@@ -1,12 +1,6 @@
-﻿using Mentohub.Core.Services.Services;
-using Mentohub.Domain.Data.DTO;
+﻿using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.Test;
 using Mentohub.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Interfaces
 {
@@ -17,7 +11,7 @@ namespace Mentohub.Core.Services.Interfaces
         Test GetTestByCourseItem(int courseItemId);
 
         void SaveHistory(TestHistory history, List<TaskHistory> taskHistories, List<AnswerHistory> answerHistories);
-                
+
         TestDTO Apply(TestDTO test);
 
         Task<PassTestResultDTO> ApplyTestResult(PassTestDTO data);

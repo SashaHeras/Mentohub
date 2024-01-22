@@ -1,14 +1,7 @@
-﻿using System.ComponentModel;
-using System.Text.Json;
-using System.Threading;
-using Azure.Core;
-using Mentohub.Core.Context;
-using Mentohub.Core.Repositories.Intefaces;
+﻿using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
-using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
-using Mentohub.Core.Services.Interfaces.CourseInterfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Mentohub.Domain.Data.Entities;
@@ -18,10 +11,8 @@ using Mentohub.Domain.Filters;
 using Mentohub.Domain.Helpers;
 using Mentohub.Domain.Mappers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using static System.Net.Mime.MediaTypeNames;
 
-namespace Mentohub.Core.Services.Services.CourseServices
+namespace Mentohub.Core.Services.Services
 {
     public class CourseService : ICourseService
     {

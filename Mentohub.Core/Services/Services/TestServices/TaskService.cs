@@ -2,9 +2,8 @@
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
-using System.Threading.Tasks;
 
-namespace Mentohub.Core.Services.Services.TestServices
+namespace Mentohub.Core.Services.Services
 {
     public class TaskService : ITaskService
     {

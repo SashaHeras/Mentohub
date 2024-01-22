@@ -1,19 +1,14 @@
 ﻿using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
-using Mentohub.Core.Services.Interfaces.IPaymentInterfaces;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.Entities;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Data.Entities.Order;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Services.PaymentServices
 {
     public class UserCourseService : IUserCourseService
     {
-#pragma warning disable 8603
+        #pragma warning disable 8603
         private readonly IUserCourseRepository _courseRepository;
         public UserCourseService(IUserCourseRepository courseRepository)
         {

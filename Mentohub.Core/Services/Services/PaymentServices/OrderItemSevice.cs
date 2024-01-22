@@ -1,11 +1,6 @@
 ﻿using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
-using Mentohub.Core.Services.Interfaces.IPaymentInterfaces;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.Entities.Order;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Services.PaymentServices
 {
@@ -20,11 +15,12 @@ namespace Mentohub.Core.Services.Services.PaymentServices
 
         public OrderItem CreateOrderItem(decimal price, decimal total, decimal? discount, bool? hasDiscount, string orderID, int courseID)
         {
-            if(orderID==null )
+            if(orderID == null)
             {
                 throw new ArgumentException("Operation cannot be performed");
             }
-            var orderItem = _orderItemRepository.AddOrderItem(price, total, discount, hasDiscount, orderID, courseID);
+
+            var orderItem = new OrderItem();// _orderItemRepository.AddOrderItem(price, total, discount, hasDiscount, orderID, courseID);
             return orderItem;
         }
 
@@ -35,7 +31,7 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             {
                 throw new ArgumentNullException(nameof(OrderItem), "This object does not exist");
             }
-            _orderItemRepository.DeleteOrderItem(orderItem);
+            //_orderItemRepository.Re(orderItem);
         }
 
         public OrderItem GetOrderItem(int id)
@@ -50,11 +46,12 @@ namespace Mentohub.Core.Services.Services.PaymentServices
 
         public ICollection<OrderItem> GetOrders()
         {
-            var orderItems = _orderItemRepository.GetAllOrderItems();
-            if(orderItems==null)
+            var orderItems = _orderItemRepository.GetOrderItems();
+            if(orderItems == null)
             {
                 throw new ArgumentNullException(nameof(ICollection<OrderItem>), "This object does not exist");
             }
+
             return orderItems;
         }
 

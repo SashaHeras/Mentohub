@@ -1,9 +1,8 @@
 ﻿using Mentohub.Domain.Entities;
-using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Services.Interfaces;
 
-namespace Mentohub.Core.Services.Services.TestServices
+namespace Mentohub.Core.Services.Services
 {
     public class AnswerHistoryService : IAnswerHistoryService
     {

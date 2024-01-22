@@ -2,7 +2,7 @@
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Data.Entities.Order;
 
-namespace Mentohub.Core.Services.Interfaces.PaymentInterfaces
+namespace Mentohub.Core.Services.Interfaces
 {
     public interface IUserCourseService
     {

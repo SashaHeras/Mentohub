@@ -1,12 +1,7 @@
 ﻿using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
-using Mentohub.Core.Services.Interfaces.CourseInterfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Mentohub.Core.Services.Interfaces;
 
-namespace Mentohub.Core.Services.Services.CourseServices
+namespace Mentohub.Core.Services.Services
 {
     public class CourseSubjectService : ICourseSubjectService
     {

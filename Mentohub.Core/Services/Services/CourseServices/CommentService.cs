@@ -6,9 +6,9 @@ using Mentohub.Domain.Helpers;
 using Mentohub.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Mentohub.Domain.Data.Entities;
-using Mentohub.Core.Services.Interfaces.CourseInterfaces;
+using Mentohub.Core.Services.Interfaces;
 
-namespace Mentohub.Core.Services.Services.CourseServices
+namespace Mentohub.Core.Services.Services
 {
     public class CommentService : ICommentService
     {

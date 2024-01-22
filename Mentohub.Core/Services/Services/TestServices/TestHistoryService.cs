@@ -2,7 +2,7 @@
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Entities;
 
-namespace Mentohub.Core.Services.Services.TestServices
+namespace Mentohub.Core.Services.Services
 {
     public class TestHistoryService : ITestHistoryService
     {

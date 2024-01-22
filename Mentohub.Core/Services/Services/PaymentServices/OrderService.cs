@@ -1,14 +1,9 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
-using Mentohub.Core.Services.Interfaces.IPaymentInterfaces;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.Entities.Order;
 using Mentohub.Domain.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Services.PaymentServices
 {
@@ -34,8 +29,8 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             var encriptId=MentoShyfr.Decrypt(userID);
             Order order = new Order(total, encriptId, discountSum);
             order.User = await _cRUD_UserRepository.FindCurrentUserById(encriptId);
-            order.OrderItems = _orderItemRepository.GetAllOrderItems();
-            order.OrderPayments = _orderPaymentRepository.GetAll();
+            order.OrderItems = _orderItemRepository.GetOrderItems();
+            order.OrderPayments = _orderPaymentRepository.GetAll().ToList();
             order.Ordered = DateTime.Now;
             _orderRepository.AddOrder(order);
             return order;
@@ -49,6 +44,7 @@ namespace Mentohub.Core.Services.Services.PaymentServices
                 return false;
                 throw new ArgumentNullException(nameof(order), "The Order does not exist"); 
             }
+
             _orderRepository.DeleteOrder(order);
             return true;
         }
@@ -61,11 +57,14 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             return order;
         }
 
-        public ICollection<Order> GetOrders()
+        public IQueryable<Order> GetOrders()
         {
-            var orders= _orderRepository.GetAll();
+            var orders = _orderRepository.GetAll();
             if (orders == null)
+            {
                 throw new ArgumentNullException(nameof(orders), "Collection does not exist");
+            }
+
             return orders;           
         }
 

@@ -1,6 +1,6 @@
 ﻿using Mentohub.Domain.Data.Entities.Order;
 
-namespace Mentohub.Core.Services.Interfaces.PaymentInterfaces
+namespace Mentohub.Core.Services.Interfaces
 {
     public interface IOrderItemSevice
     {
@@ -10,6 +10,5 @@ namespace Mentohub.Core.Services.Interfaces.PaymentInterfaces
         ICollection<OrderItem> GetOrders();
         void DeleteOrderItem(int id);
         void UpdateOrderItem(int id);
-
     }
 }

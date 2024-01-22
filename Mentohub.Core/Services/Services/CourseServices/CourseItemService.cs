@@ -1,12 +1,10 @@
 ﻿using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
-using Mentohub.Core.Repositories.Repositories;
-using Mentohub.Core.Services.Interfaces.CourseInterfaces;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities.CourseEntities;
-using Microsoft.EntityFrameworkCore;
 
-namespace Mentohub.Core.Services.Services.CourseServices
+namespace Mentohub.Core.Services.Services
 {
     public class CourseItemService : ICourseItemService
     {

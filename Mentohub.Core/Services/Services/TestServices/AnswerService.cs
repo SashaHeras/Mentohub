@@ -1,11 +1,9 @@
 ﻿using Mentohub.Core.Repositories.Intefaces;
-using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
-using System.Collections.Generic;
 
-namespace Mentohub.Core.Services.Services.TestServices
+namespace Mentohub.Core.Services.Services
 {
     public class AnswerService : IAnswerService
     {
