@@ -5,7 +5,6 @@ using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities;
-using Mentohub.Domain.Data.Entities.Interfaces;
 using Mentohub.Domain.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;

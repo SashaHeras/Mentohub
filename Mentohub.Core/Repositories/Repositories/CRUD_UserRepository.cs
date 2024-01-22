@@ -13,7 +13,6 @@ using System.Threading.Tasks;
 using Mentohub.Domain.Data.Entities;
 using Mentohub.Core.AllExceptions;
 using Microsoft.AspNetCore.Routing;
-using Mentohub.Domain.Data.Entities.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mentohub.Core.Repositories.Repositories

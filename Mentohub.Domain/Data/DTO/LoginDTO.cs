@@ -1,4 +1,4 @@
-﻿using Mentohub.Domain.Data.Entities.Interfaces;
+﻿
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 namespace Mentohub.Domain.Data.DTO
 {
-    public class LoginDTO:IItem
+    public class LoginDTO
     {
         //public string ReturnUrl { get; set; }
 

@@ -1,7 +1,6 @@
 ﻿
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities;
-using Mentohub.Domain.Data.Entities.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;

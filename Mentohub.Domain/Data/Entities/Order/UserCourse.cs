@@ -1,5 +1,4 @@
 ﻿using Mentohub.Domain.Data.Entities.CourseEntities;
-using Mentohub.Domain.Data.Entities.Order;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mentohub.Domain.Data.Entities
+namespace Mentohub.Domain.Data.Entities.Order
 {
     public class UserCourse
     {

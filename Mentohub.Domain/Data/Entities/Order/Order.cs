@@ -9,6 +9,18 @@ namespace Mentohub.Domain.Data.Entities.Order
 {
     public class Order
     {
+        public Order() { }
+#pragma warning disable 8603
+        public Order(decimal total, string userID, decimal discountSum)
+        {
+            ID = Guid.NewGuid().ToString();
+            Created = DateTime.Now;
+            DiscountSum = discountSum;
+            Total = total;
+            SubTotal = (decimal)(Total - DiscountSum);
+            UserID = userID;
+        }
+
         public string ID { get; set; }
 
         public decimal Total { get; set; }

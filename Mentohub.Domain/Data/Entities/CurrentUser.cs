@@ -1,5 +1,5 @@
 ﻿using Mentohub.Domain.Data.Entities.CourseEntities;
-using Mentohub.Domain.Data.Entities.Interfaces;
+using Mentohub.Domain.Data.Entities.Order;
 using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
@@ -32,9 +32,7 @@ namespace Mentohub.Domain.Data.Entities
         public virtual List<Course> Courses { get; set; }
 
         public virtual ICollection<Tag> Tags { get; set; }
-
-        public virtual ICollection<UserCourse> UserCourses { get; set; }
-
-        public virtual ICollection<Order.Order> Orders { get; set; }
+        public virtual  ICollection<UserCourse>? UserCourses { get; set; }
+        public virtual ICollection<Order.Order>? Orders { get; set; }
     }
 }

@@ -18,6 +18,10 @@ using Microsoft.Extensions.Configuration;
 using Mentohub.Core.Services;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Repositories.Repositories.CourseRepositories;
+using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
+using Mentohub.Core.Repositories.Repositories.PaymentRepository;
+using Mentohub.Core.Services.Interfaces.IPaymentInterfaces;
+using Mentohub.Core.Services.Services.PaymentServices;
 
 internal class Program
 {
@@ -73,6 +77,10 @@ internal class Program
         builder.Services.AddScoped<ICourseLanguageRepository, CourseLanguageRepository>();
         builder.Services.AddScoped<ICourseOverviewRepository, CourseOverviewRepository>();
         builder.Services.AddScoped<ICourseLevelRepository, CourseLevelRepository>();
+        builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+        builder.Services.AddScoped<IUserCourseRepository, UserCourseRepository>();
+        builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+        builder.Services.AddScoped<IOrderPaymentRepository, OrderPaymentRepository>();
         builder.Services.AddScoped<AllException>();
 
         builder.Services.AddScoped<IAnswerHistoryService, AnswerHistoryService>();
@@ -96,6 +104,9 @@ internal class Program
         builder.Services.AddScoped<ICourseLanguageService, CourseLanguageService>();
         builder.Services.AddTransient<IEmailSender, EmailSender>();
         builder.Services.AddHttpClient<IPrivatBankService, PrivatBankService>();
+        builder.Services.AddScoped<IOrderService, OrderService>();
+        builder.Services.AddScoped<IUserCourseService, UserCourseService>();
+
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSignalR();
