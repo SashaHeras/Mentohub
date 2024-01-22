@@ -39,8 +39,9 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
 
         public  UserCourse AddUserCourse(int courseId,string userId)
         {
+            var decriptUserId = MentoShyfr.Decrypt(userId);
             var userCourses = _projectContext.UserCourses.ToList();
-            var userCourse = new UserCourse(courseId, userId);
+            var userCourse = new UserCourse(courseId, decriptUserId);
             if (userCourses.Count == 0) 
             {
                 userCourse.Id = 1;

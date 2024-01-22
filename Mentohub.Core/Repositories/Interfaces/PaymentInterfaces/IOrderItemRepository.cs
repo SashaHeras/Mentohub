@@ -9,6 +9,12 @@ namespace Mentohub.Core.Repositories.Interfaces.PaymentInterfaces
 {
     public interface IOrderItemRepository
     {
-        ICollection<OrderItem> GetAll();
+        ICollection<OrderItem> GetAllOrderItems();
+        OrderItem GetOrderItem(int id);
+        OrderItem AddOrderItem(decimal price, decimal total, decimal? discount,
+            bool? hasDiscount, string orderID, int courseID);
+        void UpdateOrderItem(OrderItem orderItem);
+        void DeleteOrderItem(OrderItem orderItem);
+
     }
 }

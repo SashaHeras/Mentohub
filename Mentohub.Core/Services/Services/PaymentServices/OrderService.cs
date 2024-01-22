@@ -3,6 +3,7 @@ using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
 using Mentohub.Core.Services.Interfaces.IPaymentInterfaces;
 using Mentohub.Domain.Data.Entities.Order;
+using Mentohub.Domain.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,9 +31,10 @@ namespace Mentohub.Core.Services.Services.PaymentServices
 
         public async Task<Order> CreatOrder(decimal total, string userID, decimal discountSum)
         {
-            Order order = new Order(total, userID, discountSum);
-            order.User = await _cRUD_UserRepository.FindCurrentUserById(userID);
-            order.OrderItems = _orderItemRepository.GetAll();
+            var encriptId=MentoShyfr.Decrypt(userID);
+            Order order = new Order(total, encriptId, discountSum);
+            order.User = await _cRUD_UserRepository.FindCurrentUserById(encriptId);
+            order.OrderItems = _orderItemRepository.GetAllOrderItems();
             order.OrderPayments = _orderPaymentRepository.GetAll();
             order.Ordered = DateTime.Now;
             _orderRepository.AddOrder(order);

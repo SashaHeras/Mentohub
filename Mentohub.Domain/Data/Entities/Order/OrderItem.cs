@@ -9,6 +9,19 @@ namespace Mentohub.Domain.Data.Entities.Order
 {
     public class OrderItem
     {
+        public OrderItem() { }
+        public OrderItem( decimal price, decimal total,  decimal? discount,
+            bool? hasDiscount, string orderID, int courseID)
+        {
+            Price = price;
+            Total = total;
+            Discount = discount;
+            SubTotal = Total- Discount;
+            HasDiscount = hasDiscount;
+            OrderID = orderID;
+            CourseID = courseID;           
+        }
+
         public int ID { get; set; }
 
         public int Pos { get; set; }

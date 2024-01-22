@@ -14,7 +14,7 @@ namespace Mentohub.Core.Services.Interfaces.IPaymentInterfaces
         IUserCourseService CreateUserCourse(int courseId, string userId);
         Task<bool> UpdateUserCourse(int id);
         bool DeleteUserCourse(int id);
-        Task<UserCourse> GetUserCourse(int id);
+        UserCourse GetUserCourse(int id);
         ICollection<Course> GetUserCourses(string userId);
         ICollection<CurrentUser> GetUsers(int courseId);
 

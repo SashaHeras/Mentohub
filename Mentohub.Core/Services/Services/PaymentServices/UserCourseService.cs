@@ -39,7 +39,7 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             return true;
         }
 
-        public Task<UserCourse> GetUserCourse(int id)
+        public UserCourse GetUserCourse(int id)
         {
             var usercourse = _courseRepository.GetUserCourseById(id);
             if (usercourse == null)
