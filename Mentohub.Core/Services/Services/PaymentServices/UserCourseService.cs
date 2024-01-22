@@ -19,6 +19,36 @@ namespace Mentohub.Core.Services.Services.PaymentServices
         {
             _courseRepository = courseRepository;
         }
+
+        public IUserCourseService CreateUserCourse(int courseId, string userId)
+        {
+            var userCourse = _courseRepository.AddUserCourse(courseId, userId);
+            
+            return (IUserCourseService)userCourse;
+        }
+
+        public bool DeleteUserCourse(int id)
+        {
+            var usercourse=_courseRepository.GetUserCourseById(id);
+            if(usercourse == null) 
+            {
+                return false;
+                throw new ArgumentNullException(nameof(UserCourse), "The UserCourse does not exist");
+            }
+            _courseRepository.DeleteUserCourse(usercourse);
+            return true;
+        }
+
+        public Task<UserCourse> GetUserCourse(int id)
+        {
+            var usercourse = _courseRepository.GetUserCourseById(id);
+            if (usercourse == null)
+            {
+                throw new ArgumentNullException(nameof(UserCourse), "The UserCourse does not exist");
+            }
+            return usercourse;
+        }
+
         /// <summary>
         /// обираємо всі курси, які придбав користувач
         /// </summary>
@@ -48,6 +78,11 @@ namespace Mentohub.Core.Services.Services.PaymentServices
                 throw new ArgumentNullException(nameof(userCourses), "The collection cannot be null.");
             }
             return userCourses.Select(cu => cu.СurrentUser).ToList();
+        }
+
+        public Task<bool> UpdateUserCourse(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

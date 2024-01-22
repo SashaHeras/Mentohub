@@ -9,6 +9,9 @@ namespace Mentohub.Core.Repositories.Interfaces.PaymentInterfaces
 {
     public interface IUserCourseRepository
     {
+        UserCourse AddUserCourse(int courseId, string userId);
+        void UpdateUserCourse(UserCourse userCourse);
+        void DeleteUserCourse(UserCourse userCourse);
         UserCourse GetUserCourseById(int Id);
 
         ICollection<UserCourse> GetUserCoursesByUserId(string userId);

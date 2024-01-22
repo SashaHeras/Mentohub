@@ -16,7 +16,7 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
     {
 #pragma warning disable 8603
         private readonly ProjectContext _projectContext;
-
+        
         public UserCourseRepository(ProjectContext projectContext) : base(projectContext)
         {
             _projectContext = projectContext;
@@ -37,6 +37,32 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
             return GetAll().Where(uc => uc.CourseId == courseId).ToList();
         }
 
+        public  UserCourse AddUserCourse(int courseId,string userId)
+        {
+            var userCourses = _projectContext.UserCourses.ToList();
+            var userCourse = new UserCourse(courseId, userId);
+            if (userCourses.Count == 0) 
+            {
+                userCourse.Id = 1;
+            }
+            var lastUserCourseId=_projectContext.UserCourses.Max(u => u.CourseId);
+            userCourse.Id = lastUserCourseId + 1;
+            _projectContext.UserCourses.Add(userCourse);
+            _projectContext.SaveChanges();
+            return userCourse;
+        }
 
+        public void UpdateUserCourse(UserCourse userCourse)
+        {
+            _projectContext.Update(userCourse);
+            _projectContext.SaveChanges();
+            
+        }
+
+        public void DeleteUserCourse(UserCourse userCourse)
+        {
+            _projectContext.Remove(userCourse);
+            _projectContext.SaveChanges();
+        }
     }
 }

@@ -11,6 +11,13 @@ namespace Mentohub.Domain.Data.Entities.Order
 {
     public class UserCourse
     {
+        public UserCourse() { }
+        public UserCourse(int courseId, string userId) 
+        { 
+            CourseId = courseId;
+            UserId= userId;
+            Created = DateTime.Now;
+        }
         [Key]
         public int Id { get; set; }
 
