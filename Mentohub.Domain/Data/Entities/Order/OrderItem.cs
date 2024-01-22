@@ -10,8 +10,7 @@ namespace Mentohub.Domain.Data.Entities.Order
     public class OrderItem
     {
         public OrderItem() { }
-        public OrderItem( decimal price, decimal total,  decimal? discount,
-            bool? hasDiscount, string orderID, int courseID)
+        public OrderItem( decimal price, decimal total,  decimal? discount, bool? hasDiscount, string orderID, int courseID)
         {
             Price = price;
             Total = total;

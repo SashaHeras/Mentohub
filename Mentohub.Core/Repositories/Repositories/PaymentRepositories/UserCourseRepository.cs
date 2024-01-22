@@ -14,17 +14,17 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
 {
     public class UserCourseRepository : Repository<UserCourse>, IUserCourseRepository
     {
-#pragma warning disable 8603
+        #pragma warning disable 8603
         private readonly ProjectContext _projectContext;
         
         public UserCourseRepository(ProjectContext projectContext) : base(projectContext)
         {
             _projectContext = projectContext;
         }
+
         public UserCourse GetUserCourseById(int Id)
         {
             return GetAll().Where(u => u.Id == Id).FirstOrDefault();
-
         }
 
         public ICollection<UserCourse> GetUserCoursesByUserId(string userId)
@@ -56,8 +56,7 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
         public void UpdateUserCourse(UserCourse userCourse)
         {
             _projectContext.Update(userCourse);
-            _projectContext.SaveChanges();
-            
+            _projectContext.SaveChanges();            
         }
 
         public void DeleteUserCourse(UserCourse userCourse)

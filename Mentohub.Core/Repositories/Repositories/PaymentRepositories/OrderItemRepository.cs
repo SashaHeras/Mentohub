@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
 {
-    public class OrderItemRepository : Repository<OrderItem> ,IOrderItemRepository
+    public class OrderItemRepository : Repository<OrderItem>, IOrderItemRepository
     {
         private readonly ProjectContext _projectContext;
 
@@ -22,40 +22,30 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
         public OrderItem AddOrderItem(decimal price, decimal total, decimal? discount,
             bool? hasDiscount, string orderID, int courseID)
         {
-            OrderItem orderItem = new OrderItem(price, total, discount,
-            hasDiscount, orderID, courseID);
+            OrderItem orderItem = new OrderItem(price, total, discount, hasDiscount, orderID, courseID);
+
             var orderItems = _projectContext.OrderItem.ToList();
             if (orderItems.Count == 0)
             {
                 orderItem.ID = 1;
             }
+
             var lastOrderItemId = _projectContext.OrderItem.Max(u => u.ID);
             orderItem.ID = lastOrderItemId + 1;
+
             _projectContext.OrderItem.Add(orderItem);
             _projectContext.SaveChanges();
             return orderItem;
         }
 
-        public void DeleteOrderItem(OrderItem orderItem)
-        {
-            _projectContext.OrderItem.Remove(orderItem);
-            _projectContext.SaveChanges();
-            
-        }
-
-        public ICollection<OrderItem> GetAllOrderItems()
-        {
-            return GetAll().ToList();
-        }
-
         public OrderItem GetOrderItem(int id)
         {
-             return GetAll().Where(o=>o.ID==id).FirstOrDefault();
+            return GetAll(x => x.ID == id).FirstOrDefault();
         }
 
-        public void UpdateOrderItem(OrderItem orderItem)
+        public ICollection<OrderItem> GetOrderItems()
         {
-            throw new NotImplementedException();
+            return GetAll().ToList();
         }
     }
 }

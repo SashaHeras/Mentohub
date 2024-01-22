@@ -1,4 +1,6 @@
-﻿using Mentohub.Domain.Data.Entities.Order;
+﻿using Mentohub.Core.Infrastructure;
+using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Domain.Data.Entities.Order;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +9,14 @@ using System.Threading.Tasks;
 
 namespace Mentohub.Core.Repositories.Interfaces.PaymentInterfaces
 {
-    public interface IOrderRepository
+    public interface IOrderRepository : ISingletoneService, IRepository<Order>
     {
-        Order GetOrder(string id);
-        void AddOrder(Order order);
-        void UpdateOrder(Order order);
-        void DeleteOrder(Order order);
-        ICollection<Order> GetAll();
+        public Order GetOrder(string id);
+
+        public void AddOrder(Order order);
+
+        public void UpdateOrder(Order order);
+
+        public void DeleteOrder(Order order);
     }
 }

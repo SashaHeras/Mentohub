@@ -23,22 +23,21 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
 
         public Order GetOrder(string id)
         {
-            return GetAll().Where(o=>o.ID==id).FirstOrDefault();
+            return GetAll().Where(o=>o.ID == id).FirstOrDefault();
         }
+
         public void AddOrder(Order order)
         {
             _projectContext.Order.Add(order);
             _projectContext.SaveChanges();
         }
-        ICollection<Order> IOrderRepository.GetAll()
-        {
-            return GetAll().ToList();
-        }
+
         public void UpdateOrder(Order order)
         {
             _projectContext.Update(order);
             _projectContext.SaveChanges();
         }
+
         public void DeleteOrder(Order order) 
         {
             _projectContext.Remove(order);
