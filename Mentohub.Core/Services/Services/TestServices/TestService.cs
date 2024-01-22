@@ -13,7 +13,7 @@ using Mentohub.Domain.Entities;
 using Mentohub.Domain.Helpers;
 using System.Threading.Tasks;
 
-namespace Mentohub.Core.Services.Services
+namespace Mentohub.Core.Services.Services.TestServices
 {
     public class TestService : ITestService
     {
@@ -30,10 +30,10 @@ namespace Mentohub.Core.Services.Services
         private readonly ITaskHistoryService _taskHistoryService;
         private readonly IAnswerHistoryService _answerHistoryService;
 
-        public TestService( 
-            ICourseItemService courseItemService, 
+        public TestService(
+            ICourseItemService courseItemService,
             ITestHistoryService testHistoryService,
-            ITaskHistoryService taskHistoryService, 
+            ITaskHistoryService taskHistoryService,
             IAnswerHistoryService answerHistoryService,
             ITaskService taskService,
             IAnswerService answerService,
@@ -54,7 +54,7 @@ namespace Mentohub.Core.Services.Services
             _answerService = answerService;
             _userRepository = userRepository;
             _courseBlockRepository = courseBlockRepository;
-        }             
+        }
 
         public Test GetTest(int id)
         {
@@ -97,7 +97,7 @@ namespace Mentohub.Core.Services.Services
             var sameCourseItems = _courseItemRepository.GetAll()
                                                        .Where(x => x.CourseId == data.CourseID)
                                                        .ToList();
-     
+
             if (test == null)
             {
                 CourseItem newCourseItem = new()
@@ -141,15 +141,16 @@ namespace Mentohub.Core.Services.Services
 
             var currentTestTasks = _taskService.GetTasks(test.Id).ToList();
 
-            PassTestResultDTO result = new PassTestResultDTO() {
+            PassTestResultDTO result = new PassTestResultDTO()
+            {
                 TotalMark = currentTestTasks.Sum(x => x.Mark),
                 TestID = test.Id
             };
 
             TestHistory testHistory = new TestHistory(
-                currentTestTasks.Sum(x => x.Mark), 
-                DateTime.Now, 
-                test.Id, 
+                currentTestTasks.Sum(x => x.Mark),
+                DateTime.Now,
+                test.Id,
                 currentUserID);
 
             testHistory.TaskHistory = new List<TaskHistory>();
@@ -158,11 +159,11 @@ namespace Mentohub.Core.Services.Services
 
             foreach (var task in tasks)
             {
-                var currentTask = currentTestTasks.FirstOrDefault(x => x.Id == task.ID) 
+                var currentTask = currentTestTasks.FirstOrDefault(x => x.Id == task.ID)
                                                    ?? throw new Exception("Task wasn`t found");
 
                 var taskAnswers = _answerService.GetAnswers(task.ID).ToList();
-                if(taskAnswers.Count == 0)
+                if (taskAnswers.Count == 0)
                 {
                     throw new Exception("Answers weren`t found");
                 }
@@ -180,7 +181,8 @@ namespace Mentohub.Core.Services.Services
                 {
                     var currentAnswer = taskAnswers.FirstOrDefault(x => x.Id == answer.ID);
 
-                    AnswerHistory answerHistory = new AnswerHistory() {
+                    AnswerHistory answerHistory = new AnswerHistory()
+                    {
                         TaskId = task.ID,
                         AnswerId = answer.ID
                     };

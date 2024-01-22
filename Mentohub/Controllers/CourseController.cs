@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Cors;
 using Mentohub.Domain.Filters;
 using Mentohub.Domain.Data.DTO.ResultDTO;
 using static MassTransit.ValidationResultExtensions;
+using Mentohub.Core.Services.Interfaces.CourseInterfaces;
 
 namespace Mentohub.Controllers
 {

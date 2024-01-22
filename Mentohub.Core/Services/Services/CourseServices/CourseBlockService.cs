@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mentohub.Core.Services.Services
+namespace Mentohub.Core.Services.Services.CourseServices
 {
     public class CourseBlockService : ICourseBlockService
     {
@@ -37,7 +37,7 @@ namespace Mentohub.Core.Services.Services
             int courseBlocksCnt = course.CourseBlocks?.Count() ?? 0;
 
             var block = _courseBlockRepository.GetById(data.ID);
-            if(block == null)
+            if (block == null)
             {
                 block = new CourseBlock()
                 {

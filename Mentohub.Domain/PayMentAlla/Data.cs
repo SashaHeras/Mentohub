@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Mentohub.Domain.PayMent
+namespace Mentohub.Domain.PayMentAlla
 {
     public class Data
     {
@@ -18,11 +18,11 @@ namespace Mentohub.Domain.PayMent
         [XmlElement("test")]
         public int Test { get; set; }
 
-        [XmlElement("payment")]
-        public Payment Payment { get; set; }
+        [XmlElement("PayMentAlla")]
+        public PayMentAlla PayMentAlla { get; set; }
         public Data ()
         {
-            Payment = new Payment();
+            PayMentAlla = new PayMentAlla();
         }
     }
 }

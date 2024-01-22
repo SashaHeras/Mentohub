@@ -21,11 +21,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace Mentohub.Core.Services.Services
+namespace Mentohub.Core.Services.Services.CourseServices
 {
     public class CourseService : ICourseService
     {
-        #pragma warning disable 8601
+#pragma warning disable 8601
         private readonly ICourseRepository _courseRepository;
         private readonly ICourseItemRepository _courseItemRepository;
         private readonly ILessonRepository _lessonRepository;
@@ -51,13 +51,13 @@ namespace Mentohub.Core.Services.Services
             ISubjectRepository subjectRepository,
             ICourseViewService courseViewsService,
             ICourseLanguageRepository courseLanguageRepository,
-            IMediaService mediaService, 
+            IMediaService mediaService,
             ICourseLevelRepository courseLevelRepository,
             ICourseSubjectService courseSubjectService,
             ICourseLanguageService courseLanguageService,
             ICourseLevelService courseLevelService,
             ICRUD_UserRepository cRUD_UserRepository)
-            
+
         {
             _courseRepository = courseRepository;
             _courseItemRepository = courseItemRepository;
@@ -87,7 +87,7 @@ namespace Mentohub.Core.Services.Services
             var currentUserID = MentoShyfr.Decrypt(courseDTO.AuthorId);
 
             var currentCourse = _courseRepository.FirstOrDefault(x => x.Id == courseDTO.Id);
-            if(currentCourse == null)
+            if (currentCourse == null)
             {
                 currentCourse = new Course()
                 {
@@ -98,10 +98,10 @@ namespace Mentohub.Core.Services.Services
                     Price = courseDTO.Price,
                     ShortDescription = courseDTO.ShortDescription,
                     Description = courseDTO.Description,
-                    CourseSubjectId = (int)courseDTO.CourseSubjectId,
+                    CourseSubjectId = courseDTO.CourseSubjectId,
                     LastEdittingDate = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
                     LanguageID = courseDTO.LanguageId,
-                    CourseLevelID= courseDTO.CourseLevelId
+                    CourseLevelID = courseDTO.CourseLevelId
                 };
 
                 await SaveFiles(currentCourse, courseDTO);
@@ -164,7 +164,7 @@ namespace Mentohub.Core.Services.Services
                     currentCourse.LoadVideoName = courseDTO.PreviewVideo.FileName;
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 throw;
             }
@@ -253,17 +253,18 @@ namespace Mentohub.Core.Services.Services
             result = result.Take(count).ToList();
 
             return result;
-        }        
+        }
 
         public IQueryable<Course> GetAuthorsCourses(Guid userId)
         {
             throw new NotImplementedException();
         }
 
-        public List<CourseDTO> GetUserCourses(string userId) {
+        public List<CourseDTO> GetUserCourses(string userId)
+        {
             var result = new List<CourseDTO>();
             var courses = _courseRepository.GetAllAuthorsCourses(userId).ToList();
-            foreach(var course in courses)
+            foreach (var course in courses)
             {
                 result.Add(new CourseDTO()
                 {
@@ -281,13 +282,13 @@ namespace Mentohub.Core.Services.Services
 
         public async Task<CourseDTO> ViewCourse(int CourseID, string UserID)
         {
-            var course = _courseRepository.FirstOrDefault(x => x.Id == CourseID) 
+            var course = _courseRepository.FirstOrDefault(x => x.Id == CourseID)
                                            ?? throw new Exception("Course not found!");
 
             var result = CourseMapper.ToDTO(course);
 
             var courseView = await _courseViewsService.TryAddUserView(CourseID, UserID);
-            if(courseView != null)
+            if (courseView != null)
             {
                 course.CourseViews = course.CourseViews == null ? new List<CourseViews>() : course.CourseViews;
 
@@ -341,17 +342,17 @@ namespace Mentohub.Core.Services.Services
 
             var itemsIdList = course.CourseItems.Select(x => x.Id).ToList();
             var courseItems = _courseItemRepository.GetAll(x => itemsIdList.Contains(x.Id))
-                                                   .Include(x=>x.Test)
+                                                   .Include(x => x.Test)
                                                    .Include(x => x.Lesson)
                                                    .ToList();
 
             var blocks = course.CourseBlocks.Select(x => CourseMapper.ToDTO(x)).ToList();
-            foreach(var bl in blocks)
+            foreach (var bl in blocks)
             {
                 var currentBlockItems = courseItems.Where(x => x.CourseBlockID == bl.ID).ToList();
-                foreach(var item in currentBlockItems)
+                foreach (var item in currentBlockItems)
                 {
-                    if(item.Test != null)
+                    if (item.Test != null)
                     {
                         bl.CourseItems.Add(new CourseElementDTO()
                         {
@@ -365,7 +366,7 @@ namespace Mentohub.Core.Services.Services
 
                         bl.TestCount++;
                     }
-                    else if(item.Lesson != null)
+                    else if (item.Lesson != null)
                     {
                         bl.CourseItems.Add(new CourseElementDTO()
                         {
@@ -391,14 +392,14 @@ namespace Mentohub.Core.Services.Services
         {
             var coursesList = _courseRepository.GetAll(
                     x => x.Checked == true &&
-                    x.Price >= filter.PriceFrom && 
+                    x.Price >= filter.PriceFrom &&
                     x.Price <= filter.PriceTo &&
-                    (filter.SearchText == string.Empty ? true : 
-                        (
-                            x.Name.Contains(filter.SearchText) || 
+                    (filter.SearchText == string.Empty ? true :
+                        
+                            x.Name.Contains(filter.SearchText) ||
                             x.CourseTags.Select(x => x.Tag.Name).Contains(filter.SearchText) ||
                             x.Category.Name.Contains(filter.SearchText)
-                        )
+                        
                     ) &&
                     (filter.CategoryID == -1 ? true : x.CourseSubjectId == filter.CategoryID) &&
                     (filter.Level == -1 ? true : x.CourseLevelID == filter.Level) &&
@@ -406,13 +407,13 @@ namespace Mentohub.Core.Services.Services
                     (filter.Rate == -1 ? true : x.Rating > filter.Rate)
                 );
 
-            if(filter.SortOption != 0)
+            if (filter.SortOption != 0)
             {
-                if(filter.SortOption == (int)e_SortOptions.Rate)
+                if (filter.SortOption == (int)e_SortOptions.Rate)
                 {
                     coursesList = coursesList.OrderBy(x => x.Rating);
                 }
-                else if(filter.SortOption == (int)e_SortOptions.Views)
+                else if (filter.SortOption == (int)e_SortOptions.Views)
                 {
                     coursesList = coursesList.OrderBy(x => x.CourseViews.Count);
                 }
@@ -435,7 +436,7 @@ namespace Mentohub.Core.Services.Services
 
             return result;
         }
-    
+
         public SearchCourseFilterData InitSearchFilterData()
         {
             var filter = new SearchCourseFilterData();
@@ -456,7 +457,7 @@ namespace Mentohub.Core.Services.Services
             var userID = MentoShyfr.Decrypt(authorID);
             var courses = _courseRepository.GetAll(x => x.AuthorId == userID)
                                            .ToList();
-                                           
+
             var result = courses.Select(x => CourseMapper.ToDTO(x))
                                 .OrderBy(x => x.Rating)
                                 .Take(6)
@@ -467,26 +468,26 @@ namespace Mentohub.Core.Services.Services
 
         public AuthorInfoDTO GetAuthorInfoDTO(string encriptId)
         {
-           var authorId= MentoShyfr.Decrypt(encriptId);
-            if(authorId == null) 
+            var authorId = MentoShyfr.Decrypt(encriptId);
+            if (authorId == null)
             {
                 throw new Exception("Id not found");
             }
             CurrentUser author = _cRUD_UserRepository.FindByID(authorId);
             var authorInfoDTO = new AuthorInfoDTO();
-            authorInfoDTO.Id= encriptId;
-            authorInfoDTO.Image=author.Image;
-            authorInfoDTO.FirstName=author.FirstName;
-            authorInfoDTO.LastName=author.LastName;
-            authorInfoDTO.AboutMe=author.AboutMe;
+            authorInfoDTO.Id = encriptId;
+            authorInfoDTO.Image = author.Image;
+            authorInfoDTO.FirstName = author.FirstName;
+            authorInfoDTO.LastName = author.LastName;
+            authorInfoDTO.AboutMe = author.AboutMe;
             authorInfoDTO.CountOfStudents = 0;
             var courses = _courseRepository.GetAllAuthorsCourses(authorId).ToList();
-            double averageRating ;
-            if (courses == null) 
+            double averageRating;
+            if (courses == null)
             {
                 averageRating = 0.0;
             }
-            else 
+            else
             {
                 averageRating = courses.Average(c => c.Rating);
             }

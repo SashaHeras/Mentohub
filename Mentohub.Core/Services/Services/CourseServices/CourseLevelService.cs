@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mentohub.Core.Services.Services
+namespace Mentohub.Core.Services.Services.CourseServices
 {
     public class CourseLevelService : ICourseLevelService
     {

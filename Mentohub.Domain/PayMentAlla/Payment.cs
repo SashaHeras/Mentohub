@@ -5,16 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Mentohub.Domain.PayMent
+namespace Mentohub.Domain.PayMentAlla
 {
-    public class Payment
+    public class PayMentAlla
     {
         [XmlAttribute("id")]
         public string Id { get; set; }
 
         [XmlElement("prop")]
         public List<Prop> Props { get; set; }
-        public Payment() 
+        public PayMentAlla() 
         { 
             Id=Guid.NewGuid().ToString();
             Seed();

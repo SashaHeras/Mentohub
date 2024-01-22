@@ -2,6 +2,7 @@
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
+using Mentohub.Core.Services.Interfaces.CourseInterfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Data.Enums;

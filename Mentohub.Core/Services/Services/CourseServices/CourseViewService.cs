@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mentohub.Core.Services.Services
+namespace Mentohub.Core.Services.Services.CourseServices
 {
     public class CourseViewService : ICourseViewService
     {
@@ -31,19 +31,20 @@ namespace Mentohub.Core.Services.Services
         public async Task<CourseViews> TryAddUserView(int CourseID, string UserID)
         {
             var userID = MentoShyfr.Decrypt(UserID);
-            var user =  await _userRepository.FindCurrentUserById(userID);
-            if(user == null) {
+            var user = await _userRepository.FindCurrentUserById(userID);
+            if (user == null)
+            {
                 throw new Exception("User not found!");
             }
 
             var startDate = Helper.GetStartDateTime(DateTime.Now);
-            var userViewsThisDay = _courseViewsRepository.GetAll(x => 
-                                                                    x.UserID == userID && 
+            var userViewsThisDay = _courseViewsRepository.GetAll(x =>
+                                                                    x.UserID == userID &&
                                                                     x.CourseID == CourseID &&
                                                                     x.ViewDate >= startDate)
                                                          .ToList();
 
-            if(userViewsThisDay.Count > 0)
+            if (userViewsThisDay.Count > 0)
             {
                 return null;
             }

@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Mentohub.Domain.PayMent
+namespace Mentohub.Domain.PayMentAlla
 {
     public class DataResponse
     {
         [XmlElement("oper")]
         public string Operation { get; set; }
 
-        [XmlElement("payment")]
-        public PaymentResponse Payment { get; set; }
+        [XmlElement("PayMentAlla")]
+        public PayMentAllaResponse PayMentAlla { get; set; }
     }
 }

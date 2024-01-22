@@ -6,7 +6,7 @@ using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Mentohub.Core.Services.Services
+namespace Mentohub.Core.Services.Services.CourseServices
 {
     public class CourseItemService : ICourseItemService
     {
@@ -15,10 +15,11 @@ namespace Mentohub.Core.Services.Services
         private readonly ICourseItemRepository _courseItemRepository;
 
         public CourseItemService(
-            ICourseItemRepository courseItemRepository, 
+            ICourseItemRepository courseItemRepository,
             ICourseTypeRepository courseTypeRepository,
             ProjectContext projectContext
-            ) {
+            )
+        {
             _courseItemTypeRepository = courseTypeRepository;
             _courseItemRepository = courseItemRepository;
             _projectContext = projectContext;
@@ -85,13 +86,13 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public IQueryable<CourseItem> GetElementsByCourseId(int courseId)
         {
-            return (IQueryable<CourseItem>)_courseItemRepository.GetCourseItemsByCourseId(courseId);
+            return _courseItemRepository.GetCourseItemsByCourseId(courseId);
         }
 
         private int GetStatusID(string name)
         {
             var status = _projectContext.ItemsStatuses.Where(i => i.Name == name).FirstOrDefault();
-            if(status == null)
+            if (status == null)
             {
                 return -1;
             }

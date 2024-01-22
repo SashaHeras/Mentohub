@@ -22,6 +22,7 @@ using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
 using Mentohub.Core.Repositories.Repositories.PaymentRepository;
 using Mentohub.Core.Services.Interfaces.IPaymentInterfaces;
 using Mentohub.Core.Services.Services.PaymentServices;
+using Mentohub.Core.Services.Interfaces.CourseInterfaces;
 
 internal class Program
 {

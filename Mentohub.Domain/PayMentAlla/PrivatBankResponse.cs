@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Mentohub.Domain.PayMent
+namespace Mentohub.Domain.PayMentAlla
 {
     [XmlRoot("response")]
     public class PrivatBankResponse

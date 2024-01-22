@@ -5,15 +5,10 @@ using Mentohub.Domain.Filters;
 using Mentohub.Domain.Helpers;
 using Mentohub.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Mentohub.Domain.Data.Entities;
 using Mentohub.Core.Services.Interfaces.CourseInterfaces;
 
-namespace Mentohub.Core.Services.Services
+namespace Mentohub.Core.Services.Services.CourseServices
 {
     public class CommentService : ICommentService
     {
@@ -38,7 +33,7 @@ namespace Mentohub.Core.Services.Services
                                           .Include(x => x.Comments)
                                           .FirstOrDefault();
 
-            if(course == null)
+            if (course == null)
             {
                 throw new Exception("Course was not found!");
             }
@@ -46,7 +41,7 @@ namespace Mentohub.Core.Services.Services
             var currentUserID = MentoShyfr.Decrypt(data.AuthorId);
             var currentUser = _userRepository.FindByID(currentUserID);
             var comment = _commentRepository.FirstOrDefault(x => x.Id == data.Id);
-            if(comment == null)
+            if (comment == null)
             {
                 comment = new Comment()
                 {
@@ -57,7 +52,7 @@ namespace Mentohub.Core.Services.Services
                     DateCreation = DateTime.Now
                 };
 
-                if(course.Comments == null)
+                if (course.Comments == null)
                 {
                     course.Comments = new List<Comment>();
                 }
@@ -77,7 +72,7 @@ namespace Mentohub.Core.Services.Services
                             currentUser.Email :
                             currentUser.LastName + currentUser.FirstName.Take(1) + '.';
 
-            course.Rating = (course.Comments.Sum(x => x.Rating) / (double)course.Comments.Count());
+            course.Rating = course.Comments.Sum(x => x.Rating) / (double)course.Comments.Count();
             _courseRepository.Update(course);
 
             return data;

@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace Mentohub.Domain.PayMent
+namespace Mentohub.Domain.PayMentAlla
 {
-    public class PaymentResponse
+    public class PayMentAllaResponse
     {
         [XmlAttribute("id")]
         public string Id { get; set; }
