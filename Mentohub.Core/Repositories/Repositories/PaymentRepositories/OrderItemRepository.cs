@@ -47,5 +47,11 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
         {
             return GetAll().ToList();
         }
+
+        public void Delete(OrderItem currentOrderItem)
+        {
+            _projectContext.OrderItem.Remove(currentOrderItem);
+            _projectContext.SaveChanges();
+        }
     }
 }

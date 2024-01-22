@@ -53,7 +53,10 @@ namespace Mentohub.Core.Services.Services.PaymentServices
         {
             var order= _orderRepository.GetOrder(orderId);
             if (order == null)
+            {
                 throw new ArgumentNullException(nameof(order), "The Order does not exist");
+            }
+
             return order;
         }
 

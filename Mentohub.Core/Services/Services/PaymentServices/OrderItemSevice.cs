@@ -26,12 +26,13 @@ namespace Mentohub.Core.Services.Services.PaymentServices
 
         public void DeleteOrderItem(int id)
         {
-            var orderItem=_orderItemRepository.GetOrderItem(id);
+            var orderItem =_orderItemRepository.GetOrderItem(id);
             if(orderItem == null) 
             {
                 throw new ArgumentNullException(nameof(OrderItem), "This object does not exist");
             }
-            //_orderItemRepository.Re(orderItem);
+
+            _orderItemRepository.Delete(orderItem);
         }
 
         public OrderItem GetOrderItem(int id)
@@ -41,6 +42,7 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             {
                 throw new ArgumentNullException(nameof(OrderItem), "This object does not exist");
             }
+
             return orderItem;
         }
 
