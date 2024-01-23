@@ -22,7 +22,7 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
         
         public OrderPayment AddOrderPayment(decimal total, int currencyID, string orderID)
         {
-            OrderPayment orderPayment = new OrderPayment(total, currencyID, orderID);
+            OrderPayment orderPayment = new OrderPayment();
             var userCourses= _projectContext.UserCourses.ToList();
             orderPayment.UserCourses = userCourses;
             _projectContext.OrderPayment.Add(orderPayment);

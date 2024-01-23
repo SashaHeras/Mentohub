@@ -4,17 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mentohub.Domain.Data.Entities.Order
+namespace Mentohub.Domain.Data.DTO.Payment
 {
-    public class Currency
+    public class CurrencyDTO
     {
-        
         public int ID { get; set; }
 
         public string Name { get; set; }
 
         public string Code { get; set; }
-
-        public virtual ICollection<OrderPayment> OrderPayments { get; set; }
     }
 }

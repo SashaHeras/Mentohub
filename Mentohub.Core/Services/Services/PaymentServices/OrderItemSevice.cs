@@ -1,5 +1,6 @@
 ﻿using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
 using Mentohub.Core.Services.Interfaces;
+using Mentohub.Domain.Data.DTO.Payment;
 using Mentohub.Domain.Data.Entities.Order;
 
 namespace Mentohub.Core.Services.Services.PaymentServices
@@ -13,20 +14,16 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             _orderItemRepository = orderItemRepository;
         }
 
-        public OrderItem CreateOrderItem(decimal price, decimal total, decimal? discount, bool? hasDiscount, string orderID, int courseID)
+        
+        public OrderItem CreateOrderItem(OrderItemDTO orderItemDTO)
         {
-            if(orderID == null)
-            {
-                throw new ArgumentException("Operation cannot be performed");
-            }
 
-            var orderItem = new OrderItem();// _orderItemRepository.AddOrderItem(price, total, discount, hasDiscount, orderID, courseID);
-            return orderItem;
+            throw new NotImplementedException();
         }
 
         public void DeleteOrderItem(int id)
         {
-            var orderItem =_orderItemRepository.GetOrderItem(id);
+            var orderItem =_orderItemRepository.FirstOrDefault(x=>x.ID==id);
             if(orderItem == null) 
             {
                 throw new ArgumentNullException(nameof(OrderItem), "This object does not exist");
@@ -37,7 +34,7 @@ namespace Mentohub.Core.Services.Services.PaymentServices
 
         public OrderItem GetOrderItem(int id)
         {
-            var orderItem = _orderItemRepository.GetOrderItem(id);
+            var orderItem = _orderItemRepository.FirstOrDefault(x=>x.ID==id);
             if (orderItem == null)
             {
                 throw new ArgumentNullException(nameof(OrderItem), "This object does not exist");
@@ -46,20 +43,22 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             return orderItem;
         }
 
-        public ICollection<OrderItem> GetOrders()
+        public List<OrderItemDTO> GetOrderItems(string id)
         {
-            var orderItems = _orderItemRepository.GetOrderItems();
-            if(orderItems == null)
-            {
-                throw new ArgumentNullException(nameof(ICollection<OrderItem>), "This object does not exist");
-            }
-
-            return orderItems;
+            return _orderItemRepository.GetAll(x => x.OrderID == id)
+                .Select(x => new OrderItemDTO()
+                {
+                    ID = x.ID,
+                    OrderID = x.OrderID,
+                    Price=x.Price,
+                    CourseID=x.CourseID,
+                    Total=x.Price,
+                    SubTotal=x.SubTotal,
+                    HasDiscount=x.HasDiscount,
+                    Discount=x.Discount
+                })
+                .ToList();
         }
 
-        public void UpdateOrderItem(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

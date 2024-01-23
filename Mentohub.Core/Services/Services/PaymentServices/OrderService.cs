@@ -24,13 +24,11 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             _orderRepository = orderRepository;
         }
 
-        public async Task<Order> CreatOrder(decimal total, string userID, decimal discountSum)
+        public async Task<Order> CreatOrder( string userID)
         {
             var encriptId=MentoShyfr.Decrypt(userID);
-            Order order = new Order(total, encriptId, discountSum);
+            Order order = new Order();
             order.User = await _cRUD_UserRepository.FindCurrentUserById(encriptId);
-            order.OrderItems = _orderItemRepository.GetOrderItems();
-            order.OrderPayments = _orderPaymentRepository.GetAll().ToList();
             order.Ordered = DateTime.Now;
             _orderRepository.AddOrder(order);
             return order;

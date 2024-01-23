@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mentohub.Domain.Data.Entities.Order
+namespace Mentohub.Domain.Data.DTO.Payment
 {
-    public class OrderPayment
+    public class OrderPaymentDTO
     {
-       
         public string ID { get; set; }
 
         public DateTime Created { get; set; }
@@ -20,11 +19,5 @@ namespace Mentohub.Domain.Data.Entities.Order
         public int CurrencyID { get; set; }
 
         public string OrderID { get; set; }
-
-        public virtual Order Order { get; set; }
-
-        public virtual Currency Currency { get; set; }
-
-        public virtual ICollection<UserCourse> UserCourses { get; set; }
     }
 }

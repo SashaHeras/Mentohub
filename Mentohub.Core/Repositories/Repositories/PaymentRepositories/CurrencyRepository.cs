@@ -18,17 +18,11 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepositories
         public CurrencyRepository(ProjectContext projectContext) : base(projectContext) 
         {
             _projectContext = projectContext;
-        }
-
-        
+        }      
         public void Delete(Currency currency)
         {
             _projectContext.Currency.Remove(currency);
             _projectContext.SaveChanges();
-        }
-
-       
-
-        
+        } 
     }
 }
