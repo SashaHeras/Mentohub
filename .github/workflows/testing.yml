@@ -1,16 +1,38 @@
-name: Docker Image CI
+name: Publish Docker image
 
 on:
   push:
-    branches: [ "dev_ops" ]
+    branches:
+      - 'dev_ops'
+  pull_request:
+    branches:
+      - 'dev_ops'
 
 jobs:
-
-  build:
-
+  push_to_registry:
+    name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag testaction:$(date +%s)
+      - name: Check out the repo
+        uses: actions/checkout@v4
+      
+      - name: Log in to Docker Hub
+        uses: docker/login-action@3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@5
+        with:
+          images: palefoxes/be-mentohub
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
