@@ -40,7 +40,7 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
 
         public OrderItem GetOrderItem(int id)
         {
-            return GetAll(x => x.ID == id).FirstOrDefault();
+            return GetAll().Where(x => x.ID == id).FirstOrDefault();
         }
 
         public ICollection<OrderItem> GetOrderItems()

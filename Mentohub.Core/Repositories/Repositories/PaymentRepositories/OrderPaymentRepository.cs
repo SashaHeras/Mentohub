@@ -13,10 +13,44 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
 {
     public class OrderPaymentRepository : Repository<OrderPayment>, IOrderPaymentRepository
     {
+        private readonly ProjectContext _projectContext;
         #pragma warning disable 8603
-        public OrderPaymentRepository(ProjectContext repositoryContext) : base(repositoryContext)
+        public OrderPaymentRepository(ProjectContext projectContext) : base(projectContext)
         {
+            _projectContext = projectContext;
+        }
+        
+        public OrderPayment AddOrderPayment(decimal total, int currencyID, string orderID)
+        {
+            OrderPayment orderPayment = new OrderPayment(total, currencyID, orderID);
+            var userCourses= _projectContext.UserCourses.ToList();
+            orderPayment.UserCourses = userCourses;
+            _projectContext.OrderPayment.Add(orderPayment);
+            _projectContext.SaveChanges();
+            return orderPayment;
+        }
 
+        public void DeleteOrderPayment(OrderPayment orderPayment)
+        { 
+            _projectContext.OrderPayment.Remove(orderPayment);   
+        }
+
+        public OrderPayment GetOrderPaymentbyId(string id)
+        {
+           return GetAll().Where(op => op.ID == id).FirstOrDefault();
+            
+        }
+
+        public ICollection<OrderPayment> GetOrderPayments()
+        {
+            return GetAll().ToList();
+            
+        }
+
+        public void UpdateOrderPayment(OrderPayment orderPayment)
+        {
+            _projectContext.Update(orderPayment);
+            _projectContext.SaveChanges();
         }
     }
 }

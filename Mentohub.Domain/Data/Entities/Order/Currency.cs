@@ -8,6 +8,10 @@ namespace Mentohub.Domain.Data.Entities.Order
 {
     public class Currency
     {
+        public Currency()
+        {
+
+        }
         public int ID { get; set; }
 
         public string Name { get; set; }

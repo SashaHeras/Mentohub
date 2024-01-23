@@ -12,6 +12,11 @@ namespace Mentohub.Core.Repositories.Interfaces.PaymentInterfaces
 {
     public interface IOrderPaymentRepository : ISingletoneService, IRepository<OrderPayment>
     {
+        OrderPayment GetOrderPaymentbyId(string id);
+        ICollection<OrderPayment> GetOrderPayments();
+        OrderPayment AddOrderPayment(decimal total, int currencyID, string orderID);
+        void DeleteOrderPayment(OrderPayment orderPayment);
+        void UpdateOrderPayment(OrderPayment orderPayment);
 
     }
 }

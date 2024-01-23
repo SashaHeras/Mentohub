@@ -8,6 +8,15 @@ namespace Mentohub.Domain.Data.Entities.Order
 {
     public class OrderPayment
     {
+        public OrderPayment() { }
+        public OrderPayment(decimal total, int currencyID, string orderID) 
+        { 
+            ID=Guid.NewGuid().ToString();
+            Created=DateTime.Now;
+            Total=total;
+            CurrencyID=currencyID;
+            OrderID=orderID;
+        }
         public string ID { get; set; }
 
         public DateTime Created { get; set; }
