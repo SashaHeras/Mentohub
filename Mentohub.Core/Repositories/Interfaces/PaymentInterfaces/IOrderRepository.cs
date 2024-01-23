@@ -13,10 +13,6 @@ namespace Mentohub.Core.Repositories.Interfaces.PaymentInterfaces
     {
         public Order GetOrder(string id);
 
-        public void AddOrder(Order order);
-
-        public void UpdateOrder(Order order);
-
         public void DeleteOrder(Order order);
     }
 }

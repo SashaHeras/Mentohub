@@ -10,7 +10,7 @@ namespace Mentohub.Core.Services.Interfaces.PaymentInterfaces
     public interface IOrderPaymantService
     {
         ICollection<OrderPayment> GetOrderPayments(string id);
-        bool DeleteOrderPayment(string id);
-        
+
+        bool DeleteOrderPayment(string id);        
     }
 }

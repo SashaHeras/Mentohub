@@ -2,8 +2,10 @@
 using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
 using Mentohub.Core.Services.Interfaces;
+using Mentohub.Domain.Data.DTO.Payment;
 using Mentohub.Domain.Data.Entities.Order;
 using Mentohub.Domain.Helpers;
+using System.Linq;
 
 namespace Mentohub.Core.Services.Services.PaymentServices
 {
@@ -13,6 +15,7 @@ namespace Mentohub.Core.Services.Services.PaymentServices
         private readonly IOrderItemRepository _orderItemRepository;
         private readonly IOrderPaymentRepository _orderPaymentRepository;
         private readonly IOrderRepository _orderRepository;
+
         public OrderService(ICRUD_UserRepository cRUD_UserRepository,
             IOrderItemRepository orderItemRepository,
             IOrderPaymentRepository orderPaymentRepository,
@@ -24,13 +27,23 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             _orderRepository = orderRepository;
         }
 
-        public async Task<Order> CreatOrder( string userID)
+        public async Task<Order> CreateOrder(string userID)
         {
-            var encriptId=MentoShyfr.Decrypt(userID);
-            Order order = new Order();
-            order.User = await _cRUD_UserRepository.FindCurrentUserById(encriptId);
-            order.Ordered = DateTime.Now;
-            _orderRepository.AddOrder(order);
+            var encriptId = MentoShyfr.Decrypt(userID);
+            var currentUser = await _cRUD_UserRepository.FindCurrentUserById(encriptId);
+            if(currentUser == null)
+            {
+                throw new Exception("Unknown user!");
+            }
+
+            Order order = new Order()
+            {
+                Created = DateTime.Now,
+                UserID = currentUser.Id
+            };
+
+            _orderRepository.Add(order);
+
             return order;
         }
 
@@ -58,26 +71,42 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             return order;
         }
 
-        public IQueryable<Order> GetOrders()
+        public async Task<OrderDTO> GetActiveUserOrder(string userID)
         {
-            var orders = _orderRepository.GetAll();
-            if (orders == null)
+            var encriptId = MentoShyfr.Decrypt(userID);
+            var currentUser = await _cRUD_UserRepository.FindCurrentUserById(encriptId);
+            if (currentUser == null)
             {
-                throw new ArgumentNullException(nameof(orders), "Collection does not exist");
+                throw new Exception("Unknown user!");
             }
 
-            return orders;           
-        }
+            var order = _orderRepository.GetAll(x => x.UserID == currentUser.Id && 
+                                                     x.Ordered == null)
+                                        .FirstOrDefault();
 
-        public Order UpDateOrder(string orderId,decimal discount,decimal total)
-        {
-            var order = GetOrder(orderId);
-            if (order == null)
-                throw new ArgumentNullException(nameof(order),"The Order does not exist");
-            order.DiscountSum = discount;
-            order.Total = total;
-            _orderRepository.UpdateOrder(order);
-            return order;
+            var currentOrderItems = order.OrderItems.Select(x => new OrderItemDTO()
+            {
+                ID = x.ID,
+                CourseID = x.CourseID,
+                Price = x.Price,
+                Total = x.Total,
+                SubTotal = x.SubTotal,
+                Discount = x.Discount,
+                HasDiscount = x.HasDiscount,
+                Pos = x.Pos,
+            })
+            .ToList();
+
+            return new OrderDTO() { 
+                ID = order.ID,
+                UserID = currentUser.Id,
+                Total = order.Total,
+                Created = order.Created,
+                Ordered = order.Ordered,
+                DiscountSum = order.DiscountSum,
+                SubTotal = order.SubTotal,
+                Items = currentOrderItems
+            };
         }
     }
 }

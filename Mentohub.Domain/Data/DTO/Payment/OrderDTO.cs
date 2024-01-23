@@ -22,5 +22,6 @@ namespace Mentohub.Domain.Data.DTO.Payment
 
         public string UserID { get; set; }
 
+        public List<OrderItemDTO> Items { get; set; }
     }
 }

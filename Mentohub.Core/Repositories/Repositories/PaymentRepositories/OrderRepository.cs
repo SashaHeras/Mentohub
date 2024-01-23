@@ -13,7 +13,7 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
 {
     public class OrderRepository: Repository<Order>, IOrderRepository
     {
-#pragma warning disable 8603
+        #pragma warning disable 8603
         private readonly ProjectContext _projectContext;
         
         public OrderRepository(ProjectContext projectContext) : base(projectContext)
@@ -23,19 +23,7 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
 
         public Order GetOrder(string id)
         {
-            return GetAll().Where(o=>o.ID == id).FirstOrDefault();
-        }
-
-        public void AddOrder(Order order)
-        {
-            _projectContext.Order.Add(order);
-            _projectContext.SaveChanges();
-        }
-
-        public void UpdateOrder(Order order)
-        {
-            _projectContext.Update(order);
-            _projectContext.SaveChanges();
+            return GetAll().Where(o => o.ID == id).FirstOrDefault();
         }
 
         public void DeleteOrder(Order order) 

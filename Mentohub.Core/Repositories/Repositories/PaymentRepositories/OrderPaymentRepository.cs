@@ -35,16 +35,9 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
             _projectContext.OrderPayment.Remove(orderPayment);   
         }
 
-        public OrderPayment GetOrderPaymentbyId(string id)
+        public OrderPayment GetOrderPaymentById(string id)
         {
-           return GetAll().Where(op => op.ID == id).FirstOrDefault();
-            
-        }
-
-        public ICollection<OrderPayment> GetOrderPayments()
-        {
-            return GetAll().ToList();
-            
+           return GetAll(op => op.ID == id).FirstOrDefault();            
         }
 
         public void UpdateOrderPayment(OrderPayment orderPayment)
