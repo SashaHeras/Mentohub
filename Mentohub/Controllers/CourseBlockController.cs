@@ -1,9 +1,7 @@
-﻿using Mentohub.Core.Services.Interfaces.CourseInterfaces;
-using Mentohub.Core.Services.Services;
+﻿using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Amqp.Framing;
 
 namespace Mentohub.Controllers
 {

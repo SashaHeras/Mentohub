@@ -1,9 +1,5 @@
-﻿using Mentohub.Core.Context;
-using Mentohub.Core.Services.Interfaces;
-using Mentohub.Core.Services.Interfaces.CourseInterfaces;
-using Mentohub.Core.Services.Services;
+﻿using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
-using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 

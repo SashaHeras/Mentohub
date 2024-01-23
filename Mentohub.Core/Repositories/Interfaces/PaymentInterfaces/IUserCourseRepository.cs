@@ -1,4 +1,6 @@
-﻿using Mentohub.Domain.Data.Entities.Order;
+﻿using Mentohub.Core.Infrastructure;
+using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Domain.Data.Entities.Order;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +9,13 @@ using System.Threading.Tasks;
 
 namespace Mentohub.Core.Repositories.Interfaces.PaymentInterfaces
 {
-    public interface IUserCourseRepository
+    public interface IUserCourseRepository : ISingletoneService, IRepository<UserCourse>
     {
-        UserCourse AddUserCourse(int courseId, string userId);
         void UpdateUserCourse(UserCourse userCourse);
-        void DeleteUserCourse(UserCourse userCourse);
+
         UserCourse GetUserCourseById(int Id);
+
+        void DeleteUserCourse(UserCourse userCourse);
 
         ICollection<UserCourse> GetUserCoursesByUserId(string userId);
 

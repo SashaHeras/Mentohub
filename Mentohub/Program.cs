@@ -14,16 +14,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Microsoft.Extensions.Configuration;
 using Mentohub.Core.Services;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Repositories.Repositories.CourseRepositories;
 using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
 using Mentohub.Core.Repositories.Repositories.PaymentRepository;
-using Mentohub.Core.Services.Interfaces.IPaymentInterfaces;
 using Mentohub.Core.Services.Services.PaymentServices;
-using Mentohub.Core.Services.Interfaces.CourseInterfaces;
-using Mentohub.Core.Services.Interfaces.TestInterfaces;
 
 internal class Program
 {

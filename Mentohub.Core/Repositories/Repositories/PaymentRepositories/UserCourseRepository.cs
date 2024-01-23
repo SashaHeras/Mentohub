@@ -37,22 +37,6 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
             return GetAll().Where(uc => uc.CourseId == courseId).ToList();
         }
 
-        public  UserCourse AddUserCourse(int courseId,string userId)
-        {
-            var decriptUserId = MentoShyfr.Decrypt(userId);
-            var userCourses = _projectContext.UserCourses.ToList();
-            var userCourse = new UserCourse(courseId, decriptUserId);
-            if (userCourses.Count == 0) 
-            {
-                userCourse.Id = 1;
-            }
-            var lastUserCourseId=_projectContext.UserCourses.Max(u => u.CourseId);
-            userCourse.Id = lastUserCourseId + 1;
-            _projectContext.UserCourses.Add(userCourse);
-            _projectContext.SaveChanges();
-            return userCourse;
-        }
-
         public void UpdateUserCourse(UserCourse userCourse)
         {
             _projectContext.Update(userCourse);

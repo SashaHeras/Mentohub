@@ -1,14 +1,7 @@
-﻿using Antlr.Runtime.Tree;
-using Mentohub.Core.Context;
-using Mentohub.Core.Repositories.Intefaces;
-using Mentohub.Core.Services.Interfaces.TestInterfaces;
-using Mentohub.Core.Services.Services;
+﻿using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
-using Mentohub.Domain.Entities;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Amqp.Framing;
-using System.Linq.Expressions;
 using System.Transactions;
 
 namespace Mentohub.Controllers

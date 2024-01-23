@@ -1,14 +1,9 @@
-﻿using Mentohub.Core.Context;
-using Mentohub.Core.Services.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Mentohub.Core.Services.Interfaces;
-using Microsoft.Azure.Amqp.Framing;
 using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Microsoft.AspNetCore.Cors;
 using Mentohub.Domain.Filters;
 using Mentohub.Domain.Data.DTO.ResultDTO;
-using static MassTransit.ValidationResultExtensions;
-using Mentohub.Core.Services.Interfaces.CourseInterfaces;
 
 namespace Mentohub.Controllers
 {

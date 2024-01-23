@@ -1,9 +1,8 @@
 ﻿using Mentohub.Domain.Data.DTO;
-using Mentohub.Domain.Helpers;
 using Mentohub.Domain.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Cors;
-using Mentohub.Core.Services.Interfaces.CourseInterfaces;
+using Mentohub.Core.Services.Interfaces;
 
 namespace Mentohub.Controllers
 {

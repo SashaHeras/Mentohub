@@ -1,5 +1,5 @@
 ﻿using Mentohub.Core.Services.Interfaces;
-using Mentohub.Domain.PayMent;
+using Mentohub.Domain.PayMentAlla;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mentohub.Controllers
