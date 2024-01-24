@@ -50,7 +50,7 @@ namespace Mentohub.Core.Repositories.Repositories
         [HttpPost]
         [Route("register")]
         [SwaggerOperation(Summary = "Реєстрація користувача", Tags = new[] { "Теги" })]
-        public async Task<IActionResult> Register([FromForm] RegisterDTO model)
+        public async Task<IActionResult> Register([FromBody] RegisterDTO model)
         {
             try
             {
@@ -101,7 +101,7 @@ namespace Mentohub.Core.Repositories.Repositories
         [SwaggerOperation(Summary = "Sign in a user")]
         [SwaggerResponse(200, "User signed in successfully")]
         [SwaggerResponse(401, "Authentication failed")]
-        public async Task<JsonResult> LoginAsync([FromForm] LoginDTO credentials)
+        public async Task<JsonResult> LoginAsync([FromBody] LoginDTO credentials)
         {
             // Логіка аутентифікації користувача
             try
