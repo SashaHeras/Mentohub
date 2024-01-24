@@ -22,6 +22,7 @@ using Mentohub.Core.Repositories.Repositories.PaymentRepository;
 using Mentohub.Core.Services.Services.PaymentServices;
 using Mentohub.Core.Repositories.Repositories.PaymentRepositories;
 using Mentohub.Core.Services.Interfaces.PaymentInterfaces;
+using Microsoft.Owin.Cors;
 
 internal class Program
 {
@@ -53,7 +54,7 @@ internal class Program
             co.AddPolicy("MentoPolicy", p =>
             {
                 p.WithOrigins("http://34.116.248.113", "https://localhost:7236", "https://behm.net")
-                 .AllowAnyMethod()
+                 .WithMethods("GET", "POST", "DELETE", "PUT")
                  .AllowCredentials()
                  .AllowAnyHeader();
             });
@@ -150,6 +151,7 @@ internal class Program
         {
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mentohub6" + " V1");
         });
+
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
         {

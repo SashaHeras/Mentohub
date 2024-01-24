@@ -5,6 +5,7 @@ using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Helpers;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.ServiceBus;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Mentohub.Controllers
@@ -45,7 +46,7 @@ namespace Mentohub.Controllers
                 if (deletedUser)
                 {
                       _logger.LogInformation("User deleted successfully.");
-                        return new JsonResult("User deleted successfully ")
+                      return new JsonResult("User deleted successfully ")
                       {
                         StatusCode = 204 // Код статусу "No Content"
                       };
@@ -132,10 +133,7 @@ namespace Mentohub.Controllers
                 var updatedUser = await _userService.UpdateUser(userDTO);
                 if (updatedUser)
                 {
-                    return new JsonResult("User profile is updated")
-                    {
-                        StatusCode = 200 //профіль користувача успішно оновлено
-                    };
+                    return Json(new { IsError = false, Message = "Success" });
                 }
                 else
                 {
@@ -273,12 +271,23 @@ namespace Mentohub.Controllers
 
         [HttpPost]
         [Route("AddRoleAuthorToCurrentUser")]
-        public async Task<JsonResult> AddToUserRoleAuthor([FromForm]string userId,string roleId)
+        public async Task<JsonResult> AddToUserRoleAuthor([FromForm] string userId,string roleId)
         {
-            var result=await _userService.AddRoleAuthor(userId,roleId);
-            if (result==null)
-                return new JsonResult("Incorrect data!");
-            return new JsonResult(result,"The role Author has been added successfully");
+            try
+            {
+                var result = await _userService.AddRoleAuthor(userId, roleId);
+
+                return Json(new { IsError = false, Message = "Success" });
+            }
+            // ToDo
+            //catch (Exception ex)
+            //{
+            //    return Json(new { IsError = false, NeedFillFields = true, Message = ex.Message });
+            //}
+            catch (Exception ex)
+            {
+                return Json(new { IsError = false, Message = ex.Message });
+            }
         }
     }
 }

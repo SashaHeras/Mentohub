@@ -12,7 +12,6 @@ namespace Mentohub.Core.Services.Interfaces
 {
     public interface IUserService
     {
-
         public IList<CurrentUser> GetAllUsers();
         public Task<CurrentUser> CreateUser( RegisterDTO model);
         public Task<bool> UpdateUser(UserDTO model);
@@ -29,6 +28,7 @@ namespace Mentohub.Core.Services.Interfaces
         public Task<string> GetAvatarUrl(string userId);
         public Task<List<CurrentUser>> GetAllUsersByRoleName(string roleName);
         public Task<ChangeRoleDTO?> GetChangeRoleDTO(string userId);
+
         public Task<string> AddRoleAuthor(string userId, string roleId);
     }
 }

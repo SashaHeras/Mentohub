@@ -187,7 +187,7 @@ namespace Mentohub.Core.Services.Services
                 AboutMe = currentUser.AboutMe,
                 DateOfBirth = currentUser.DateOfBirth ?? DateTime.Now,
                 FirstName = currentUser.FirstName
-            };            
+            };
 
             return dto;
         }
@@ -232,12 +232,12 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<bool> UpdateUser(UserDTO userDTO)
         {
-            if(userDTO.Id==null)
+            if (userDTO.Id == null)
             {
                 throw new Exception("It is not data");
             }
-            var decrepted=MentoShyfr.Decrypt(userDTO.Id);
-            CurrentUser currentUser = await _userRepository.FindCurrentUserById(decrepted);            
+
+            CurrentUser currentUser = await _userRepository.FindCurrentUserById(userDTO.Id);            
             if (currentUser == null)
             {
                 return false;
@@ -299,18 +299,18 @@ namespace Mentohub.Core.Services.Services
         /// <summary>
         /// додавання ролі до списку ролей користувача
         /// </summary>
-        /// <param name="user"></param>
-        /// <param name="roleName"></param>
+        /// <param name="userId"></param>
+        /// <param name="roleId"></param>
         /// <returns></returns>
         public async Task<bool> AddRoleToUserListRoles(string userId, string roleId)
         {
             var encriptId = MentoShyfr.Decrypt(userId);
-            var user =await _userRepository.FindCurrentUserById(encriptId);
+            var user = await _userRepository.FindCurrentUserById(encriptId);
             var identityRole = await _roleManager.FindByIdAsync(roleId);
-            if (identityRole != null&& user!=null)
+            if (identityRole != null && user != null)
             {
-                var userRoles=await _userManager.GetRolesAsync(user);
-                if(userRoles.ToList().Any(x=>x== identityRole.Name))
+                var userRoles = await _userManager.GetRolesAsync(user);
+                if (userRoles.ToList().Any(x => x == identityRole.Name)) 
                 {
                     _logger.LogInformation("Role already exists for this user");
                     return false;
@@ -322,6 +322,7 @@ namespace Mentohub.Core.Services.Services
                 }
                 
             }
+
             return false;
         }
         /// <summary>
@@ -422,24 +423,29 @@ namespace Mentohub.Core.Services.Services
         public async Task<string> AddRoleAuthor(string userId, string roleId)
         {
             var encripted = MentoShyfr.Decrypt(userId);
-            var user=await _userRepository.FindCurrentUserById(encripted);
-            if(user==null)
+            var user = await _userRepository.FindCurrentUserById(encripted);
+            if(user == null)
             {
                 throw new ArgumentNullException(nameof(user), "User does not exist!");
             }
-            if(user.FirstName==null&& user.AboutMe==null && user.LastName==null|| user.Image==null)
+
+            if(user.FirstName == null || user.LastName == null || user.Image == null)
             {
+                // ToDo: зробити спеціальну помилку
                 throw new Exception("Please fill out the form!");
             }
-            if(roleId==null) 
+
+            if(roleId == null) 
             {
-                throw new Exception("Role does not exist! ");
+                throw new Exception("Role does not exist!");
             }
-            var identityRole =await _roleManager.FindByIdAsync(roleId);
-            if(identityRole.Name!="Author")
+
+            var identityRole = await _roleManager.FindByIdAsync(roleId);
+            if(identityRole.Name != "Author")
             {
                 throw new Exception("Role Author not find");
             }
+
             await _userManager.AddToRoleAsync(user, identityRole.Name);
             return user.Id;
         }

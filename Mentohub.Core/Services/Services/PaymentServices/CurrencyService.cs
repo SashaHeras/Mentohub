@@ -19,20 +19,22 @@ namespace Mentohub.Core.Services.Services.PaymentServices
         {
             var currency = _currentRepository.Add(new Currency()
             {
-                ID=currencyDTO.ID,
-                Name=currencyDTO.Name,
-                Code=currencyDTO.Code
+                ID = currencyDTO.ID,
+                Name = currencyDTO.Name,
+                Code = currencyDTO.Code
             });
+
             return currency;
         }
 
         public bool DeleteCurrency(int id)
         {
-           var currency= _currentRepository.FirstOrDefault(x => x.ID == id);
-            if(currency==null)
+            var currency = _currentRepository.FirstOrDefault(x => x.ID == id);
+            if(currency == null)
             {
                 throw new ArgumentNullException(nameof(currency), "Currency does not exist!");
             }
+
             _currentRepository.Delete(currency);
             return true;
         }
@@ -44,7 +46,10 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             {
                 throw new ArgumentNullException(nameof(currency), "Currency does not exist!");
             }
+
             return currency;
         }
+
+        // Todo: отримати валюту по коду
     }
 }
