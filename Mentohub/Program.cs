@@ -49,7 +49,6 @@ internal class Program
                                   .UseNpgsql(builder.Configuration.GetConnectionString("DefaultPost"))
         );
 
-
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowAll",
@@ -154,7 +153,6 @@ internal class Program
 
         var app = builder.Build();
 
-        app.UseAuthentication();
         app.UseSwagger();
         app.UseSwaggerUI(c =>
         {
@@ -169,14 +167,14 @@ internal class Program
             app.UseHsts();
         }
 
-        app.UseStaticFiles();
-
         #endregion
 
         app.UseDeveloperExceptionPage();
         app.UseHttpsRedirection();
+        app.UseStaticFiles();
         app.UseRouting();
         app.UseCors("AllowAll");
+        app.UseAuthentication();
         app.UseAuthorization();
         app.UseEndpoints(endpoints =>
         {
