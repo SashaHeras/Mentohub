@@ -53,7 +53,7 @@ internal class Program
         {
             co.AddPolicy("MentoPolicy", p =>
             {
-                p.AllowAnyOrigin()
+                p.WithOrigins("*")
                  .AllowAnyMethod()
                  .AllowCredentials()
                  .AllowAnyHeader();
