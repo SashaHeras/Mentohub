@@ -53,12 +53,14 @@ internal class Program
         {
             co.AddPolicy("MentoPolicy", p =>
             {
-                p.WithOrigins("http://34.116.248.113", "https://localhost:7236", "https://behm.net")
-                 .WithMethods("GET", "POST", "DELETE", "PUT")
+                p.AllowAnyOrigin()
+                 .AllowAnyMethod()
                  .AllowCredentials()
                  .AllowAnyHeader();
             });
         });
+
+        #region Repository DI
 
         builder.Services.AddScoped<IAnswerHistoryRepository, AnswerHistoryRepository>();
         builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
@@ -85,12 +87,16 @@ internal class Program
         builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
         builder.Services.AddScoped<AllException>();
 
+        #endregion
+
+        #region Service DI
+
         builder.Services.AddScoped<IAnswerHistoryService, AnswerHistoryService>();
         builder.Services.AddScoped<IAnswerService, AnswerService>();
         builder.Services.AddScoped<IAzureService, AzureService>();
         builder.Services.AddScoped<ICourseItemService, CourseItemService>();
         builder.Services.AddScoped<ICourseService, CourseService>();
-        builder.Services.AddScoped<ICommentService, CommentService>();        
+        builder.Services.AddScoped<ICommentService, CommentService>();
         builder.Services.AddScoped<ILessonService, LessonService>();
         builder.Services.AddScoped<IMediaService, MediaService>();
         builder.Services.AddScoped<ITaskHistoryService, TaskHistoryService>();
@@ -111,6 +117,8 @@ internal class Program
         builder.Services.AddScoped<IOrderItemSevice, OrderItemSevice>();
         builder.Services.AddScoped<IOrderPaymantService, OrderPaymantService>();
         builder.Services.AddScoped<ICurrencyService, CurrencyService>();
+
+        #endregion
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSignalR();
@@ -165,7 +173,7 @@ internal class Program
         app.UseDeveloperExceptionPage();
         app.UseHttpsRedirection();
         app.UseRouting();
-        app.UseCors();
+        app.UseCors("MentoPolicy");
         app.UseAuthorization();
         app.UseEndpoints(endpoints =>
         {

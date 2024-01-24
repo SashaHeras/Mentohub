@@ -1,9 +1,11 @@
 ﻿using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.PayMentAlla;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Mentohub.Controllers
 {
+    [EnableCors("MentoPolicy")]
     [ApiController]
     [Route("api/[controller]")]
     public class PaymentController : Controller

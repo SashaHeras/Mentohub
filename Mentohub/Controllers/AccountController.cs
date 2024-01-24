@@ -47,14 +47,6 @@ namespace Mentohub.Core.Repositories.Repositories
             _hubContext = hubContext;
         }
 
-        [HttpGet]
-        [Route("register")]
-        [SwaggerOperation(Summary = "Отримання форми реєстрації користувача", Tags = new[] { "Теги" })]
-        public IActionResult Register()
-        {
-            return View();
-        }
-
         [HttpPost]
         [Route("register")]
         [SwaggerOperation(Summary = "Реєстрація користувача", Tags = new[] { "Теги" })]

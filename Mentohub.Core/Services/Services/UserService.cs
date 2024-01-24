@@ -75,7 +75,6 @@ namespace Mentohub.Core.Services.Services
 
             // добавляем пользователя
             var result = await _userManager.CreateAsync(user, model.Password);
-
             if (result.Succeeded && role != null)
             {
                 _logger.LogInformation($"Role: {role.Id}, User: {user.Id}");
