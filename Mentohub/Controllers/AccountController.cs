@@ -86,7 +86,6 @@ namespace Mentohub.Core.Repositories.Repositories
                 {
                     StatusCode = 500 // код статусу, що вказує на помилку
                 };
-
             }
 
             return _exception.NotFoundObjectResult("User was not created");
