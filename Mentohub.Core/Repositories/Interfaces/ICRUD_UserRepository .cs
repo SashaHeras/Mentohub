@@ -31,8 +31,6 @@ namespace Mentohub.Core.Repositories.Interfaces
 
         public Task<List<IdentityRole>> GetAllRoles();
 
-        public  Task<IdentityRole> GetRoleName(string roleId);
-
         public CurrentUser FindByID(string ID);
     }
 }

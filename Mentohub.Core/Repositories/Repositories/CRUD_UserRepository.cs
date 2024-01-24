@@ -143,10 +143,7 @@ namespace Mentohub.Core.Repositories.Repositories
         {
             return Task.FromResult(_roleManager.Roles.ToList());
         }
-        public async Task<IdentityRole> GetRoleName(string roleId)
-        {
-            return await _roleManager.FindByIdAsync(roleId);
-        }
+        
         public async Task<bool> Login(LoginDTO model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);

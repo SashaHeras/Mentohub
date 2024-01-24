@@ -20,6 +20,8 @@ using Mentohub.Core.Repositories.Repositories.CourseRepositories;
 using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
 using Mentohub.Core.Repositories.Repositories.PaymentRepository;
 using Mentohub.Core.Services.Services.PaymentServices;
+using Mentohub.Core.Repositories.Repositories.PaymentRepositories;
+using Mentohub.Core.Services.Interfaces.PaymentInterfaces;
 
 internal class Program
 {
@@ -79,6 +81,7 @@ internal class Program
         builder.Services.AddScoped<IUserCourseRepository, UserCourseRepository>();
         builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
         builder.Services.AddScoped<IOrderPaymentRepository, OrderPaymentRepository>();
+        builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
         builder.Services.AddScoped<AllException>();
 
         builder.Services.AddScoped<IAnswerHistoryService, AnswerHistoryService>();
@@ -105,6 +108,8 @@ internal class Program
         builder.Services.AddScoped<IOrderService, OrderService>();
         builder.Services.AddScoped<IUserCourseService, UserCourseService>();
         builder.Services.AddScoped<IOrderItemSevice, OrderItemSevice>();
+        builder.Services.AddScoped<IOrderPaymantService, OrderPaymantService>();
+        builder.Services.AddScoped<ICurrencyService, CurrencyService>();
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSignalR();

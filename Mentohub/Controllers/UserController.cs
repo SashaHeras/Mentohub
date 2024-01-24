@@ -77,7 +77,7 @@ namespace Mentohub.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         [Route("getUserProfile")]
         [SwaggerOperation(Summary ="Get user profile")]
         public async Task<IActionResult> GetUserProfile([FromForm] string id)
@@ -269,6 +269,16 @@ namespace Mentohub.Controllers
         public JsonResult ShyfrUserID([FromForm] string userID)
         {
             return Json(MentoShyfr.Encrypt(userID));
+        }
+
+        [HttpPost]
+        [Route("AddRoleAuthorToCurrentUser")]
+        public async Task<JsonResult> AddToUserRoleAuthor([FromForm]string userId,string roleId)
+        {
+            var result=await _userService.AddRoleAuthor(userId,roleId);
+            if (result==null)
+                return new JsonResult("Incorrect data!");
+            return new JsonResult(result,"The role Author has been added successfully");
         }
     }
 }

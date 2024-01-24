@@ -83,7 +83,10 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             var order = _orderRepository.GetAll(x => x.UserID == currentUser.Id && 
                                                      x.Ordered == null)
                                         .FirstOrDefault();
-
+            if(order== null)
+            {
+                throw new ArgumentNullException(nameof(order), "Active UserOrders do not exist");
+            }
             var currentOrderItems = order.OrderItems.Select(x => new OrderItemDTO()
             {
                 ID = x.ID,

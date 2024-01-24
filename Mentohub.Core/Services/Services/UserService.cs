@@ -226,13 +226,18 @@ namespace Mentohub.Core.Services.Services
         }
 
         /// <summary>
-        /// 
+        /// Оновлення інформації про користувача
         /// </summary>
         /// <param name="userDTO"></param>
         /// <returns></returns>
         public async Task<bool> UpdateUser(UserDTO userDTO)
         {
-            CurrentUser currentUser = await _userRepository.FindCurrentUserById(userDTO.Id);            
+            if(userDTO.Id==null)
+            {
+                throw new Exception("It is not data");
+            }
+            var decrepted=MentoShyfr.Decrypt(userDTO.Id);
+            CurrentUser currentUser = await _userRepository.FindCurrentUserById(decrepted);            
             if (currentUser == null)
             {
                 return false;
@@ -254,7 +259,7 @@ namespace Mentohub.Core.Services.Services
         }
 
         /// <summary>
-        /// 
+        /// отримання профіля користувача по userName
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
@@ -282,7 +287,7 @@ namespace Mentohub.Core.Services.Services
         }
 
         /// <summary>
-        /// 
+        /// отримання інформації про користувача за id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -292,14 +297,15 @@ namespace Mentohub.Core.Services.Services
         }
 
         /// <summary>
-        /// 
+        /// додавання ролі до списку ролей користувача
         /// </summary>
         /// <param name="user"></param>
         /// <param name="roleName"></param>
         /// <returns></returns>
         public async Task<bool> AddRoleToUserListRoles(string userId, string roleId)
         {
-            var user =await _userRepository.FindCurrentUserById(userId);
+            var encriptId = MentoShyfr.Decrypt(userId);
+            var user =await _userRepository.FindCurrentUserById(encriptId);
             var identityRole = await _roleManager.FindByIdAsync(roleId);
             if (identityRole != null&& user!=null)
             {
@@ -405,7 +411,38 @@ namespace Mentohub.Core.Services.Services
 
             return model;
         }
-        
+        /// <summary>
+        /// додавання ролі автора користувачу
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="Exception"></exception>
+        public async Task<string> AddRoleAuthor(string userId, string roleId)
+        {
+            var encripted = MentoShyfr.Decrypt(userId);
+            var user=await _userRepository.FindCurrentUserById(encripted);
+            if(user==null)
+            {
+                throw new ArgumentNullException(nameof(user), "User does not exist!");
+            }
+            if(user.FirstName==null&& user.AboutMe==null && user.LastName==null|| user.Image==null)
+            {
+                throw new Exception("Please fill out the form!");
+            }
+            if(roleId==null) 
+            {
+                throw new Exception("Role does not exist! ");
+            }
+            var identityRole =await _roleManager.FindByIdAsync(roleId);
+            if(identityRole.Name!="Author")
+            {
+                throw new Exception("Role Author not find");
+            }
+            await _userManager.AddToRoleAsync(user, identityRole.Name);
+            return user.Id;
+        }
     }
 }
 

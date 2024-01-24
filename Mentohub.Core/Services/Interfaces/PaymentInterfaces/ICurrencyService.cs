@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mentohub.Domain.Data.DTO.Payment;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,8 +11,8 @@ namespace Mentohub.Core.Services.Interfaces.PaymentInterfaces
     public interface ICurrencyService
     {
         Currency GetCurrency(int id);
-        
-        bool DeleteCurrency(Currency currency);
+        Currency CreateCurrency(CurrencyDTO currencyDTO);
+        bool DeleteCurrency(int id);
 
     }
 }
