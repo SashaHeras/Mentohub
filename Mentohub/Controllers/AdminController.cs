@@ -12,7 +12,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Mentohub.Controllers
 {
-    [EnableCors("MentoPolicy")]
+    [EnableCors("AllowAll")]
     [Route("api/admin")]
     [ApiController]
     [SwaggerTag("AdminController")]

@@ -49,15 +49,14 @@ internal class Program
                                   .UseNpgsql(builder.Configuration.GetConnectionString("DefaultPost"))
         );
 
-        builder.Services.AddCors(co =>
+
+        builder.Services.AddCors(options =>
         {
-            co.AddPolicy("MentoPolicy", p =>
-            {
-                p.WithOrigins("*")
-                 .AllowAnyMethod()
-                 .AllowCredentials()
-                 .AllowAnyHeader();
-            });
+            options.AddPolicy("AllowAll",
+                builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
         });
 
         #region Repository DI
@@ -120,6 +119,8 @@ internal class Program
 
         #endregion
 
+        #region
+
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSignalR();
         builder.Services.AddSwaggerGen(c =>
@@ -170,10 +171,12 @@ internal class Program
 
         app.UseStaticFiles();
 
+        #endregion
+
         app.UseDeveloperExceptionPage();
         app.UseHttpsRedirection();
         app.UseRouting();
-        app.UseCors("MentoPolicy");
+        app.UseCors("AllowAll");
         app.UseAuthorization();
         app.UseEndpoints(endpoints =>
         {

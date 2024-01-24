@@ -6,7 +6,7 @@ using System.Transactions;
 
 namespace Mentohub.Controllers
 {
-    [EnableCors("MentoPolicy")]
+    [EnableCors("AllowAll")]
     public class TestController : Controller
     {
         private readonly ITestService _testService;

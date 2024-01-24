@@ -6,7 +6,7 @@ using static MassTransit.ValidationResultExtensions;
 
 namespace Mentohub.Controllers
 {
-    [EnableCors("MentoPolicy")]
+    [EnableCors("AllowAll")]
     public class CourseOverviewController : Controller
     {
         private readonly IOverviewService _overviewService;

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mentohub.Controllers
 {
-    [EnableCors("MentoPolicy")]
+    [EnableCors("AllowAll")]
     public class LessonController : Controller
     {
         private readonly ILessonService _lessonService;

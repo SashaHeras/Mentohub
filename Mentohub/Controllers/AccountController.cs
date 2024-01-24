@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Cors;
 
 namespace Mentohub.Core.Repositories.Repositories
 {
-    [EnableCors("MentoPolicy")]
+    [EnableCors("AllowAll")]
     [Route("api/account")]
     [ApiController]
     [SwaggerTag("AccountController")]

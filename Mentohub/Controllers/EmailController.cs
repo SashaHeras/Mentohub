@@ -9,7 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Mentohub.Controllers
 {
-    [EnableCors("MentoPolicy")]
+    [EnableCors("AllowAll")]
     [Route("api/email")]
     [ApiController]
     [SwaggerTag("EmailController")]

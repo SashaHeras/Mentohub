@@ -7,7 +7,7 @@ using Mentohub.Domain.Data.DTO.ResultDTO;
 
 namespace Mentohub.Controllers
 {
-    [EnableCors("MentoPolicy")]
+    [EnableCors("AllowAll")]
     public class CourseController : Controller
     {
         private readonly ICourseService _courseService;

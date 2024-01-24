@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mentohub.Controllers
 {
-    [EnableCors("MentoPolicy")]
+    [EnableCors("AllowAll")]
     [ApiController]
     [Route("api/[controller]")]
     public class PaymentController : Controller

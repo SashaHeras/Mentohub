@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Mentohub.Controllers
 {
-    [EnableCors("MentoPolicy")]
+    [EnableCors("AllowAll")]
     public class HomeController : Controller
     {
         private readonly ILessonRepository _lessonRepository;

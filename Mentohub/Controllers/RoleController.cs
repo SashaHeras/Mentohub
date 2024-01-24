@@ -11,7 +11,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Mentohub.Controllers
 {
-    [EnableCors("MentoPolicy")]
+    [EnableCors("AllowAll")]
     [Route("api/role")]
     [ApiController]
     [SwaggerTag("RoleController")]
