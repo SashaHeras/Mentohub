@@ -50,7 +50,7 @@ internal class Program
         {
             co.AddPolicy("MentoPolicy", p =>
             {
-                p.WithOrigins("http://34.116.248.113", "https://localhost:7236")
+                p.WithOrigins("http://34.116.248.113", "https://localhost:7236", "https://behm.net")
                  .AllowAnyMethod()
                  .AllowCredentials()
                  .AllowAnyHeader();
