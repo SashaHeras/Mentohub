@@ -49,7 +49,14 @@ namespace Mentohub.Core.Services.Services.PaymentServices
 
             return currency;
         }
-
-        // Todo: отримати валюту по коду
+        public Currency GetCurrencyByCode(string code)  
+        {
+            var currency = _currentRepository.FirstOrDefault(c => c.Code == code);
+            if (currency == null)
+            {
+                throw new ArgumentNullException(nameof(currency), "Currency does not exist!");
+            }
+            return currency;
+        }   
     }
 }

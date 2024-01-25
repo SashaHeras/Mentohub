@@ -68,5 +68,9 @@ namespace Mentohub.Core.AllExceptions
         {
             throw new NotImplementedException();
         }
+        public string NotificationMessage(string v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

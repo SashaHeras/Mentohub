@@ -15,5 +15,7 @@ namespace Mentohub.Core.Services.Interfaces.PaymentInterfaces
         Currency CreateCurrency(CurrencyDTO currencyDTO);
 
         bool DeleteCurrency(int id);
+
+        Currency GetCurrencyByCode(string code);
     }
 }

@@ -46,17 +46,12 @@ namespace Mentohub.Controllers
                 if (deletedUser)
                 {
                       _logger.LogInformation("User deleted successfully.");
-                      return new JsonResult("User deleted successfully ")
-                      {
-                        StatusCode = 204 // Код статусу "No Content"
-                      };
+                    return Json(new { IsError = false, Message = "User deleted successfully " });
+                      
                 }
                 else
                 {
-                    return new JsonResult("User not found")
-                    {
-                        StatusCode = 404 // Код статусу "Not Found"
-                    };
+                    return Json(new { IsError = true, Message = "User not found" });                   
                 }
             }
             catch(Exception ex)
@@ -66,10 +61,8 @@ namespace Mentohub.Controllers
                     message = "Error when deleting a user",
                     error = ex.Message // інформація про помилку
                 };
-                return new JsonResult(errorResponse)
-                {
-                    StatusCode = 500 // код статусу, що вказує на помилку
-                };
+                return Json(new {IsError=true, errorResponse });
+ 
             }   
         }
 
@@ -137,10 +130,7 @@ namespace Mentohub.Controllers
                 }
                 else
                 {
-                    return new JsonResult("User not found")
-                    {
-                        StatusCode = 404 // Код статусу "Not Found", користувача не знайдено
-                    };
+                    return Json(new { IsError = true, Message = "User not found" });                   
                 }
             }
             catch(Exception ex)
@@ -150,10 +140,8 @@ namespace Mentohub.Controllers
                     message = "Error when updating a user",
                     error = ex.Message // інформація про помилку
                 };
-                return new JsonResult(errorResponse)
-                {
-                    StatusCode = 500 // код статусу, що вказує на помилку
-                };
+                return Json(new { IsError = true, errorResponse });
+ 
             }            
         }
 
@@ -173,16 +161,10 @@ namespace Mentohub.Controllers
                 var avatarUrl = await _userService.UploadAvatar(avatar, id);
                 if(avatarUrl != null)
                 {
-                      return new JsonResult(avatarUrl)
-                      {
-                           StatusCode = 200
-                      };
+                    return Json(new { IsError = false, avatarUrl });
+                      
                 }
-                return new JsonResult("Not file for download")
-                {
-                    StatusCode = 404
-                };
-
+                return Json(new { IsError = true, Message = "Not file for download" });                
             }
            catch (Exception ex)
             {
@@ -191,10 +173,7 @@ namespace Mentohub.Controllers
                     message = "Error when was a download of avatar",
                     error = ex.Message // інформація про помилку
                 };
-                return new JsonResult(errorResponse)
-                {
-                    StatusCode = 500 // код статусу, що вказує на помилку
-                };
+                return Json(errorResponse);                
             }
         }
 
@@ -209,22 +188,17 @@ namespace Mentohub.Controllers
         [SwaggerOperation(Summary ="add role to user`s roles")]
         public async Task<JsonResult> AddUserRoles([FromForm]string userId,
             [FromForm]string roleId)
-        {            
-            var user=await _cRUD.FindCurrentUserById(userId);
+        {
+            var decreptedId = MentoShyfr.Decrypt(userId);
+            var user=await _cRUD.FindCurrentUserById(decreptedId);
             try
             {              
                 if( await _userService.AddRoleToUserListRoles(userId, roleId))
                 {
                     var UserDTO = await _userService.GetProfile(userId);
-                    return new JsonResult(UserDTO)
-                    {
-                        StatusCode = 200
-                    };
+                    return Json(new{ IsError = false,UserDTO});
                 }
-                return new JsonResult("Add role is failed")
-                {
-                    StatusCode = 500
-                };
+                return Json(new { IsError = true, Message = "Add role is failed" });
             }
             catch(Exception ex)
             {
@@ -233,10 +207,7 @@ namespace Mentohub.Controllers
                     message = "Error when add user`s role",
                     error = ex.Message // інформація про помилку
                 };
-                return new JsonResult(errorResponse)
-                {
-                    StatusCode = 500 // код статусу, що вказує на помилку
-                };
+                return Json(new { IsError = true, errorResponse });
             }
            
         }
@@ -271,22 +242,23 @@ namespace Mentohub.Controllers
 
         [HttpPost]
         [Route("AddRoleAuthorToCurrentUser")]
-        public async Task<JsonResult> AddToUserRoleAuthor([FromForm] string userId,string roleId)
+        public async Task<JsonResult> AddToUserRoleAuthor([FromForm] string userId)
         {
             try
             {
-                var result = await _userService.AddRoleAuthor(userId, roleId);
+                var result = await _userService.AddRoleAuthor(userId);
 
                 return Json(new { IsError = false, Message = "Success" });
             }
-            // ToDo
-            //catch (Exception ex)
-            //{
-            //    return Json(new { IsError = false, NeedFillFields = true, Message = ex.Message });
-            //}
+
+            catch (AllException ex)
+            {
+                return Json(new { IsError = true, NeedFillFields = true, 
+                    Message = ex.NotificationMessage("Please fill out the required fields!") });
+            }
             catch (Exception ex)
             {
-                return Json(new { IsError = false, Message = ex.Message });
+                return Json(new { IsError = true, Message=ex.Message });
             }
         }
     }

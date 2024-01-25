@@ -331,12 +331,11 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public async Task<string> GetAvatarUrl(string userId)
         {
-            var user =await _userRepository.FindCurrentUserById(userId);
+            var decrepted = MentoShyfr.Decrypt(userId);
+            var user =await _userRepository.FindCurrentUserById(decrepted);
             if (user != null && !string.IsNullOrEmpty(user.Image))
-            {
-                
-                 return user.Image; 
-                             
+            {               
+                 return user.Image;                             
             }
             
             // Повернути URL за замовчуванням, якщо користувач не має аватарки.
@@ -415,11 +414,10 @@ namespace Mentohub.Core.Services.Services
         /// додавання ролі автора користувачу
         /// </summary>
         /// <param name="userId"></param>
-        /// <param name="roleId"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception"></exception>
-        public async Task<string> AddRoleAuthor(string userId, string roleId)
+        public async Task<string> AddRoleAuthor(string userId)
         {
             var encripted = MentoShyfr.Decrypt(userId);
             var user = await _userRepository.FindCurrentUserById(encripted);
@@ -427,27 +425,21 @@ namespace Mentohub.Core.Services.Services
             {
                 throw new ArgumentNullException(nameof(user), "User does not exist!");
             }
-
-            if(user.FirstName == null || user.LastName == null || user.Image == null)
+            if(string.IsNullOrEmpty(user.FirstName) || string.IsNullOrEmpty(user.LastName)
+                || user.Image == null)
             {
-                // ToDo: зробити спеціальну помилку
-                throw new Exception("Please fill out the form!");
+                return _exciption.NotificationMessage("Please fill out the required fields!");
             }
-
-            if(roleId == null) 
-            {
-                throw new Exception("Role does not exist!");
-            }
-
-            var identityRole = await _roleManager.FindByIdAsync(roleId);
-            if(identityRole.Name != "Author")
+            var identityRole = await _roleManager.FindByNameAsync("Author");
+            if(identityRole== null)
             {
                 throw new Exception("Role Author not find");
             }
-
             await _userManager.AddToRoleAsync(user, identityRole.Name);
             return user.Id;
         }
+
+        
     }
 }
 

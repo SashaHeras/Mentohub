@@ -28,7 +28,6 @@ namespace Mentohub.Core.Services.Interfaces
         public Task<string> GetAvatarUrl(string userId);
         public Task<List<CurrentUser>> GetAllUsersByRoleName(string roleName);
         public Task<ChangeRoleDTO?> GetChangeRoleDTO(string userId);
-
-        public Task<string> AddRoleAuthor(string userId, string roleId);
+        public Task<string> AddRoleAuthor(string userId);
     }
 }
