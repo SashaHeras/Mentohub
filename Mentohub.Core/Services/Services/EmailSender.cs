@@ -50,7 +50,7 @@ namespace Mentohub.Core.Services.Services
                     var smtpPort = 465;
                     var smtpUsername = "mentochub@ukr.net";
                     var smtpPassword = "N6740I3aWaYPfABF";
-
+                    client.ServerCertificateValidationCallback = (s, c, h, e) => true;
                     await client.ConnectAsync(smtpServer, smtpPort, true);
                     //client.CheckCertificateRevocation = false;
                     client.Authenticate(new NetworkCredential()

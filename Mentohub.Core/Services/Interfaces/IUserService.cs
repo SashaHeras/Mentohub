@@ -29,5 +29,9 @@ namespace Mentohub.Core.Services.Interfaces
         public Task<List<CurrentUser>> GetAllUsersByRoleName(string roleName);
         public Task<ChangeRoleDTO?> GetChangeRoleDTO(string userId);
         public Task<string> AddRoleAuthor(string userId);
+        public Task<string> ForgotPassword(string email);
+        string GenerateRandomPassword();
+        public Task<bool> ChangePasswordAsync(string userId, string currentPassword, string newPassword);
+
     }
 }

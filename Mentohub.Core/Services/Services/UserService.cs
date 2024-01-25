@@ -9,6 +9,7 @@ using Mentohub.Domain.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +33,7 @@ namespace Mentohub.Core.Services.Services
         private readonly IHubContext<SignalRHub> _hubContext;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IMediaService _mediaService;
-
+        private readonly IEmailSender _emailSender;
         /// <summary>
         /// конструктор сервісу з параметром
         /// </summary>
@@ -40,7 +41,8 @@ namespace Mentohub.Core.Services.Services
         public UserService(ICRUD_UserRepository cRUD, UserManager<CurrentUser> userManager
             , RoleManager<IdentityRole> roleManager, AllException exciption,
             ILogger<UserService> logger, SignInManager<CurrentUser> signInManager,
-            IHubContext<SignalRHub> hubContext, IWebHostEnvironment webHostEnvironment, IMediaService mediaService)
+            IHubContext<SignalRHub> hubContext, IWebHostEnvironment webHostEnvironment,
+            IEmailSender emailSender, IMediaService mediaService)
         {
             _userRepository = cRUD;
             _userManager = userManager;
@@ -50,7 +52,8 @@ namespace Mentohub.Core.Services.Services
             _signInManager = signInManager;
             _hubContext = hubContext;
             _webHostEnvironment = webHostEnvironment;
-            _mediaService= mediaService;
+            _mediaService = mediaService;
+            _emailSender = emailSender;
         }
 
         /// <summary>
@@ -67,8 +70,9 @@ namespace Mentohub.Core.Services.Services
                 await _roleManager.CreateAsync(role);
             }
 
-            CurrentUser user = new() { 
-                Email = model.Email, 
+            CurrentUser user = new()
+            {
+                Email = model.Email,
                 UserName = model.NickName,
                 DateOfBirth = DateTime.MinValue
             };
@@ -87,7 +91,7 @@ namespace Mentohub.Core.Services.Services
                 return user;
             }
 
-            return _exciption.NotFoundObject("User was not created");            
+            return _exciption.NotFoundObject("User was not created");
         }
 
         /// <summary>
@@ -115,7 +119,7 @@ namespace Mentohub.Core.Services.Services
                 return false;
             }
         }
-        
+
         public IList<CurrentUser> GetAllUsers()
         {
             return _userManager.Users.ToList();
@@ -128,15 +132,15 @@ namespace Mentohub.Core.Services.Services
 
         public IList<CurrentUser> GetUsersList(SearchUserParams params_)
         {
-            if(params_ == null)
+            if (params_ == null)
             {
                 params_ = new SearchUserParams();
             }
 
-            return _userManager.Users.Where(x => (params_.Name == string.Empty ? 
-                    true : 
+            return _userManager.Users.Where(x => (params_.Name == string.Empty ?
+                    true :
                     (
-                        (x.LastName ?? string.Empty).Contains(params_.Name) || 
+                        (x.LastName ?? string.Empty).Contains(params_.Name) ||
                         (x.FirstName ?? string.Empty).Contains(params_.Name) ||
                         (x.UserName ?? string.Empty).Contains(params_.Name)
                     )
@@ -177,7 +181,8 @@ namespace Mentohub.Core.Services.Services
             var currentUserID = MentoShyfr.Decrypt(id);
             CurrentUser currentUser = await _userRepository.FindCurrentUserById(currentUserID)
                                                             ?? throw new Exception("Unknown user!");
-            UserDTO dto = new UserDTO() {
+            UserDTO dto = new UserDTO()
+            {
                 Id = currentUser.Id,
                 Email = currentUser.Email,
                 Name = currentUser.UserName,
@@ -236,7 +241,7 @@ namespace Mentohub.Core.Services.Services
                 throw new Exception("It is not data");
             }
 
-            CurrentUser currentUser = await _userRepository.FindCurrentUserById(userDTO.Id);            
+            CurrentUser currentUser = await _userRepository.FindCurrentUserById(userDTO.Id);
             if (currentUser == null)
             {
                 return false;
@@ -252,9 +257,9 @@ namespace Mentohub.Core.Services.Services
             {
                 currentUser.DateOfBirth = userDTO.DateOfBirth;
             }
-            
+
             var result = await _userManager.UpdateAsync(currentUser);
-            return result.Succeeded;            
+            return result.Succeeded;
         }
 
         /// <summary>
@@ -278,7 +283,7 @@ namespace Mentohub.Core.Services.Services
                     DateOfBirth = user.DateOfBirth ?? DateTime.Now,
                     UserRoles = await _userRepository.GetUserRoles(user)
                 };
-                
+
                 return userDTO;
             }
 
@@ -309,7 +314,7 @@ namespace Mentohub.Core.Services.Services
             if (identityRole != null && user != null)
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
-                if (userRoles.ToList().Any(x => x == identityRole.Name)) 
+                if (userRoles.ToList().Any(x => x == identityRole.Name))
                 {
                     _logger.LogInformation("Role already exists for this user");
                     return false;
@@ -319,7 +324,7 @@ namespace Mentohub.Core.Services.Services
                     await _userManager.AddToRoleAsync(user, identityRole.Name);
                     return true;
                 }
-                
+
             }
 
             return false;
@@ -332,12 +337,12 @@ namespace Mentohub.Core.Services.Services
         public async Task<string> GetAvatarUrl(string userId)
         {
             var decrepted = MentoShyfr.Decrypt(userId);
-            var user =await _userRepository.FindCurrentUserById(decrepted);
+            var user = await _userRepository.FindCurrentUserById(decrepted);
             if (user != null && !string.IsNullOrEmpty(user.Image))
-            {               
-                 return user.Image;                             
+            {
+                return user.Image;
             }
-            
+
             // Повернути URL за замовчуванням, якщо користувач не має аватарки.
             return "/wwwroot/avatar/default-avatar.ipg";
         }
@@ -377,15 +382,15 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         /// <exception cref="NotImplementedException"></exception>
         public async Task<bool> CreateRole(string name)
-        { 
+        {
             if (!string.IsNullOrEmpty(name)
-                &&await _roleManager.FindByNameAsync(name)==null)
+                && await _roleManager.FindByNameAsync(name) == null)
             {
                 IdentityResult result = await _roleManager.CreateAsync(new IdentityRole(name));
                 if (result.Succeeded)
                 {
                     return true;
-                }              
+                }
             }
             return false;
         }
@@ -421,25 +426,67 @@ namespace Mentohub.Core.Services.Services
         {
             var encripted = MentoShyfr.Decrypt(userId);
             var user = await _userRepository.FindCurrentUserById(encripted);
-            if(user == null)
+            if (user == null)
             {
                 throw new ArgumentNullException(nameof(user), "User does not exist!");
             }
-            if(string.IsNullOrEmpty(user.FirstName) || string.IsNullOrEmpty(user.LastName)
+            if (string.IsNullOrEmpty(user.FirstName) || string.IsNullOrEmpty(user.LastName)
                 || user.Image == null)
             {
                 return _exciption.NotificationMessage("Please fill out the required fields!");
             }
             var identityRole = await _roleManager.FindByNameAsync("Author");
-            if(identityRole== null)
+            if (identityRole == null)
             {
                 throw new Exception("Role Author not find");
             }
             await _userManager.AddToRoleAsync(user, identityRole.Name);
             return user.Id;
         }
+        public async Task<string> ForgotPassword(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return "User not found.";
+            }
+            var newPassword = GenerateRandomPassword();
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
+            if (result.Succeeded)
+            {
+                var emailMessage = $"Your new password is: {newPassword}";
+                await _emailSender.SendEmailAsync(email, "New Password", emailMessage);
 
-        
-    }
+                return "Password reset successfully. Check your email for the new password.";
+            }
+            throw new Exception("Failed to reset password.");
+        }
+        public string GenerateRandomPassword()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
+            var random = new Random();
+            var password = new StringBuilder();
+            for (int i = 0; i < 10; i++)
+            {
+                password.Append(chars[random.Next(chars.Length)]);
+            }
+            return password.ToString();
+        }
+        public async Task<bool> ChangePasswordAsync(string userId, string currentPassword, string newPassword)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return false;
+            }
+            var passwordChangeResult = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            if (!passwordChangeResult.Succeeded)
+            {
+                return false;
+            }
+            return true;
+        }
+    }   
 }
 

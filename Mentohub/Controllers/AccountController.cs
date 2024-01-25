@@ -189,5 +189,35 @@ namespace Mentohub.Core.Repositories.Repositories
                 StatusCode = 200
             };
         }
+        [HttpPost]
+        [Route("ForgotPassword")]
+        public async Task<JsonResult> ForgotPassword(string email)
+        {
+            if (ModelState.IsValid)
+            {
+               return Json( await _userService.ForgotPassword(email));
+            }
+            return Json(ModelState);
+        }
+        [HttpPost]
+        [Route("Changepassword")]
+        public async Task<JsonResult> ChangePassword([FromForm]ChangePasswordDTO model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return Json(ModelState);
+            }
+
+            var userId = model.Id;
+            var result = await _userService.ChangePasswordAsync(userId, model.OldPassword, model.NewPassword);
+            if (result)
+            {
+                return Json("Password changed successfully.");
+            }
+            else
+            {
+                return Json("Failed to change password.");
+            }
+        }
     }
 }
