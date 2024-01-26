@@ -8,6 +8,6 @@ namespace Mentohub.Core.Services.Interfaces
 {
     public interface ICourseLanguageService
     {
-        List<KeyValuePair<int, string>> GetLanguagesList();
+        List<KeyValuePair<int, string>> GetLanguagesList(bool withCourseCount = false);
     }
 }

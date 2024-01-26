@@ -2,6 +2,6 @@
 {
     public interface ICourseSubjectService
     {
-        List<KeyValuePair<int, string>> SubjectsList();
+        List<KeyValuePair<int, string>> SubjectsList(bool withCourseCount = false);
     }
 }

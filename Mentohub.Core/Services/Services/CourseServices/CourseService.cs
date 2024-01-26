@@ -7,6 +7,7 @@ using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Mentohub.Domain.Data.Entities;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Data.Enums;
+using Mentohub.Domain.Data.Models;
 using Mentohub.Domain.Filters;
 using Mentohub.Domain.Helpers;
 using Mentohub.Domain.Mappers;
@@ -431,13 +432,13 @@ namespace Mentohub.Core.Services.Services
         public SearchCourseFilterData InitSearchFilterData()
         {
             var filter = new SearchCourseFilterData();
-            filter.Categories = _courseSubjectService.SubjectsList();
+            filter.Categories = _courseSubjectService.SubjectsList(true);
             filter.Categories.Insert(0, new KeyValuePair<int, string>(-1, "Будь-який"));
 
-            filter.Languages = _courseLanguageService.GetLanguagesList();
+            filter.Languages = _courseLanguageService.GetLanguagesList(true);
             filter.Languages.Insert(0, new KeyValuePair<int, string>(-1, "Будь-яка"));
 
-            filter.Levels = _courseLevelService.GetLevelsList();
+            filter.Levels = _courseLevelService.GetLevelsList(true);
             filter.Levels.Insert(0, new KeyValuePair<int, string>(-1, "Будь-який"));
 
             return filter;
@@ -457,6 +458,17 @@ namespace Mentohub.Core.Services.Services
             return result;
         }
 
+        public AdditionalListModel GetAdditionalList()
+        {
+            AdditionalListModel data = new AdditionalListModel();
+
+            data.Categories = _courseSubjectService.SubjectsList();
+            data.Levels = _courseLevelService.GetLevelsList();
+            data.Languages = _courseLanguageService.GetLanguagesList();
+
+            return data;
+        }
+
         public AuthorInfoDTO GetAuthorInfoDTO(string encriptId)
         {
             var authorId = MentoShyfr.Decrypt(encriptId);
@@ -464,6 +476,7 @@ namespace Mentohub.Core.Services.Services
             {
                 throw new Exception("Id not found");
             }
+
             CurrentUser author = _cRUD_UserRepository.FindByID(authorId);
             var authorInfoDTO = new AuthorInfoDTO();
             authorInfoDTO.Id = encriptId;
@@ -473,6 +486,7 @@ namespace Mentohub.Core.Services.Services
             authorInfoDTO.AboutMe = author.AboutMe;
             authorInfoDTO.CountOfStudents = 0;
             var courses = _courseRepository.GetAllAuthorsCourses(authorId).ToList();
+
             double averageRating;
             if (courses == null)
             {

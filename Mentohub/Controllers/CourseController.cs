@@ -4,6 +4,7 @@ using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Microsoft.AspNetCore.Cors;
 using Mentohub.Domain.Filters;
 using Mentohub.Domain.Data.DTO.ResultDTO;
+using Mentohub.Core.Services.Services;
 
 namespace Mentohub.Controllers
 {
@@ -12,14 +13,17 @@ namespace Mentohub.Controllers
     {
         private readonly ICourseService _courseService;
         private readonly IAzureService _azureService;
+        private readonly ICourseSubjectService _courseSubjectService;
 
         public CourseController(
             ICourseService service,
-            IAzureService azureService
+            IAzureService azureService,
+            ICourseSubjectService courseSubjectService
         )
         {
             _courseService = service;
             _azureService = azureService;
+            _courseSubjectService = courseSubjectService;
         }
 
         /// <summary>
@@ -152,13 +156,23 @@ namespace Mentohub.Controllers
         {
             try
             {
-                var result=_courseService.GetAuthorInfoDTO(encriptId);
+                var result = _courseService.GetAuthorInfoDTO(encriptId);
                 return Json(result);
             }
             catch (Exception ex)
             {
                 return Json(new { IsError = true, Message = ex.Message });
             }
+        }
+
+        /// <summary>
+        /// Get list of course categories
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public JsonResult GetCouseAdditionalLists()
+        {
+            return Json(_courseService.GetAdditionalList());
         }
     }
 }

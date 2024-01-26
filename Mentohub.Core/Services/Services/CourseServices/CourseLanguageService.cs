@@ -14,11 +14,17 @@ namespace Mentohub.Core.Services.Services
             _courseLanguageRepository = courseLanguageRepository;
         }
 
-        public List<KeyValuePair<int, string>> GetLanguagesList()
+        public List<KeyValuePair<int, string>> GetLanguagesList(bool withCourseCount = false)
         {
             var res = _courseLanguageRepository.GetAll()
                                                .ToList()
-                                               .Select(x => new KeyValuePair<int, string>(x.Id, x.Name))
+                                               .Select(x => new KeyValuePair<int, string>(
+                                                   x.Id,
+                                                   withCourseCount == false ? 
+                                                   x.Name :
+                                                   x.Name + " (" + x.Courses.Count.ToString() + ")"
+                                                   )
+                                               )
                                                .ToList();
 
             return res.OrderBy(x => x.Key).ToList();
