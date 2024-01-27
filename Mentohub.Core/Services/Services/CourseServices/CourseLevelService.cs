@@ -20,10 +20,16 @@ namespace Mentohub.Core.Services.Services
             _courseLevelRepository = courseLevelRepository;
         }
 
-        public List<KeyValuePair<int, string>> GetLevelsList()
+        public List<KeyValuePair<int, string>> GetLevelsList(bool withCourseCount = false)
         {
             var res = _courseLevelRepository.GetAll()
-                                            .Select(x => new KeyValuePair<int, string>(x.ID, x.Name))
+                                            .Select(x => new KeyValuePair<int, string>(
+                                                x.ID,
+                                                withCourseCount == false ?
+                                                x.Name :
+                                                x.Name + " (" + x.Courses.Count.ToString() + ")"
+                                                )
+                                            )
                                             .ToList();
 
             return res.OrderBy(x => x.Key).ToList();

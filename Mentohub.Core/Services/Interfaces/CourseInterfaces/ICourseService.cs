@@ -1,7 +1,9 @@
 ﻿using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Mentohub.Domain.Data.Entities.CourseEntities;
+using Mentohub.Domain.Data.Models;
 using Mentohub.Domain.Filters;
+using static Mentohub.Core.Services.Services.CourseService;
 
 namespace Mentohub.Core.Services.Interfaces
 {
@@ -21,12 +23,14 @@ namespace Mentohub.Core.Services.Interfaces
 
         List<CourseBlockDTO> GetCourseInfoList(int ID);
 
-        List<CourseDTO> List(SearchFilterModel filter, out int totalCount);
+        public List<CourseDTO> List(SearchFilterModel filter, out int totalCount);
 
-        SearchCourseFilterData InitSearchFilterData();
+        public SearchCourseFilterData InitSearchFilterData();
 
-        List<CourseDTO> GetAuthorsToCourses(string authorID);
+        public List<CourseDTO> GetAuthorsToCourses(string authorID);
 
-        AuthorInfoDTO GetAuthorInfoDTO(string encriptId);
+        public AuthorInfoDTO GetAuthorInfoDTO(string encriptId);
+
+        public AdditionalListModel GetAdditionalList();
     }
 }

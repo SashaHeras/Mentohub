@@ -9,6 +9,6 @@ namespace Mentohub.Core.Services.Interfaces
 {
     public interface ICourseLevelService
     {
-        List<KeyValuePair<int, string>> GetLevelsList();
+        List<KeyValuePair<int, string>> GetLevelsList(bool withCourseCount = false);
     }
 }
