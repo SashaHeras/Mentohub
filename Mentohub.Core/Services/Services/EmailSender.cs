@@ -19,19 +19,17 @@ namespace Mentohub.Core.Services.Services
     public class EmailSender : IEmailSender
     {
         private readonly IConfiguration _configuration;
-        //private readonly IQueueService _queueService;
 
-        public EmailSender(IConfiguration configuration/*, IQueueService queueService*/)
+        public EmailSender(IConfiguration configuration)
         {
             _configuration = configuration;
-            //_queueService = queueService;
         }
 
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
             var message = new MimeMessage();
-            message.From.Add(new MailboxAddress("Mentohub", "mentochub@ukr.net"));
-            message.To.Add(new MailboxAddress("Dear customer", email));
+            message.From.Add(new MailboxAddress(_configuration["Email:SmtpServer"], _configuration["Email:FromAddress"] ));
+            message.To.Add(new MailboxAddress("", email));
             message.Subject = subject;
 
             var bodyBuilder = new BodyBuilder
@@ -40,19 +38,17 @@ namespace Mentohub.Core.Services.Services
             };
 
             message.Body = bodyBuilder.ToMessageBody();
-            //await _queueService.SendMessageAsync(JsonConvert.SerializeObject(message));
 
             try
             {
                 using (var client = new SmtpClient())
                 {
-                    var smtpServer = "smtp.ukr.net";
-                    var smtpPort = 465;
-                    var smtpUsername = "mentochub@ukr.net";
-                    var smtpPassword = "N6740I3aWaYPfABF";
+                    var smtpServer = _configuration["Email:SmtpServer"];
+                    var smtpPort = _configuration.GetValue<int>("Email:Port");
+                    var smtpUsername = _configuration["Email:SmtpUsername"];
+                    var smtpPassword = _configuration["Email:SmtpPassword"];
                     client.ServerCertificateValidationCallback = (s, c, h, e) => true;
                     await client.ConnectAsync(smtpServer, smtpPort, true);
-                    //client.CheckCertificateRevocation = false;
                     client.Authenticate(new NetworkCredential()
                     {
                         Password = smtpPassword,

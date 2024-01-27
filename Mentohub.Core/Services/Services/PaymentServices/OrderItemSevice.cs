@@ -17,8 +17,18 @@ namespace Mentohub.Core.Services.Services.PaymentServices
         
         public OrderItem CreateOrderItem(OrderItemDTO orderItemDTO)
         {
-
-            throw new NotImplementedException();
+            var orderItem = new OrderItem()
+            {
+                //ID = orderItemDTO.ID,
+                OrderID = orderItemDTO.OrderID,
+                CourseID = orderItemDTO.CourseID,
+                Discount = orderItemDTO.Discount,
+                HasDiscount= orderItemDTO.HasDiscount,
+                Pos= orderItemDTO.Pos,
+                Price= orderItemDTO.Price,
+            };
+            _orderItemRepository.Add(orderItem);
+            return orderItem;
         }
 
         public void DeleteOrderItem(int id)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mentohub.Domain.Data.Entities.Order;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,6 @@ namespace Mentohub.Domain.Data.DTO.Payment
 
         public string UserID { get; set; }
 
-        public List<OrderItemDTO> Items { get; set; }
+        public ICollection<OrderItemDTO> Items { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Mentohub.Domain.Data.Entities.CourseEntities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +11,8 @@ namespace Mentohub.Domain.Data.Entities.Order
 {
     public class OrderItem
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
         public int Pos { get; set; }
