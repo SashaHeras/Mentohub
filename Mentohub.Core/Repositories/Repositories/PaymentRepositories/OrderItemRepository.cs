@@ -19,33 +19,12 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
         {
             _projectContext = projectContext;
         }
-        public OrderItem Create()
-        {
-            var orderItem = new OrderItem()
-            {
-
-            };
-            _projectContext.Add(orderItem);
-            return orderItem;
-        }
+        
         public void Delete(OrderItem currentOrderItem)
         {
             _projectContext.OrderItem.Remove(currentOrderItem);
             _projectContext.SaveChanges();
         }
-        public void UpDate(OrderItemDTO OrderItemDTO, OrderItem orderItem)
-        {
-            orderItem.ID = OrderItemDTO.ID;
-            orderItem.Total = OrderItemDTO.Total;
-            orderItem.SubTotal = OrderItemDTO.SubTotal;
-            orderItem.Discount = OrderItemDTO.Discount;
-            orderItem.HasDiscount = OrderItemDTO.HasDiscount;
-            orderItem.CourseID = OrderItemDTO.CourseID;
-            orderItem.OrderID = OrderItemDTO.OrderID;
-            orderItem.Pos = OrderItemDTO.Pos;
-
-            _projectContext.OrderItem.Update(orderItem);
-            _projectContext.SaveChanges();
-        }
+        
     }
 }

@@ -8,7 +8,7 @@ namespace Mentohub.Core.Repositories.Interfaces.PaymentInterfaces
     public interface IOrderItemRepository : ISingletoneService, IRepository<OrderItem>
     {
         public void Delete(OrderItem currentOrderItem);
-        public OrderItem Create();
-        void UpDate(OrderItemDTO OrderItemDTO, OrderItem orderItem);
+       
+       
     }
 }

@@ -37,7 +37,7 @@ namespace Mentohub.Core.Services.Services
                 public_key = _public_key,
                 version = 3,
                 action = "pay",
-                amount = order.OrderItems.Sum(x => x.Total),
+                amount = (decimal)order.OrderItems.Sum(x => x.Total),
                 currency = "UAH",
                 description = "Оплата замовлення",
                 order_id = orderID,

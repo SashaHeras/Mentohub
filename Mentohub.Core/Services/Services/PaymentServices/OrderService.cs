@@ -91,33 +91,32 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             {
                 throw new Exception("Unknown user!");
             }
-
+            var course = _courseRepository.FirstOrDefault(c => c.Id == courseId);
+            if (course == null)
+            {
+                throw new Exception("Unknown course!");
+            }
             var order = _orderRepository.GetAll(x => x.UserID == currentUser.Id && 
                                                      x.Ordered == null)
-                                        .FirstOrDefault();
-            if(order== null)
+                                        .FirstOrDefault();            
+            if (order== null)
             {
-              var newOrder= await CreateOrder(userID);
-                
-                var course = _courseRepository.FirstOrDefault(c => c.Id == courseId);
-                if(course==null)
+                var newOrder= await CreateOrder(userID);
+                decimal subtotal = _courseRepository.FirstOrDefault(x => x.Id == courseId).Price;
+                decimal discount = 0;
+                var orderItem = new OrderItem()
                 {
-                    throw new Exception("Unknown course!");
-                }
-                var orderItem = _orderItemRepository.Create();
-                var orderItemDTO = new OrderItemDTO()
-                {
-                    ID = _orderItemRepository.GetAll().Count() + 1,
-                    Pos = newOrder.OrderPayments.Count + 1,
+                    Pos= newOrder.OrderPayments.Count + 1,
                     Price = _courseRepository.FirstOrDefault(x => x.Id == courseId).Price,
                     HasDiscount = false,
-                    Discount = 0,
+                    Discount = discount,
                     OrderID = newOrder.ID,
-                    CourseID = courseId,                     
-                    SubTotal = +orderItem.Price,
-                }; 
-                
-                _orderItemRepository.UpDate(orderItemDTO, orderItem);
+                    CourseID = courseId,
+                    SubTotal = subtotal,
+                    Total= subtotal-discount,
+                };
+
+                    _orderItemRepository.Add(orderItem);
                 newOrder.OrderItems.Add(orderItem);
                 newOrder.DiscountSum = +orderItem.Discount;
                 newOrder.SubTotal = +orderItem.SubTotal;
