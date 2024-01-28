@@ -14,13 +14,6 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             _orderItemRepository = orderItemRepository;
         }
 
-        
-        public OrderItem CreateOrderItem(OrderItemDTO orderItemDTO)
-        {
-            return _orderItemRepository.Create(orderItemDTO);
-             
-        }
-
         public void DeleteOrderItem(int id)
         {
             var orderItem =_orderItemRepository.FirstOrDefault(x=>x.ID==id);
