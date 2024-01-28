@@ -2,6 +2,7 @@
 using Mentohub.Domain.PayMentAlla;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using System.Transactions;
 
 namespace Mentohub.Controllers
 {
@@ -10,11 +11,9 @@ namespace Mentohub.Controllers
     [Route("api/payment")]
     public class PaymentController : Controller
     {
-        //private readonly IPrivatBankService _privatBankService;
         private readonly IOrderService _orderService;
-        public PaymentController(/*IPrivatBankService privatBankService,*/ IOrderService orderService)
+        public PaymentController(IOrderService orderService)
         {
-            //_privatBankService = privatBankService;
             _orderService = orderService;
         }
 
@@ -34,37 +33,55 @@ namespace Mentohub.Controllers
 
         [HttpPost]
         [Route("CreateOrder")]
-        public async Task<JsonResult> CreateOrder(string userID, int courseId)
+        public async Task<JsonResult> CreateOrder([FromForm] string userID, [FromForm] int courseId)
         {
-            var result = await _orderService.GetActiveUserOrder(userID, courseId);
-            if (result == null)
+            using (TransactionScope scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
-                return Json(new { IsError = true, Message = "Could not create a new order" });
+                try
+                {
+                    var result = await _orderService.GetActiveUserOrder(userID, courseId);
+                    if (result == null)
+                    {
+                        return Json(new { IsError = true, Message = "Could not create a new order" });
+                    }
+
+                    scope.Complete();
+
+                    return Json(new { IsError = false, result });
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { IsError = true, Message = ex.Message });
+                }
             }
-            return Json(new { IsError = false, result });
         }
+
         [HttpPost]
         [Route("GetOrder")]
-        public JsonResult GetOrder(string orderId)
+        public JsonResult GetOrder([FromForm] string orderId)
         {
             var result = _orderService.GetOrderDTO(orderId);
             if (result == null)
             {
                 return Json(new { IsError = true, Message = "Order does not exist" });
             }
-            return Json(new { IsError = false, result });
+
+            return Json(new { IsError = false, Data = result });
         }
+
         [HttpPost]
         [Route("DeleteOrder")]
-        public JsonResult DeleteOrder(string orderId)
+        public JsonResult DeleteOrder([FromForm] string orderId)
         {
-            var result = _orderService.GetOrder(orderId);
-            if (result == null)
+            try
             {
-                return Json(new { IsError = true, Message = "Order does not exist" });
+                _orderService.DeleteOrder(orderId);
+                return Json(new { IsError = false, Message = "Order successfully deleted" });
             }
-            _orderService.DeleteOrder(orderId);
-            return Json(new { IsError = false,Message= "Order successfully deleted" });
+            catch(Exception ex)
+            {
+                return Json(new { IsError = true, Message = ex.Message });
+            }
         }
     }
 }

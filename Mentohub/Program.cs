@@ -115,6 +115,7 @@ internal class Program
         builder.Services.AddScoped<IOrderItemSevice, OrderItemSevice>();
         builder.Services.AddScoped<IOrderPaymantService, OrderPaymantService>();
         builder.Services.AddScoped<ICurrencyService, CurrencyService>();
+        builder.Services.AddScoped<ILiqpayService, LiqpayService>();        
 
         #endregion
 

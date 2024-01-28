@@ -44,7 +44,11 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             Order order = new Order()
             {
                 Created = DateTime.Now,
-                UserID = currentUser.Id
+                UserID = currentUser.Id,
+                SubTotal = 0,
+                Total = 0,
+                DiscountSum = 0,
+                OrderItems = new List<OrderItem>()
             };
 
             _orderRepository.Add(order);
@@ -56,7 +60,6 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             var order = _orderRepository.GetOrder(orderId);
             if (order == null)
             {
-                return false;
                 throw new ArgumentNullException(nameof(order), "The Order does not exist"); 
             }
 
@@ -74,16 +77,16 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             var order = _orderRepository.GetOrder(orderId);
             return new OrderDTO()
             {
-                ID=order.ID,
-                DiscountSum=order.DiscountSum,
-                SubTotal=order.SubTotal,
-                Total=order.Total,
-                Created=order.Created,
-                UserID=order.UserID,
-               
+                ID = order.ID,
+                DiscountSum = order.DiscountSum,
+                SubTotal = order.SubTotal,
+                Total = order.Total,
+                Created = order.Created,
+                UserID = order.UserID
             };
         }
-        public async Task<OrderDTO> GetActiveUserOrder(string userID,int courseId)
+
+        public async Task<OrderDTO> GetActiveUserOrder(string userID, int courseId)
         {
             var encriptId = MentoShyfr.Decrypt(userID);
             var currentUser = await _cRUD_UserRepository.FindCurrentUserById(encriptId);
@@ -91,49 +94,51 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             {
                 throw new Exception("Unknown user!");
             }
+
             var course = _courseRepository.FirstOrDefault(c => c.Id == courseId);
             if (course == null)
             {
                 throw new Exception("Unknown course!");
             }
-            var order = _orderRepository.GetAll(x => x.UserID == currentUser.Id && 
-                                                     x.Ordered == null)
-                                        .FirstOrDefault();            
-            if (order== null)
-            {
-                var newOrder= await CreateOrder(userID);
-                decimal subtotal = _courseRepository.FirstOrDefault(x => x.Id == courseId).Price;
-                decimal discount = 0;
-                var orderItem = new OrderItem()
-                {
-                    Pos= newOrder.OrderPayments.Count + 1,
-                    Price = _courseRepository.FirstOrDefault(x => x.Id == courseId).Price,
-                    HasDiscount = false,
-                    Discount = discount,
-                    OrderID = newOrder.ID,
-                    CourseID = courseId,
-                    SubTotal = subtotal,
-                    Total= subtotal-discount,
-                };
 
-                    _orderItemRepository.Add(orderItem);
-                newOrder.OrderItems.Add(orderItem);
-                newOrder.DiscountSum = +orderItem.Discount;
-                newOrder.SubTotal = +orderItem.SubTotal;
-                newOrder.Total = (decimal)(newOrder.SubTotal - newOrder.DiscountSum);
-                _orderRepository.Add(newOrder);
-                return new OrderDTO()
-                {
-                    ID = newOrder.ID,
-                    UserID = currentUser.Id,
-                    Total = newOrder.Total,
-                    Created = newOrder.Created,
-                    Ordered = newOrder.Ordered,
-                    DiscountSum = newOrder.DiscountSum,
-                    SubTotal = newOrder.SubTotal,
-                    Items = (List<OrderItemDTO>)newOrder.OrderItems,
-                };
+            var order = _orderRepository.GetAll(x => x.UserID == currentUser.Id &&
+                                                     x.Ordered == null)
+                                        .FirstOrDefault();
+
+            if (order == null)
+            {
+                order = await CreateOrder(userID);
             }
+            else
+            {
+                if(order.OrderItems.Any(x => x.CourseID == courseId))
+                {
+                    throw new Exception("Course is already in your basket!");
+                }
+            }
+
+            decimal subtotal = course.Price;
+            decimal discount = 0;
+
+            var orderItem = new OrderItem()
+            {
+                Pos = order.OrderItems.Count + 1,
+                Price = course.Price,
+                HasDiscount = false,
+                Discount = discount,
+                OrderID = order.ID,
+                CourseID = courseId,
+                SubTotal = subtotal,
+                Total = subtotal - discount,
+            };
+
+            order.OrderItems.Add(orderItem);
+            order.DiscountSum += orderItem.Discount;
+            order.SubTotal += orderItem.SubTotal;
+            order.Total = (decimal)(order.SubTotal - order.DiscountSum);
+
+            _orderRepository.Update(order);
+
             var currentOrderItems = order.OrderItems.Select(x => new OrderItemDTO()
             {
                 ID = x.ID,
@@ -143,6 +148,7 @@ namespace Mentohub.Core.Services.Services.PaymentServices
                 SubTotal = x.SubTotal,
                 Discount = x.Discount,
                 HasDiscount = x.HasDiscount,
+                OrderID = x.OrderID,
                 Pos = x.Pos,
             })
             .ToList();

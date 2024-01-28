@@ -1,173 +1,21 @@
-﻿@using Mentohub.Domain.Data.Entities.CourseEntities;
-@model List<Course>
+﻿@using Mentohub.Domain.Payment;
+@model LiqPayCheckoutFormModel
 @{
     ViewData["Title"] = "Home Page";
-    int a = 0;
-}
-
-<style>
-    .body {
-        margin-left: 40px;
-        margin-right: 40px;
-    }
-
-    .myImg {
-        width: 260px;
-        height: 150px;
-    }
-
-    #coursesList {
-        margin-left: 40px;
-        margin-right: 40px;
-    }
-
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        grid-gap: 10px;
-    }
-
-    .grid-item {
-        padding: 20px;
-        text-align: center;
-    }
-
-    .listElement {
-        vertical-align: middle;
-        height: 240px;
-        font-size: 18px;
-        margin-top: 15px;
-        margin-right: 10px;
-        margin-right: 10px;
-        width: 280px;
-        border-radius: 5px;
-        padding-top: 3px;
-        padding-bottom: 3px;
-        padding-left: 10px;
-        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    }
-
-    .image-box {
-        width: 250px;
-        height: 140px;
-    }
-
-    a {
-        text-decoration: none;
-        color: black;
-    }
-
-        a:hover {
-            text-decoration: none;
-            color: black;
-        }
-
-        a:visited {
-            text-decoration: none;
-            color: black;
-        }
-
-    .courseName {
-        color: black;
-        font-size: 24px;
-    }
-
-    .course-name-block {
-        margin-top: 10px;
-    }
-
-    .raiting {
-        color: gold;
-    }
-
-    #coursesLine {
-        display: flex;
-    }
-
-
-    .rating {
-        display: inline-block;
-        font-size: 0;
-        position: relative;
-    }
-
-    .star {
-        display: inline-block;
-        font-size: 24px;
-        cursor: pointer;
-        color: #ddd;
-        position: relative;
-    }
-
-        .star:before, .half-star:before {
-            content: '\2605';
-        }
-
-        .star.filled:before, .half-star.filled:before {
-            content: '\2605';
-            color: #ffc107;
-        }
-
-    [data-value="1"] {
-        margin-right: 10px;
-    }
-
-    [data-value="2"] {
-        margin-right: 10px;
-    }
-
-    [data-value="3"] {
-        margin-right: 10px;
-    }
-
-    [data-value="4"] {
-        margin-right: 10px;
-    }
-
-    .half-star {
-        position: absolute;
-        width: 50%;
-        height: 100%;
-        left: 0;
-        top: 0;
-        overflow: hidden;
-    }
-
-        .half-star:before {
-            position: absolute;
-            left: -20px;
-        }
-
-    .carusel-pad {
-        padding-bottom: 15px;
-        padding-left: 15%;
-    }
-</style>
-
-@functions
-{
-    public string PagerNumber(int number)
-    {
-        if (number != 0)
-        {
-            return "item";
-        }
-
-        return "item active";
-    }
 }
 
 <partial name="/Views/Partial/Header.cshtml" />
-<!--<form action="Home/Load" class="dropzone" id="myDropzone">
-    
-</form>-->
-
-<script>
-    // Get the base64 string from ViewBag
-    //var base64Video = '@Html.Raw(ViewBag.Base64Video)';
-    //var lengthVideo = @ViewBag.VideoLength;
-
-    //document.addEventListener("DOMContentLoaded", function () {
-    //    new Dz().initDropzone(base64Video, lengthVideo);
-    //});
-</script>
+@if (Model != null)
+{
+    <form method="POST" accept-charset="utf-8" action="https://www.liqpay.ua/api/3/checkout">
+        <input type="hidden" name="data" value="@Model.Data" />
+        <input type="hidden" name="signature" value="@Model.Signature" />
+        <button style="border: none !important; display:inline-block !important;text-align: center !important;padding: 7px 20px !important;
+                                    color: #fff !important; font-size:16px !important; font-weight: 600 !important; font-family:OpenSans, sans-serif; cursor: pointer !important; border-radius: 2px !important;
+                                    background: rgb(122,183,43) !important;" onmouseover="this.style.opacity='0.5';" onmouseout="this.style.opacity='1';">
+            <img src="https://static.liqpay.ua/buttons/logo-small.png" name="btn_text"
+                 style="margin-right: 7px !important; vertical-align: middle !important;" />
+            <span style="vertical-align:middle !important">Pay</span>
+        </button>
+    </form>
+}

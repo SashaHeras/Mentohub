@@ -1,6 +1,10 @@
-﻿using Mentohub.Core.Repositories.Intefaces;
+﻿using LiqPay.SDK;
+using LiqPay.SDK.Dto;
+using LiqPay.SDK.Dto.Enums;
+using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Services.Interfaces;
+using Mentohub.Domain.Data.Entities.Order;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
@@ -11,35 +15,57 @@ namespace Mentohub.Controllers
     public class HomeController : Controller
     {
         private readonly ILessonRepository _lessonRepository;
-        private readonly ICourseRepository _courseRepository;
+        private readonly ILiqpayService _liqpayService;
+        private readonly IConfiguration _config;
 
         private readonly ICourseService _courseService;
         private readonly IAzureService _azureService;
 
         public HomeController(
             ILessonRepository lessonRepository,
-            ICourseRepository courseRepository,
             ICourseService courseService,
-            IAzureService azureService
+            IAzureService azureService,
+            ILiqpayService liqpayService,
+            IConfiguration config
             )
         {
             _lessonRepository = lessonRepository;
-            _courseRepository = courseRepository;
+            _liqpayService = liqpayService;
             _courseService = courseService;
             _azureService = azureService;
+            _config = config;
         }
 
         public IActionResult Index()
         {
-            //var videoBytes = ConvertIFormFileToBytes("C:\\Users\\acsel\\source\\repos\\Mentohub\\Mentohub\\125.mp4");
+            var order = _config["OrderID:ID"];
+            var model = _liqpayService.GenerateOrderPayModel(order);
+            return View(model);
+        }
 
-            //// Convert the byte array to a base64 string
-            //var base64Video = Convert.ToBase64String(videoBytes);
+        /// <summary>
+        /// На цю сторінку LiqPay відправляє результат оплати. Вона вказана в data.result_url
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> Redirect()
+        {
+            // --- Перетворюю відповідь LiqPay в Dictionary<string, string> для зручності:
+            var orderID = Request.Query["order_id"];
 
-            //ViewBag.Base64Video = base64Video;
-            //ViewBag.VideoLength = videoBytes.Length;
+            var liqpayClient = new LiqPayClient(_config["Payment:Public"], _config["Payment:Private"]);
 
-            return View();
+            var invoiceRequest = new LiqPayRequest()
+            {
+                OrderId = orderID,
+                Action = LiqPayRequestAction.Status,
+            };
+
+            LiqPayResponse response = await liqpayClient.RequestAsync("request", invoiceRequest);
+
+            var order = _config["OrderID:ID"];
+            var model = _liqpayService.GenerateOrderPayModel(order);
+            return View("~/Views/Home/Index.cshtml", model);
         }
 
         public JsonResult Load()

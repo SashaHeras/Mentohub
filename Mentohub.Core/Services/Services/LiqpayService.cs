@@ -32,6 +32,11 @@ namespace Mentohub.Core.Services.Services
         {
             var order = _orderService.GetOrder(orderID);
 
+            if(order == null)
+            {
+                return null;
+            }
+
             var signature_source = new LiqPayCheckout()
             {
                 public_key = _public_key,
@@ -39,14 +44,10 @@ namespace Mentohub.Core.Services.Services
                 action = "pay",
                 amount = (decimal)order.OrderItems.Sum(x => x.Total),
                 currency = "UAH",
-                description = "Оплата замовлення",
+                description = "Оплата замовлення. Придбані курси: " + string.Join(',', order.OrderItems.Select(x => { return " " + x.Course.Name; })),
                 order_id = orderID,
                 sandbox = 1,
-
-                result_url = "https://localhost:7218/Home/Redirect?order_id=" + orderID,
-
-                product_category = "Покупка курсів",
-                product_description = "До покупки курси: " + string.Join(',', order.OrderItems.Select(x => { return " " + x.Course.Name; }))
+                result_url = "https://localhost:7236/Home/Redirect?order_id=" + orderID,
             };
 
             var json_string = JsonConvert.SerializeObject(signature_source);
