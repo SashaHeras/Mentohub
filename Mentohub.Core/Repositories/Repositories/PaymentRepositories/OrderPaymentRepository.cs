@@ -20,19 +20,17 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
             _projectContext = projectContext;
         }
         
-        public OrderPayment AddOrderPayment(decimal total, int currencyID, string orderID)
-        {
-            OrderPayment orderPayment = new OrderPayment();
-            var userCourses= _projectContext.UserCourses.ToList();
-            orderPayment.UserCourses = userCourses;
-            _projectContext.OrderPayment.Add(orderPayment);
+        public OrderPayment AddOrderPayment(OrderPayment orderPayment)
+        {         
+            _projectContext.Add(orderPayment);
             _projectContext.SaveChanges();
             return orderPayment;
         }
 
         public void DeleteOrderPayment(OrderPayment orderPayment)
         { 
-            _projectContext.OrderPayment.Remove(orderPayment);   
+            _projectContext.Remove(orderPayment);
+            _projectContext.SaveChanges();
         }
 
         public OrderPayment GetOrderPaymentById(string id)

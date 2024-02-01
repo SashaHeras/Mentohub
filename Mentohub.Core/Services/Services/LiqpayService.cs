@@ -1,5 +1,6 @@
 ﻿using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Payment;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -15,17 +16,17 @@ namespace Mentohub.Core.Services.Services
     {
         private readonly IOrderService _orderService;
         private readonly IOrderItemSevice _orderItemService;
-
-        private readonly string _public_key = "sandbox_i12181666709";
-        private readonly string _private_key = "sandbox_ipTb02OFMs7IETrDTdKRKuUwnn3EWHJPFQLXvJCv";
+        private readonly IConfiguration _config;
 
         public LiqpayService(
             IOrderService orderService, 
-            IOrderItemSevice orderItemService
+            IOrderItemSevice orderItemService,
+            IConfiguration config
         )
         {
             _orderService = orderService;
             _orderItemService = orderItemService;
+            _config = config;
         }
 
         public LiqPayCheckoutFormModel GenerateOrderPayModel(string orderID)
@@ -39,7 +40,7 @@ namespace Mentohub.Core.Services.Services
 
             var signature_source = new LiqPayCheckout()
             {
-                public_key = _public_key,
+                public_key = _config["Payment:Public"],
                 version = 3,
                 action = "pay",
                 amount = (decimal)order.OrderItems.Sum(x => x.Total),
@@ -68,7 +69,7 @@ namespace Mentohub.Core.Services.Services
         /// <returns></returns>
         public string GetLiqPaySignature(string data)
         {
-            var buffer = Encoding.UTF8.GetBytes(_private_key + data + _private_key);
+            var buffer = Encoding.UTF8.GetBytes(_config["Payment:Private"] + data + _config["Payment:Private"]);
             return Convert.ToBase64String(SHA1.Create().ComputeHash(buffer));
         }
     }

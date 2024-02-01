@@ -26,9 +26,9 @@ namespace Mentohub.Domain.Data.Entities.Order
 
         public virtual CurrentUser? СurrentUser { get; set; }
 
-        public int OrderItemId { get; set; }
+        public int? OrderItemId { get; set; }
 
-        public string OrderPaymentId { get; set; }
+        public string? OrderPaymentId { get; set; }
 
         public virtual OrderPayment OrderPayment { get; set; }
 

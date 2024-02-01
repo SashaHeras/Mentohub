@@ -2,6 +2,7 @@
 using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
+using Mentohub.Core.Repositories.Repositories.PaymentRepository;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO.Payment;
 using Mentohub.Domain.Data.Entities.Order;
@@ -17,19 +18,21 @@ namespace Mentohub.Core.Services.Services.PaymentServices
         private readonly IOrderPaymentRepository _orderPaymentRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly ICourseRepository _courseRepository;
-        
+        private readonly IUserCourseRepository _userCourseRepository;
+
         public OrderService(ICRUD_UserRepository cRUD_UserRepository,
             IOrderItemRepository orderItemRepository,
             IOrderPaymentRepository orderPaymentRepository,
             IOrderRepository orderRepository,
-            ICourseRepository courseRepository)
+            ICourseRepository courseRepository,
+            IUserCourseRepository userCourseRepository)
         {
             _cRUD_UserRepository = cRUD_UserRepository;
             _orderItemRepository = orderItemRepository;
             _orderPaymentRepository = orderPaymentRepository;
             _orderRepository = orderRepository;
             _courseRepository = courseRepository;
-         
+            _userCourseRepository = userCourseRepository;
         }
 
         public async Task<Order> CreateOrder(string userID)
@@ -69,12 +72,16 @@ namespace Mentohub.Core.Services.Services.PaymentServices
 
         public Order  GetOrder(string orderId)
         {
-            var order= _orderRepository.GetOrder(orderId);               
+            var order= _orderRepository.GetOrder(orderId);
+            if (order == null)
+            {
+                throw new Exception("Order does not exist!");
+            }
             return order;
         }
         public OrderDTO GetOrderDTO(string orderId)
         {
-            var order = _orderRepository.GetOrder(orderId);
+            var order=GetOrderDTO(orderId);
             return new OrderDTO()
             {
                 ID = order.ID,
@@ -82,10 +89,9 @@ namespace Mentohub.Core.Services.Services.PaymentServices
                 SubTotal = order.SubTotal,
                 Total = order.Total,
                 Created = order.Created,
-                UserID = order.UserID
+                UserID = order.UserID,                
             };
         }
-
         public async Task<OrderDTO> GetActiveUserOrder(string userID, int courseId)
         {
             var encriptId = MentoShyfr.Decrypt(userID);
@@ -116,10 +122,10 @@ namespace Mentohub.Core.Services.Services.PaymentServices
                     throw new Exception("Course is already in your basket!");
                 }
             }
-
+            
             decimal subtotal = course.Price;
             decimal discount = 0;
-
+            
             var orderItem = new OrderItem()
             {
                 Pos = order.OrderItems.Count + 1,
@@ -129,9 +135,9 @@ namespace Mentohub.Core.Services.Services.PaymentServices
                 OrderID = order.ID,
                 CourseID = courseId,
                 SubTotal = subtotal,
-                Total = subtotal - discount,
+                Total = subtotal - discount,               
             };
-
+            
             order.OrderItems.Add(orderItem);
             order.DiscountSum += orderItem.Discount;
             order.SubTotal += orderItem.SubTotal;
@@ -164,6 +170,11 @@ namespace Mentohub.Core.Services.Services.PaymentServices
                 SubTotal = order.SubTotal,
                 Items = currentOrderItems
             };
+        }
+
+        public Order UpdateOrder(Order order)
+        {
+            return _orderRepository.Update(order);
         }
     }
 }

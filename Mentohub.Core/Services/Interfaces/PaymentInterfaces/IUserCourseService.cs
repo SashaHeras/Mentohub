@@ -14,7 +14,7 @@ namespace Mentohub.Core.Services.Interfaces
 
         UserCourse GetUserCourse(int id);
 
-        ICollection<Course> GetUserCourses(string userId);
+        ICollection<UserCourse> GetUserCourses(string userId);
 
         ICollection<UserDTO> GetUsers(int courseId);
     }

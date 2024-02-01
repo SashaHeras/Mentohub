@@ -14,7 +14,7 @@ namespace Mentohub.Core.Repositories.Interfaces.PaymentInterfaces
     {
         OrderPayment GetOrderPaymentById(string id);
 
-        OrderPayment AddOrderPayment(decimal total, int currencyID, string orderID);
+        OrderPayment AddOrderPayment(OrderPayment orderPayment);
 
         void DeleteOrderPayment(OrderPayment orderPayment);
 

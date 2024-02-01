@@ -14,5 +14,7 @@ namespace Mentohub.Core.Services.Interfaces
         Task<OrderDTO> GetActiveUserOrder(string userID, int courseId);
 
         OrderDTO GetOrderDTO(string orderId);
+
+        Order UpdateOrder(Order order);
     }
 }

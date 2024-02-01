@@ -11,6 +11,8 @@ namespace Mentohub.Core.Services.Interfaces.PaymentInterfaces
     {
         ICollection<OrderPayment> GetOrderPayments(string id);
 
-        bool DeleteOrderPayment(string id);        
+        bool DeleteOrderPayment(string id);
+
+        OrderPayment CreateOrderPaymant(decimal total, int currencyID, string orderID);
     }
 }

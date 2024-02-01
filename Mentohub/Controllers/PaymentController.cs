@@ -1,4 +1,7 @@
 ﻿using Mentohub.Core.Services.Interfaces;
+using Mentohub.Core.Services.Interfaces.PaymentInterfaces;
+using Mentohub.Core.Services.Services.PaymentServices;
+using Mentohub.Domain.Data.Entities.Order;
 using Mentohub.Domain.PayMentAlla;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +15,16 @@ namespace Mentohub.Controllers
     public class PaymentController : Controller
     {
         private readonly IOrderService _orderService;
-        public PaymentController(IOrderService orderService)
+        private readonly ICurrencyService _currencyService;
+        private readonly IOrderPaymantService _orderPaymentService;
+        private readonly IUserCourseService _useCourseService;
+        public PaymentController(IOrderService orderService, ICurrencyService currencyService,
+            IOrderPaymantService orderPaymentService, IUserCourseService useCourseService)
         {
             _orderService = orderService;
+            _currencyService = currencyService;
+            _orderPaymentService = orderPaymentService;
+            _useCourseService = useCourseService;
         }
 
         //[HttpPost("makePayment")]
@@ -51,7 +61,7 @@ namespace Mentohub.Controllers
                 }
                 catch (Exception ex)
                 {
-                    return Json(new { IsError = true, Message = ex.Message });
+                    return Json(new { IsError = true,  ex.Message });
                 }
             }
         }
@@ -80,8 +90,79 @@ namespace Mentohub.Controllers
             }
             catch(Exception ex)
             {
-                return Json(new { IsError = true, Message = ex.Message });
+                return Json(new { IsError = true, ex.Message });
             }
+        }
+        [HttpPost]
+        [Route("DeleteOrderItem")]
+        public JsonResult DeleteOrderItem([FromForm] string orderItemId)
+        {
+            try
+            {
+                _orderService.DeleteOrder(orderItemId);
+                return Json(new { IsError = false, Message = "Order successfully deleted" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("GetCurrencyById")]
+        public JsonResult GetCurrencyById([FromForm]int id)
+        {           
+            try
+            {
+                var currency = _currencyService.GetCurrency(id);
+                if (currency == null)
+                {
+                    return Json(new { IsError = false, Message = "Currency does not exist" }); 
+                }         
+                return Json(new { IsError = false, Data= currency });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, ex.Message });
+            }
+            
+        }
+        [HttpPost]
+        [Route("GetOrderPaymentById")]
+        public JsonResult GetOrderPaymentById([FromForm] string id)
+        {
+            try
+            {
+                var result = _orderPaymentService.GetOrderPayments(id);
+                if (result == null)
+                {
+                    return Json(new { IsError = false, Message = "OrderPayments does not exist" });
+                }
+                return Json(new { IsError = false, Data=result });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, ex.Message });
+            }
+
+        }
+        [HttpPost]
+        [Route("GetUserCoursesByUserId")]
+        public JsonResult GetUserCoursesByUserId([FromForm] string userId)
+        {
+            try
+            {
+                var result =_useCourseService.GetUserCourses(userId);
+                if (result == null)
+                {
+                    return Json(new { IsError = false, Message = "User's courses does not exist" });
+                }
+                return Json(new { IsError = false, Data = result });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, ex.Message });
+            }
+
         }
     }
 }

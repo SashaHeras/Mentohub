@@ -12,7 +12,6 @@ namespace Mentohub.Domain.Data.Entities.Order
     public class OrderItem
     {
         [Key]
-        //[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int? ID { get; set; }
         
         public int? Pos { get; set; }
@@ -29,7 +28,7 @@ namespace Mentohub.Domain.Data.Entities.Order
 
         public string? OrderID { get; set; }
 
-        public int? CourseID { get; set; }
+        public int CourseID { get; set; }
 
         public virtual Order Order { get; set; }
 

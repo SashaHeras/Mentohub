@@ -4,6 +4,7 @@ using LiqPay.SDK.Dto.Enums;
 using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Services.Interfaces;
+using Mentohub.Core.Services.Interfaces.PaymentInterfaces;
 using Mentohub.Domain.Data.Entities.Order;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -17,8 +18,9 @@ namespace Mentohub.Controllers
         private readonly ILessonRepository _lessonRepository;
         private readonly ILiqpayService _liqpayService;
         private readonly IConfiguration _config;
-
         private readonly ICourseService _courseService;
+        private readonly IOrderPaymantService _orderPaymantService;
+        private readonly IOrderService _orderService;
         private readonly IAzureService _azureService;
 
         public HomeController(
@@ -26,6 +28,8 @@ namespace Mentohub.Controllers
             ICourseService courseService,
             IAzureService azureService,
             ILiqpayService liqpayService,
+            IOrderPaymantService orderPaymantService,
+            IOrderService orderService,
             IConfiguration config
             )
         {
@@ -33,14 +37,16 @@ namespace Mentohub.Controllers
             _liqpayService = liqpayService;
             _courseService = courseService;
             _azureService = azureService;
+            _orderPaymantService= orderPaymantService;
             _config = config;
+            _orderService= orderService;
         }
 
         public IActionResult Index()
         {
-            var order = _config["OrderID:ID"];
-            var model = _liqpayService.GenerateOrderPayModel(order);
-            return View(model);
+            //var order = _config["OrderID:ID"];
+            //var model = _liqpayService.GenerateOrderPayModel(order);
+            return View(/*model*/);
         }
 
         /// <summary>
@@ -62,10 +68,32 @@ namespace Mentohub.Controllers
             };
 
             LiqPayResponse response = await liqpayClient.RequestAsync("request", invoiceRequest);
+            
+            try
+            {
+                //if (response.Status == LiqPayResponseStatus.Success)
+                {var orderId = _config["OrderID:ID"];
+                    var order = _orderService.GetOrder(orderID);
+                    order.Ordered = DateTime.Now;
+                    _orderService.UpdateOrder(order);
+                    decimal total= order.Total;
+                    var orderPayment = _orderPaymantService.CreateOrderPaymant(total, 1, orderID);
+                    var model = _liqpayService.GenerateOrderPayModel(orderId);
+                    return View("~/Views/Home/Index.cshtml", model);
 
-            var order = _config["OrderID:ID"];
-            var model = _liqpayService.GenerateOrderPayModel(order);
-            return View("~/Views/Home/Index.cshtml", model);
+                }
+                //if (response.Status == LiqPayResponseStatus.Error)
+                //{
+                //    return Json(new { IsError = true, Message= "An unforeseen error occurred" });
+                //}
+            }
+            catch(Exception ex)
+            {
+                    return Json(new { IsError = true, ex.Message });
+            }
+               
+            return Json(new { IsError = true, Message= "The payment was unsuccessful" });
+
         }
 
         public JsonResult Load()
