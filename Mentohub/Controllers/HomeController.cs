@@ -44,9 +44,9 @@ namespace Mentohub.Controllers
 
         public IActionResult Index()
         {
-            ////var order = _config["OrderID:ID"];
-            ////var model = _liqpayService.GenerateOrderPayModel(order);
-            return View(/*model*/);
+            var order = _config["OrderID:ID"];
+            var model = _liqpayService.GenerateOrderPayModel(order);
+            return View(model);
         }
 
         /// <summary>

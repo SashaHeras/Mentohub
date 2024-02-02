@@ -28,24 +28,11 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
             return GetAll().Where(u => u.Id == Id).FirstOrDefault();
         }
 
-        public ICollection<UserCourseDTO> GetUserCoursesByUserId(string userId)
+        public ICollection<UserCourse> GetUserCoursesByUserId(string userId)
         {
             var decriptUserId = MentoShyfr.Decrypt(userId);
-           var userCourses=GetAll().Where(uc => uc.UserId == decriptUserId).ToList();
-            var userCoursesDTO=new List<UserCourseDTO>();
-            foreach (var item in userCourses)
-            {
-                userCoursesDTO.Add(new UserCourseDTO()
-                {
-                    Id = item.Id,
-                    CourseId = item.CourseId,
-                    OrderPaymentId = item.OrderPaymentId,
-                    OrderItemId = item.OrderItemId,
-                    UserId = decriptUserId,
-                    Created = item.Created,
-                });
-            }
-            return userCoursesDTO;
+           var userCourses=GetAll().Where(uc => uc.UserId == decriptUserId).ToList();            
+            return userCourses;
         }
         public ICollection<UserCourse> GetUserCoursesByCourseId(int courseId)
         {

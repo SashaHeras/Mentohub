@@ -86,7 +86,7 @@ namespace Mentohub.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpDelete]
         [Route("DeleteOrder")]
         public JsonResult DeleteOrder([FromForm] string orderId)
         {
@@ -100,7 +100,7 @@ namespace Mentohub.Controllers
                 return Json(new { IsError = true, ex.Message });
             }
         }
-        [HttpPost]
+        [HttpDelete]
         [Route("DeleteOrderItem")]
         public JsonResult DeleteOrderItem([FromForm] string orderItemId)
         {

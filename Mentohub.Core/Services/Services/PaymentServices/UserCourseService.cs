@@ -65,12 +65,26 @@ namespace Mentohub.Core.Services.Services.PaymentServices
         /// <exception cref="ArgumentNullException"></exception>
         public ICollection<UserCourseDTO> GetUserCourses(string userId)
         {
-            var userCourses = _userCourseRepository.GetUserCoursesByUserId(userId).ToList();
-            if (userCourses == null)
+            var userCourses = _userCourseRepository.GetUserCoursesByUserId(userId);
+            if (userCourses.Count==0)
             {
                 throw new ArgumentNullException(nameof(userCourses), "The collection cannot be null.");
             }
-            return userCourses;
+            var userCoursesDTO = new List<UserCourseDTO>();
+            foreach (var item in userCourses)
+            {
+                userCoursesDTO.Add(new UserCourseDTO()
+                {
+                    Id = item.Id,
+                    CourseId = item.CourseId,
+                    OrderPaymentId = item.OrderPaymentId,
+                    OrderItemId = item.OrderItemId,
+                    UserId = item.UserId,
+                    Created = item.Created,
+                });
+            }
+           
+            return userCoursesDTO;
         }
 
         /// <summary>

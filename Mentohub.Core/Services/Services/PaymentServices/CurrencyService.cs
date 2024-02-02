@@ -39,24 +39,35 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             return true;
         }
 
-        public Currency GetCurrency(int id)
+        public CurrencyDTO GetCurrency(int id)
         {
             var currency = _currentRepository.FirstOrDefault(x => x.ID == id);
             if (currency == null)
             {
                 throw new ArgumentNullException(nameof(currency), "Currency does not exist!");
             }
-
-            return currency;
+            var currencyDTO = new CurrencyDTO()
+            {
+                Code = currency.Code,
+                Name = currency.Name,
+                ID = currency.ID
+            };
+            return currencyDTO;
         }
-        public Currency GetCurrencyByCode(string code)  
+        public CurrencyDTO GetCurrencyByCode(string code)  
         {
             var currency = _currentRepository.FirstOrDefault(c => c.Code == code);
             if (currency == null)
             {
                 throw new ArgumentNullException(nameof(currency), "Currency does not exist!");
             }
-            return currency;
+            var currencyDTO = new CurrencyDTO()
+            {  
+                Code=currency.Code,
+                Name=currency.Name,
+                ID=currency.ID
+            };
+            return currencyDTO;
         }   
     }
 }

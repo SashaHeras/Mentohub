@@ -10,12 +10,12 @@ namespace Mentohub.Core.Services.Interfaces.PaymentInterfaces
 {
     public interface ICurrencyService
     {
-        Currency GetCurrency(int id);
+        CurrencyDTO GetCurrency(int id);
 
         Currency CreateCurrency(CurrencyDTO currencyDTO);
 
         bool DeleteCurrency(int id);
 
-        Currency GetCurrencyByCode(string code);
+        CurrencyDTO GetCurrencyByCode(string code);
     }
 }

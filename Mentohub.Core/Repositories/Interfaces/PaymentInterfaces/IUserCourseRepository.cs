@@ -18,7 +18,7 @@ namespace Mentohub.Core.Repositories.Interfaces.PaymentInterfaces
 
         void DeleteUserCourse(UserCourse userCourse);
 
-        ICollection<UserCourseDTO> GetUserCoursesByUserId(string userId);
+        ICollection<UserCourse> GetUserCoursesByUserId(string userId);
 
         ICollection<UserCourse> GetUserCoursesByCourseId(int courseId);
 

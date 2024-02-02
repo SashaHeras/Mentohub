@@ -57,19 +57,9 @@ namespace Mentohub.Core.Services.Services.PaymentServices
                 PaymentStatus = 1,                           
             };
             _orderPaymentRepository.AddOrderPayment(orderPayment);
-            
-            //var user = await _CRUD_Repository.FindCurrentUserById(order.UserID);
-            //if(user==null)
-            //{
-            //    throw new ArgumentNullException("User does not exist!");
-            //}
+
             foreach (var item in orderItem)
-            {
-                //var course = _courseRepository.GetCourse(item.CourseID);
-                //if (course == null)
-                //{
-                //    throw new Exception($"Course with ID {item.CourseID} not found");
-                //}
+            {               
                 var userCourse = new UserCourse()
                 {
                     Id = _userCourseRepository.GetAll().Count() + 1,
@@ -78,11 +68,21 @@ namespace Mentohub.Core.Services.Services.PaymentServices
                     OrderItemId = item.ID,
                     UserId = order.UserID,
                     OrderPaymentId = orderPayment.ID,
-                    //OrderPayment=orderPayment,
-                    //Course=course,
+                    OrderPayment=orderPayment,
                     OrderItem=item,
-                    //СurrentUser=user,
                 };
+                //var course = _courseRepository.GetCourse(item.CourseID);
+                //if (course == null)
+                //{
+                //    throw new Exception($"Course with ID {item.CourseID} not found");
+                //}
+                //userCourse.Course=course;
+                var user = await _CRUD_Repository.FindCurrentUserById(order.UserID);
+                if (user == null)
+                {
+                    throw new ArgumentNullException("User does not exist!");
+                }
+                userCourse.СurrentUser=user;
                 userCourses.Add(userCourse);
                 _userCourseRepository.Add(userCourse); 
             }
