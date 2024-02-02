@@ -1,6 +1,7 @@
 ﻿using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Interfaces.PaymentInterfaces;
 using Mentohub.Core.Services.Services.PaymentServices;
+using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities.Order;
 using Mentohub.Domain.PayMentAlla;
 using Microsoft.AspNetCore.Cors;
@@ -162,6 +163,24 @@ namespace Mentohub.Controllers
                 if (result.Count==0)
                 {
                     return Json(new { IsError = false, Message = "User's courses does not exist" });
+                }
+                return Json(new { IsError = false, Data = result });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, ex.Message });
+            }
+        }
+        [HttpPost]
+        [Route("GetUsersByCourseId")]
+        public JsonResult GetUsers(int courseId)
+        {
+            try
+            {
+                var result = _useCourseService.GetUsers(courseId);
+                if (result == null)
+                {
+                    return Json(new { IsError = false, Message = "Users does not exist" });
                 }
                 return Json(new { IsError = false, Data = result });
             }

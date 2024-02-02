@@ -1,4 +1,5 @@
-﻿using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
+﻿using Mentohub.Core.Repositories.Interfaces;
+using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.Payment;
@@ -12,10 +13,12 @@ namespace Mentohub.Core.Services.Services.PaymentServices
     {
         #pragma warning disable 8603
         private readonly IUserCourseRepository _userCourseRepository;
-
-        public UserCourseService(IUserCourseRepository userCourseRepository)
+        private readonly ICRUD_UserRepository _cRUD_UserRepository;
+        public UserCourseService(IUserCourseRepository userCourseRepository,
+            ICRUD_UserRepository cRUD_UserRepository)
         {
             _userCourseRepository = userCourseRepository;
+            _cRUD_UserRepository= cRUD_UserRepository;
         }
 
         public UserCourse CreateUserCourse(UserCourseDTO data)
@@ -93,19 +96,31 @@ namespace Mentohub.Core.Services.Services.PaymentServices
         /// <param name="courseId"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public ICollection<UserDTO> GetUsers(int courseId)
+        public async Task <ICollection<UserDTO>> GetUsers(int courseId)
         {
-            var userCourses = _userCourseRepository.GetUserCoursesByCourseId(courseId).ToList();
-            if (userCourses == null)
+            var userCourses = _userCourseRepository.GetUserCoursesByCourseId(courseId);
+            if (userCourses.Count==0)
             {
                 throw new ArgumentNullException(nameof(userCourses), "The collection cannot be null.");
             }
-
-            return userCourses.Select(cu => new UserDTO()
+            var users = new List<UserDTO>();
+            foreach (var item in userCourses)
             {
-                Id = cu.СurrentUser.Id,
-                Email = cu.СurrentUser.Email
-            }).ToList();
+                var user = await _cRUD_UserRepository.FindCurrentUserById(item.UserId);
+                if(user == null)
+                {
+                    throw new ArgumentNullException(nameof(userCourses), "User does not exist!");
+                }
+                var userDTO = new UserDTO()
+                {
+                    Id = item.UserId,
+                    Email = item.СurrentUser.Email,
+                };
+                userDTO.FirstName = user.FirstName;
+                userDTO.LastName = user.LastName;
+                users.Add(userDTO);
+            }
+            return users;
         }
 
         public Task<bool> UpdateUserCourse(int id)

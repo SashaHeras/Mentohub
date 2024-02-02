@@ -1,6 +1,8 @@
 ﻿using Mentohub.Core.Infrastructure;
 using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.Payment;
+using Mentohub.Domain.Data.Entities;
 using Mentohub.Domain.Data.Entities.Order;
 using System;
 using System.Collections.Generic;

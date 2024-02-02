@@ -1,7 +1,9 @@
 ﻿using MassTransit;
 using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
+using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.Payment;
+using Mentohub.Domain.Data.Entities;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Data.Entities.Order;
 using Mentohub.Domain.Helpers;
@@ -34,11 +36,7 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
            var userCourses=GetAll().Where(uc => uc.UserId == decriptUserId).ToList();            
             return userCourses;
         }
-        public ICollection<UserCourse> GetUserCoursesByCourseId(int courseId)
-        {
-            return GetAll().Where(uc => uc.CourseId == courseId).ToList();
-        }
-
+ 
         public void UpdateUserCourse(UserCourse userCourse)
         {
             _projectContext.Update(userCourse);
@@ -49,6 +47,11 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
         {
             _projectContext.Remove(userCourse);
             _projectContext.SaveChanges();
+        }
+
+        ICollection<UserCourse> IUserCourseRepository.GetUserCoursesByCourseId(int courseId)
+        {
+            return GetAll().Where(uc => uc.CourseId == courseId).ToList();
         }
     }
 }
