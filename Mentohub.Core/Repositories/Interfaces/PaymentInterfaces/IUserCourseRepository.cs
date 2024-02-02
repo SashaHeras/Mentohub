@@ -1,5 +1,6 @@
 ﻿using Mentohub.Core.Infrastructure;
 using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Domain.Data.DTO.Payment;
 using Mentohub.Domain.Data.Entities.Order;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace Mentohub.Core.Repositories.Interfaces.PaymentInterfaces
 
         void DeleteUserCourse(UserCourse userCourse);
 
-        ICollection<UserCourse> GetUserCoursesByUserId(string userId);
+        ICollection<UserCourseDTO> GetUserCoursesByUserId(string userId);
 
         ICollection<UserCourse> GetUserCoursesByCourseId(int courseId);
 

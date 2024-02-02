@@ -12,8 +12,8 @@ namespace Mentohub.Domain.Data.DTO.Payment
 
         public string UserId { get; set; }
 
-        public int OrderItemId { get; set; }
+        public int? OrderItemId { get; set; }
 
-        public string OrderPaymentId { get; set; }
+        public string? OrderPaymentId { get; set; }
     }
 }

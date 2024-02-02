@@ -1,6 +1,7 @@
 ﻿using MassTransit;
 using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
+using Mentohub.Domain.Data.DTO.Payment;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Data.Entities.Order;
 using Mentohub.Domain.Helpers;
@@ -27,10 +28,24 @@ namespace Mentohub.Core.Repositories.Repositories.PaymentRepository
             return GetAll().Where(u => u.Id == Id).FirstOrDefault();
         }
 
-        public ICollection<UserCourse> GetUserCoursesByUserId(string userId)
+        public ICollection<UserCourseDTO> GetUserCoursesByUserId(string userId)
         {
             var decriptUserId = MentoShyfr.Decrypt(userId);
-            return GetAll().Where(uc => uc.UserId == decriptUserId).ToList();
+           var userCourses=GetAll().Where(uc => uc.UserId == decriptUserId).ToList();
+            var userCoursesDTO=new List<UserCourseDTO>();
+            foreach (var item in userCourses)
+            {
+                userCoursesDTO.Add(new UserCourseDTO()
+                {
+                    Id = item.Id,
+                    CourseId = item.CourseId,
+                    OrderPaymentId = item.OrderPaymentId,
+                    OrderItemId = item.OrderItemId,
+                    UserId = decriptUserId,
+                    Created = item.Created,
+                });
+            }
+            return userCoursesDTO;
         }
         public ICollection<UserCourse> GetUserCoursesByCourseId(int courseId)
         {

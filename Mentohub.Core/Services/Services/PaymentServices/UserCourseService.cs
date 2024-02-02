@@ -63,7 +63,7 @@ namespace Mentohub.Core.Services.Services.PaymentServices
         /// <param name="userId"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public ICollection<UserCourse> GetUserCourses(string userId)
+        public ICollection<UserCourseDTO> GetUserCourses(string userId)
         {
             var userCourses = _userCourseRepository.GetUserCoursesByUserId(userId).ToList();
             if (userCourses == null)

@@ -70,13 +70,20 @@ namespace Mentohub.Controllers
         [Route("GetOrder")]
         public JsonResult GetOrder([FromForm] string orderId)
         {
-            var result = _orderService.GetOrderDTO(orderId);
-            if (result == null)
+            try
             {
-                return Json(new { IsError = true, Message = "Order does not exist" });
-            }
+                var result = _orderService.GetOrderDTO(orderId);
+                if (result == null)
+                {
+                   return Json(new { IsError = true, Message = "Order does not exist" });
+                }
 
-            return Json(new { IsError = false, Data = result });
+                return Json(new { IsError = false, Data = result });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, ex.Message });
+            }
         }
 
         [HttpPost]
@@ -152,7 +159,7 @@ namespace Mentohub.Controllers
             try
             {
                 var result =_useCourseService.GetUserCourses(userId);
-                if (result == null)
+                if (result.Count==0)
                 {
                     return Json(new { IsError = false, Message = "User's courses does not exist" });
                 }
@@ -162,7 +169,6 @@ namespace Mentohub.Controllers
             {
                 return Json(new { IsError = true, ex.Message });
             }
-
         }
     }
 }
