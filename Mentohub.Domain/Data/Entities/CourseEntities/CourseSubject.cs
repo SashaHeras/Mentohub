@@ -1,4 +1,5 @@
 ﻿using Mentohub.Domain.Data.DTO.CourseDTOs;
+using System.Text.Json.Serialization;
 
 namespace Mentohub.Domain.Data.Entities.CourseEntities
 {
@@ -8,7 +9,7 @@ namespace Mentohub.Domain.Data.Entities.CourseEntities
 
         public string Name { get; set; }
 
-        public virtual ICollection<Course> Courses { get; set; }    
+        public virtual ICollection<Course> Courses { get; set; }
 
         public CourseSubjectDTO ToDTO()
         {

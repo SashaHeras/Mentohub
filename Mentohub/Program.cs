@@ -23,6 +23,7 @@ using Mentohub.Core.Services.Services.PaymentServices;
 using Mentohub.Core.Repositories.Repositories.PaymentRepositories;
 using Mentohub.Core.Services.Interfaces.PaymentInterfaces;
 using Microsoft.Owin.Cors;
+using StackExchange.Redis;
 
 internal class Program
 {
@@ -48,6 +49,14 @@ internal class Program
                 options => options.UseLazyLoadingProxies()
                                   .UseNpgsql(builder.Configuration.GetConnectionString("DefaultPost"))
         );
+
+        builder.Services.AddStackExchangeRedisCache(options =>
+        {
+            string connection = builder.Configuration.GetConnectionString("Redis");
+            options.Configuration = connection;
+
+            options.InstanceName = "RedisTest";
+        });
 
         builder.Services.AddCors(options =>
         {
@@ -115,7 +124,7 @@ internal class Program
         builder.Services.AddScoped<IOrderItemSevice, OrderItemSevice>();
         builder.Services.AddScoped<IOrderPaymantService, OrderPaymantService>();
         builder.Services.AddScoped<ICurrencyService, CurrencyService>();
-        builder.Services.AddScoped<ILiqpayService, LiqpayService>();        
+        builder.Services.AddScoped<ILiqpayService, LiqpayService>();
 
         #endregion
 

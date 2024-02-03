@@ -11,6 +11,6 @@ namespace Mentohub.Core.Repositories.Interfaces.CourseInterfaces
 {
     public interface ISubjectRepository : ISingletoneService, IRepository<CourseSubject>
     {
-
+        public Task<bool> InitRedisSubjects();
     }
 }

@@ -17,6 +17,7 @@ namespace Mentohub.Controllers
         private readonly ILessonRepository _lessonRepository;
         private readonly ILiqpayService _liqpayService;
         private readonly IConfiguration _config;
+        private readonly ISubjectRepository _subjectRepository;
 
         private readonly ICourseService _courseService;
         private readonly IAzureService _azureService;
@@ -26,6 +27,7 @@ namespace Mentohub.Controllers
             ICourseService courseService,
             IAzureService azureService,
             ILiqpayService liqpayService,
+            ISubjectRepository subjectRepository,
             IConfiguration config
             )
         {
@@ -34,12 +36,15 @@ namespace Mentohub.Controllers
             _courseService = courseService;
             _azureService = azureService;
             _config = config;
+            _subjectRepository = subjectRepository;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var order = _config["OrderID:ID"];
             var model = _liqpayService.GenerateOrderPayModel(order);
+
+            await _subjectRepository.InitRedisSubjects();
             return View(model);
         }
 
