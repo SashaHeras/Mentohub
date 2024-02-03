@@ -39,7 +39,7 @@ namespace Mentohub.Controllers
             _azureService = azureService;
             _orderPaymantService= orderPaymantService;
             _config = config;
-            _orderService= orderService;
+            _orderService = orderService;
         }
 
         public IActionResult Index()
@@ -72,15 +72,19 @@ namespace Mentohub.Controllers
             try
             {
                 //if (response.Status == LiqPayResponseStatus.Success)
-                {var orderId = _config["OrderID:ID"];
+                {
                     var order = _orderService.GetOrder(orderID);
                     order.Ordered = DateTime.Now;
-                    _orderService.UpdateOrder(order);
-                    decimal total= order.Total;
-                    var orderPayment = _orderPaymantService.CreateOrderPaymant(total, 1, orderID);
-                    var model = _liqpayService.GenerateOrderPayModel(orderId);
-                    return View("~/Views/Home/Index.cshtml", model);
 
+                    _orderService.UpdateOrder(order);
+
+                    decimal total = order.Total;
+
+                    await _orderPaymantService.CreateOrderPaymant(total, 1, orderID);
+
+                    var model = _liqpayService.GenerateOrderPayModel(orderID);
+
+                    return View("~/Views/Home/Index.cshtml", model);
                 }
                 //if (response.Status == LiqPayResponseStatus.Error)
                 //{

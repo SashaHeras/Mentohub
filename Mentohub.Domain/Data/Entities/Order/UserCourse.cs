@@ -21,7 +21,7 @@ namespace Mentohub.Domain.Data.Entities.Order
 
         public virtual Course Course { get; set; }
 
-        [ForeignKey("User")]
+        [ForeignKey("СurrentUser")]
         public string UserId { get; set; }
 
         public virtual CurrentUser? СurrentUser { get; set; }

@@ -72,16 +72,18 @@ namespace Mentohub.Core.Services.Services.PaymentServices
 
         public Order  GetOrder(string orderId)
         {
-            var order= _orderRepository.GetOrder(orderId);
+            var order = _orderRepository.GetOrder(orderId);
             if (order == null)
             {
                 throw new Exception("Order does not exist!");
             }
+
             return order;
         }
+
         public OrderDTO GetOrderDTO(string orderId)
         {
-            var order=GetOrderDTO(orderId);
+            var order = GetOrderDTO(orderId);
             return new OrderDTO()
             {
                 ID = order.ID,
@@ -92,6 +94,7 @@ namespace Mentohub.Core.Services.Services.PaymentServices
                 UserID = order.UserID,                
             };
         }
+
         public async Task<OrderDTO> GetActiveUserOrder(string userID, int courseId)
         {
             var encriptId = MentoShyfr.Decrypt(userID);
