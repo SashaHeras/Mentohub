@@ -9,7 +9,7 @@ namespace Mentohub.Core.Services.Interfaces
 {
     public interface ICourseService
     {
-        IQueryable<Course> GetAuthorsCourses(Guid userId);
+        List<CourseDTO> GetAuthorsCourses(string userId);
 
         List<CourseElementDTO> GetCourseElements(int id);
 
@@ -32,5 +32,7 @@ namespace Mentohub.Core.Services.Interfaces
         public AuthorInfoDTO GetAuthorInfoDTO(string encriptId);
 
         public AdditionalListModel GetAdditionalList();
+
+        public TagDTO ApplyCourseTag(int courseID, int tagID, string tagName, string userID);
     }
 }

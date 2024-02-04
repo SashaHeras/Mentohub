@@ -4,7 +4,6 @@ using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Microsoft.AspNetCore.Cors;
 using Mentohub.Domain.Filters;
 using Mentohub.Domain.Data.DTO.ResultDTO;
-using Mentohub.Core.Services.Services;
 
 namespace Mentohub.Controllers
 {
@@ -37,6 +36,20 @@ namespace Mentohub.Controllers
             try
             {
                 var course = await _courseService.Apply(data);
+                return Json(new { IsError = false, Data = course, Message = "Success" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, Message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public JsonResult SetTagToCourse([FromForm] int courseID, [FromForm] int tagID, [FromForm] string tagName, [FromForm] string userID)
+        {
+            try
+            {
+                var course = _courseService.ApplyCourseTag(courseID, tagID, tagName, userID);
                 return Json(new { IsError = false, Data = course, Message = "Success" });
             }
             catch (Exception ex)
@@ -174,6 +187,16 @@ namespace Mentohub.Controllers
         public JsonResult GetCouseAdditionalLists()
         {
             return Json(_courseService.GetAdditionalList());
+        }
+
+        /// <summary>
+        /// Get list of course categories
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public JsonResult GetSubjectsList()
+        {
+            return Json(_courseSubjectService.SubjectsList());
         }
     }
 }

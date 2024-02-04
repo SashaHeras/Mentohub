@@ -3,12 +3,6 @@ using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Entities;
 using Mentohub.Domain.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Mentohub.Domain.Mappers
 {
@@ -32,7 +26,14 @@ namespace Mentohub.Domain.Mappers
                 LanguageId = course.LanguageID ?? 0,
                 LastEdittingDate = course.LastEdittingDate,
                 Comments = course.Comments.Select(x => ToDTO(x)).ToList(),
-                CourseViews = course.CourseViews.Count
+                CourseViews = course.CourseViews.Count,
+                Tags = course.CourseTags.Select(x => x.Tag)
+                .Select(x => new TagDTO()
+                {
+                    ID = x.ID,
+                    Name = x.Name
+                }).ToList(),
+                CourseLevelId = course.CourseLevelID ?? -1
             };
         }
 
