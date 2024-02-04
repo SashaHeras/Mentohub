@@ -81,6 +81,8 @@ internal class Program
         builder.Services.AddScoped<IOrderRepository, OrderRepository>();
         builder.Services.AddScoped<IUserCourseRepository, UserCourseRepository>();
         builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+        builder.Services.AddScoped<ITagRepository, TagRepository>();
+        builder.Services.AddScoped<ICourseTagRepository, CourseTagRepository>();
         builder.Services.AddScoped<IOrderPaymentRepository, OrderPaymentRepository>();
         builder.Services.AddScoped<ICurrencyRepository, CurrencyRepository>();
         builder.Services.AddScoped<AllException>();

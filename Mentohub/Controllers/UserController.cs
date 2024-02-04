@@ -20,18 +20,21 @@ namespace Mentohub.Controllers
         private readonly AllException _exception;
         private readonly IUserService _userService;
         private readonly ICRUD_UserRepository _cRUD;
+        private readonly ICourseService _courseService;
 
         public UserController(
             ILogger<UserController> logger, 
             IUserService userService,
             AllException exception, 
-            ICRUD_UserRepository cRUD_UserRepository
+            ICRUD_UserRepository cRUD_UserRepository,
+            ICourseService courseService
         )
         {
             _logger = logger;
             _userService = userService;
             _exception = exception;
             _cRUD = cRUD_UserRepository;
+            _courseService = courseService;
         }
         
         [HttpDelete]
@@ -45,9 +48,8 @@ namespace Mentohub.Controllers
                 var deletedUser =await _userService.DeleteUser(userId);
                 if (deletedUser)
                 {
-                      _logger.LogInformation("User deleted successfully.");
-                    return Json(new { IsError = false, Message = "User deleted successfully " });
-                      
+                    _logger.LogInformation("User deleted successfully.");
+                    return Json(new { IsError = false, Message = "User deleted successfully " });                      
                 }
                 else
                 {
@@ -61,8 +63,8 @@ namespace Mentohub.Controllers
                     message = "Error when deleting a user",
                     error = ex.Message // інформація про помилку
                 };
-                return Json(new {IsError=true, errorResponse });
- 
+
+                return Json(new { IsError = true, errorResponse }); 
             }   
         }
 
@@ -102,8 +104,7 @@ namespace Mentohub.Controllers
                 {
                     StatusCode = 500 // код статусу, що вказує на помилку
                 };
-            }
-            
+            }            
         }
 
         /// <summary>
@@ -140,8 +141,8 @@ namespace Mentohub.Controllers
                     message = "Error when updating a user",
                     error = ex.Message // інформація про помилку
                 };
-                return Json(new { IsError = true, errorResponse });
- 
+
+                return Json(new { IsError = true, errorResponse }); 
             }            
         }
 
@@ -161,8 +162,7 @@ namespace Mentohub.Controllers
                 var avatarUrl = await _userService.UploadAvatar(avatar, id);
                 if(avatarUrl != null)
                 {
-                    return Json(new { IsError = false, avatarUrl });
-                      
+                    return Json(new { IsError = false, avatarUrl });                      
                 }
                 return Json(new { IsError = true, Message = "Not file for download" });                
             }
@@ -173,6 +173,7 @@ namespace Mentohub.Controllers
                     message = "Error when was a download of avatar",
                     error = ex.Message // інформація про помилку
                 };
+
                 return Json(errorResponse);                
             }
         }
@@ -208,8 +209,7 @@ namespace Mentohub.Controllers
                     error = ex.Message // інформація про помилку
                 };
                 return Json(new { IsError = true, errorResponse });
-            }
-           
+            }           
         }
 
         /// <summary>
@@ -259,6 +259,21 @@ namespace Mentohub.Controllers
             catch (Exception ex)
             {
                 return Json(new { IsError = true, Message=ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("GetAuthorsCourses")]
+        public JsonResult GetAuthorsCourses([FromForm] string authorID)
+        {
+            try
+            {
+                var result = _courseService.GetAuthorsCourses(authorID); ;
+                return Json(new { IsError = false, Data = result, Message = "Success" });
+            }
+            catch(Exception ex)
+            {
+                return Json(new { IsError = true, Message = ex.Message });
             }
         }
     }

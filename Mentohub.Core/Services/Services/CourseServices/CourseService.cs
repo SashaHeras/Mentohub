@@ -1,6 +1,7 @@
 ﻿using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
+using Mentohub.Core.Repositories.Repositories.CourseRepositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.CourseDTOs;
@@ -22,6 +23,8 @@ namespace Mentohub.Core.Services.Services
         private readonly ICourseItemRepository _courseItemRepository;
         private readonly ILessonRepository _lessonRepository;
         private readonly ITestRepository _testRepository;
+        private readonly ITagRepository _tagRepository;
+        private readonly ICourseTagRepository _courseTagRepository;
         private readonly ISubjectRepository _subjectRepository;
         private readonly ICommentRepository _commentRepository;
         private readonly ICourseLanguageRepository _courseLanguageRepository;
@@ -40,10 +43,12 @@ namespace Mentohub.Core.Services.Services
             ICommentRepository commentRepository,
             ILessonRepository lessonRepository,
             ITestRepository testRepository,
+            ITagRepository tagRepository,
             ISubjectRepository subjectRepository,
             ICourseViewService courseViewsService,
             ICourseLanguageRepository courseLanguageRepository,
             IMediaService mediaService,
+            ICourseTagRepository courseTagRepository,
             ICourseLevelRepository courseLevelRepository,
             ICourseSubjectService courseSubjectService,
             ICourseLanguageService courseLanguageService,
@@ -58,6 +63,8 @@ namespace Mentohub.Core.Services.Services
             _testRepository = testRepository;
             _courseViewsService = courseViewsService;
             _mediaService = mediaService;
+            _tagRepository = tagRepository;
+            _courseTagRepository = courseTagRepository;
             _subjectRepository = subjectRepository;
             _courseLanguageRepository = courseLanguageRepository;
             _courseLevelRepository = courseLevelRepository;
@@ -247,9 +254,18 @@ namespace Mentohub.Core.Services.Services
             return result;
         }
 
-        public IQueryable<Course> GetAuthorsCourses(Guid userId)
+        public List<CourseDTO> GetAuthorsCourses(string userId)
         {
-            throw new NotImplementedException();
+            var userID = MentoShyfr.Decrypt(userId);
+            var userCourses = _courseRepository.GetAll(x => x.AuthorId == userID).ToList();
+            var result = new List<CourseDTO>();
+
+            foreach(var course in userCourses)
+            {
+                result.Add(CourseMapper.ToDTO(course));
+            }
+
+            return result;
         }
 
         public List<CourseDTO> GetUserCourses(string userId)
@@ -278,6 +294,9 @@ namespace Mentohub.Core.Services.Services
                                            ?? throw new Exception("Course not found!");
 
             var result = CourseMapper.ToDTO(course);
+
+            result.LanguageList = _courseLanguageService.GetLanguagesList();
+            result.CourseLevelList = _courseLevelService.GetLevelsList();
 
             var courseView = await _courseViewsService.TryAddUserView(CourseID, UserID);
             if (courseView != null)
@@ -499,6 +518,36 @@ namespace Mentohub.Core.Services.Services
             authorInfoDTO.AvarageRating = averageRating;
 
             return authorInfoDTO;
+        }
+
+        public TagDTO ApplyCourseTag(int courseID, int tagID, string tagName, string userID)
+        {
+            var result = new TagDTO();
+            var currentUserId = MentoShyfr.Decrypt(userID);
+            var tag = _tagRepository.FirstOrDefault(x => x.ID == tagID);
+            if (tag == null)
+            {
+                tag = new Tag()
+                {
+                    Name = tagName,
+                    Enabled = true,
+                    Created = DateTime.Now,
+                    UserID = currentUserId
+                };
+
+                tag = _tagRepository.Add(tag);
+            }
+
+            CourseTag ct = new CourseTag()
+            {
+                ID = Guid.NewGuid(),
+                CourseID = courseID,
+                TagID = tag.ID
+            };
+
+            _courseTagRepository.Add(ct);
+
+            return CourseMapper.ToDTO(tag);
         }
     }
 }
