@@ -1,11 +1,14 @@
 ﻿using Mentohub.Core.Repositories.Interfaces;
+using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
+using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Mentohub.Domain.Data.DTO.Payment;
 using Mentohub.Domain.Data.Entities;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Data.Entities.Order;
+using Mentohub.Domain.Mappers;
 
 namespace Mentohub.Core.Services.Services.PaymentServices
 {
@@ -14,11 +17,14 @@ namespace Mentohub.Core.Services.Services.PaymentServices
         #pragma warning disable 8603
         private readonly IUserCourseRepository _userCourseRepository;
         private readonly ICRUD_UserRepository _cRUD_UserRepository;
+        private readonly ICourseRepository _courseRepository;
         public UserCourseService(IUserCourseRepository userCourseRepository,
-            ICRUD_UserRepository cRUD_UserRepository)
+            ICRUD_UserRepository cRUD_UserRepository,
+            ICourseRepository courseRepository)
         {
             _userCourseRepository = userCourseRepository;
             _cRUD_UserRepository= cRUD_UserRepository;
+            _courseRepository = courseRepository;
         }
 
         public UserCourse CreateUserCourse(UserCourseDTO data)
@@ -66,28 +72,20 @@ namespace Mentohub.Core.Services.Services.PaymentServices
         /// <param name="userId"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public ICollection<UserCourseDTO> GetUserCourses(string userId)
+        public ICollection<CourseDTO> GetUserCourses(string userId)
         {
             var userCourses = _userCourseRepository.GetUserCoursesByUserId(userId);
             if (userCourses.Count==0)
             {
                 throw new ArgumentNullException(nameof(userCourses), "The collection cannot be null.");
             }
-            var userCoursesDTO = new List<UserCourseDTO>();
+            var CoursesDTO = new List<CourseDTO>();
             foreach (var item in userCourses)
             {
-                userCoursesDTO.Add(new UserCourseDTO()
-                {
-                    Id = item.Id,
-                    CourseId = item.CourseId,
-                    OrderPaymentId = item.OrderPaymentId,
-                    OrderItemId = item.OrderItemId,
-                    UserId = item.UserId,
-                    Created = item.Created,
-                });
-            }
-           
-            return userCoursesDTO;
+                var course = _courseRepository.GetCourse(item.CourseId);
+                CoursesDTO.Add(CourseMapper.ToDTO(course));               
+            }           
+            return CoursesDTO;
         }
 
         /// <summary>
@@ -113,9 +111,9 @@ namespace Mentohub.Core.Services.Services.PaymentServices
                 }
                 var userDTO = new UserDTO()
                 {
-                    Id = item.UserId,
-                    Email = item.СurrentUser.Email,
+                    Id = item.UserId,                   
                 };
+                userDTO.Email=user.Email;
                 userDTO.FirstName = user.FirstName;
                 userDTO.LastName = user.LastName;
                 users.Add(userDTO);

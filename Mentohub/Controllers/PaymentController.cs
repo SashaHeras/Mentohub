@@ -173,11 +173,11 @@ namespace Mentohub.Controllers
         }
         [HttpPost]
         [Route("GetUsersByCourseId")]
-        public JsonResult GetUsers(int courseId)
+        public async Task<JsonResult> GetUsers(int courseId)
         {
             try
             {
-                var result = _useCourseService.GetUsers(courseId);
+                var result = await _useCourseService.GetUsers(courseId);
                 if (result == null)
                 {
                     return Json(new { IsError = false, Message = "Users does not exist" });

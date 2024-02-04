@@ -6,6 +6,7 @@ using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Interfaces.PaymentInterfaces;
 using Mentohub.Domain.Data.Entities.Order;
+using Mentohub.Domain.Helpers;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
@@ -22,7 +23,7 @@ namespace Mentohub.Controllers
         private readonly IOrderPaymantService _orderPaymantService;
         private readonly IOrderService _orderService;
         private readonly IAzureService _azureService;
-
+        private readonly ICurrencyService _currencyService;
         public HomeController(
             ILessonRepository lessonRepository,
             ICourseService courseService,
@@ -30,7 +31,8 @@ namespace Mentohub.Controllers
             ILiqpayService liqpayService,
             IOrderPaymantService orderPaymantService,
             IOrderService orderService,
-            IConfiguration config
+            IConfiguration config,
+            ICurrencyService currencyService
             )
         {
             _lessonRepository = lessonRepository;
@@ -40,6 +42,7 @@ namespace Mentohub.Controllers
             _orderPaymantService= orderPaymantService;
             _config = config;
             _orderService = orderService;
+            _currencyService = currencyService;
         }
 
         public IActionResult Index()
@@ -68,20 +71,19 @@ namespace Mentohub.Controllers
             };
 
             LiqPayResponse response = await liqpayClient.RequestAsync("request", invoiceRequest);
-            
+            var currency = _currencyService.GetCurrencyByCode("UAN");
+            var createOrder = new CreateOrderPayment();
             try
             {
                 //if (response.Status == LiqPayResponseStatus.Success)
-                {
+                {                  
                     var order = _orderService.GetOrder(orderID);
-                    order.Ordered = DateTime.Now;
-
+                    order.Ordered = DateTime.Now;       
+                    createOrder.OrderId=orderID;
+                    createOrder.CurrencyId=currency.ID;
+                    createOrder.Total=order.Total; 
+                    _orderPaymantService.CreateOrderPaymant(createOrder);
                     _orderService.UpdateOrder(order);
-
-                    decimal total = order.Total;
-
-                    await _orderPaymantService.CreateOrderPaymant(total, 1, orderID);
-
                     var model = _liqpayService.GenerateOrderPayModel(orderID);
 
                     return View("~/Views/Home/Index.cshtml", model);

@@ -1,4 +1,5 @@
 ﻿using Mentohub.Domain.Data.DTO;
+using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Mentohub.Domain.Data.DTO.Payment;
 using Mentohub.Domain.Data.Entities;
 using Mentohub.Domain.Data.Entities.CourseEntities;
@@ -14,7 +15,7 @@ namespace Mentohub.Core.Services.Interfaces
 
         UserCourse GetUserCourse(int id);
 
-        ICollection<UserCourseDTO> GetUserCourses(string userId);
+        ICollection<CourseDTO> GetUserCourses(string userId);
 
         Task<ICollection<UserDTO>> GetUsers(int courseId);
     }

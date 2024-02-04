@@ -4,7 +4,7 @@ using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
 using Mentohub.Core.Services.Interfaces.PaymentInterfaces;
 using Mentohub.Domain.Data.DTO.Payment;
 using Mentohub.Domain.Data.Entities.Order;
-
+using Mentohub.Domain.Helpers;
 
 namespace Mentohub.Core.Services.Services.PaymentServices
 {
@@ -28,15 +28,15 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             _orderRepository = orderRepository;
         }
 
-        public async Task<OrderPayment> CreateOrderPaymant(decimal total, int currencyID, string orderID)
+        public OrderPayment CreateOrderPaymant(CreateOrderPayment createOrder)
         {
-            var order = _orderRepository.FirstOrDefault(o => o.ID == orderID);
+            var order = _orderRepository.FirstOrDefault(o => o.ID == createOrder.OrderId);
             if(order == null)
             {
                 throw new Exception("Order does not exist");
             }
 
-            var orderItem = _orderItemRepository.GetAll().Where(o => o.OrderID == orderID).ToList();
+            var orderItem = _orderItemRepository.GetAll().Where(o => o.OrderID == createOrder.OrderId).ToList();
             if (orderItem.Count == 0)
             {
                 throw new Exception("OrderItem does not exist");
@@ -47,15 +47,14 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             {
                 ID = Guid.NewGuid().ToString(),
                 Created = DateTime.Now,
-                CurrencyID = currencyID,
-                OrderID = orderID,
-                UserCourses = new List<UserCourse>(),
-                Total = total,
+                CurrencyID = createOrder.CurrencyId,
+                OrderID = order.ID,
+                UserCourses = userCourses,
+                Total = createOrder.Total,
                 PaymentStatus = 1,
             };
 
             orderPayment = _orderPaymentRepository.AddOrderPayment(orderPayment);
-
             var currentUserCoursesNumber = _userCourseRepository.GetAll().Count();
             foreach (var item in orderItem)
             {               
@@ -68,14 +67,12 @@ namespace Mentohub.Core.Services.Services.PaymentServices
                     UserId = order.UserID,
                     OrderPaymentId = orderPayment.ID
                 };
-
                 userCourses.Add(userCourse);
             }
-
             _userCourseRepository.AddList(userCourses);
-            var result = _orderPaymentRepository.FirstOrDefault(x => x.ID == orderPayment.ID);
-            
-            return result;
+            orderPayment.UserCourses= userCourses;
+            _orderPaymentRepository.UpdateOrderPayment(orderPayment);            
+            return orderPayment;
         }
 
         public bool DeleteOrderPayment(string id)
@@ -85,7 +82,6 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             {
                 throw new ArgumentNullException(nameof(order), "The Order does not exist");
             }
-
             _orderPaymentRepository.DeleteOrderPayment(order);
             return true;
         }
