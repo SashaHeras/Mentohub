@@ -126,5 +126,25 @@ namespace Mentohub.Domain.Mappers
                 Description = overview.Description,
             };
         }
+        public static CourseDTO ToUserCourseDTO(Course course)
+        {
+            return new CourseDTO()
+            {
+                Id = course.Id,
+                AuthorId = course.AuthorId.ToString(),
+                Name = course.Name,
+                PicturePath = course.PicturePath,
+                PreviewVideoPath = course.PreviewVideoPath,
+                Checked = course.Checked,
+                Rating = course.Rating,
+                ShortDescription = course.ShortDescription,
+                Description = course.Description,
+                Price = course.Price,
+                CourseSubjectId = course.CourseSubjectId,
+              
+                AuthorName = course.Author.LastName + " " + course.Author.FirstName.Remove(1).ToString() + ".",
+                
+            };
+        }
     }
 }

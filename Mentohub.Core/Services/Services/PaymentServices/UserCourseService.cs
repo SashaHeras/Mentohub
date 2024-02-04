@@ -8,6 +8,7 @@ using Mentohub.Domain.Data.DTO.Payment;
 using Mentohub.Domain.Data.Entities;
 using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Data.Entities.Order;
+using Mentohub.Domain.Helpers;
 using Mentohub.Domain.Mappers;
 
 namespace Mentohub.Core.Services.Services.PaymentServices
@@ -18,13 +19,16 @@ namespace Mentohub.Core.Services.Services.PaymentServices
         private readonly IUserCourseRepository _userCourseRepository;
         private readonly ICRUD_UserRepository _cRUD_UserRepository;
         private readonly ICourseRepository _courseRepository;
+        private readonly IOrderRepository _orderRepository;
         public UserCourseService(IUserCourseRepository userCourseRepository,
             ICRUD_UserRepository cRUD_UserRepository,
-            ICourseRepository courseRepository)
+            ICourseRepository courseRepository,
+            IOrderRepository orderRepository)
         {
             _userCourseRepository = userCourseRepository;
             _cRUD_UserRepository= cRUD_UserRepository;
             _courseRepository = courseRepository;
+            _orderRepository = orderRepository;
         }
 
         public UserCourse CreateUserCourse(UserCourseDTO data)
@@ -75,9 +79,10 @@ namespace Mentohub.Core.Services.Services.PaymentServices
         public ICollection<CourseDTO> GetUserCourses(string userId)
         {
             var userCourses = _userCourseRepository.GetUserCoursesByUserId(userId);
-            if (userCourses.Count==0)
+            var orders=_orderRepository.GetAll(o => o.UserID == userId);
+            if (orders.Count()==0 && userCourses.Count==0)
             {
-                throw new ArgumentNullException(nameof(userCourses), "The collection cannot be null.");
+                throw new ArgumentNullException(nameof(userCourses), "This user has not purchased any courses.");
             }
             var CoursesDTO = new List<CourseDTO>();
             foreach (var item in userCourses)
@@ -99,7 +104,7 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             var userCourses = _userCourseRepository.GetUserCoursesByCourseId(courseId);
             if (userCourses.Count==0)
             {
-                throw new ArgumentNullException(nameof(userCourses), "The collection cannot be null.");
+                throw new ArgumentNullException(nameof(userCourses), "This course has never been taken.");
             }
             var users = new List<UserDTO>();
             foreach (var item in userCourses)

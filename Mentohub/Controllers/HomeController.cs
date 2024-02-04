@@ -71,11 +71,12 @@ namespace Mentohub.Controllers
             };
 
             LiqPayResponse response = await liqpayClient.RequestAsync("request", invoiceRequest);
+            //LiqPayResponse response = liqPayApi.SendPaymentRequest(invoiceRequest);
             var currency = _currencyService.GetCurrencyByCode("UAN");
             var createOrder = new CreateOrderPayment();
             try
             {
-                //if (response.Status == LiqPayResponseStatus.Success)
+               if (response.Status == LiqPayResponseStatus.Sandbox)
                 {                  
                     var order = _orderService.GetOrder(orderID);
                     order.Ordered = DateTime.Now;       
@@ -88,17 +89,17 @@ namespace Mentohub.Controllers
 
                     return View("~/Views/Home/Index.cshtml", model);
                 }
-                //if (response.Status == LiqPayResponseStatus.Error)
-                //{
-                //    return Json(new { IsError = true, Message= "An unforeseen error occurred" });
-                //}
+                if (response.Status == LiqPayResponseStatus.Error)
+                {
+                    return Json(new { IsError = true, Message = "An unforeseen error occurred" });
+                }
             }
             catch(Exception ex)
             {
                     return Json(new { IsError = true, ex.Message });
             }
-               
-            return Json(new { IsError = true, Message= "The payment was unsuccessful" });
+
+            return Json(new { IsError = true, Message = "The payment was unsuccessful" });
 
         }
 
