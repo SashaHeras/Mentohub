@@ -111,7 +111,6 @@ internal class Program
         builder.Services.AddScoped<ICourseSubjectService, CourseSubjectService>();
         builder.Services.AddScoped<ICourseLanguageService, CourseLanguageService>();
         builder.Services.AddTransient<IEmailSender, EmailSender>();
-        builder.Services.AddHttpClient<IPrivatBankService, PrivatBankService>();
         builder.Services.AddScoped<IOrderService, OrderService>();
         builder.Services.AddScoped<IUserCourseService, UserCourseService>();
         builder.Services.AddScoped<IOrderItemSevice, OrderItemSevice>();

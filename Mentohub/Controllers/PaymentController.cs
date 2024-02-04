@@ -3,7 +3,6 @@ using Mentohub.Core.Services.Interfaces.PaymentInterfaces;
 using Mentohub.Core.Services.Services.PaymentServices;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities.Order;
-using Mentohub.Domain.PayMentAlla;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Transactions;
@@ -27,20 +26,6 @@ namespace Mentohub.Controllers
             _orderPaymentService = orderPaymentService;
             _useCourseService = useCourseService;
         }
-
-        //[HttpPost("makePayment")]
-        //public async Task<IActionResult> MakePayment([FromBody] PrivatBankRequest paymentRequest)
-        //{
-        //    try
-        //    {
-        //        var paymentResult = await _privatBankService.MakePaymentAsync(paymentRequest);
-        //        return Ok(paymentResult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new { error = ex.Message });
-        //    }
-        //}
 
         [HttpPost]
         [Route("CreateOrder")]
