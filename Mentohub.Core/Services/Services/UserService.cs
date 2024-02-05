@@ -249,6 +249,7 @@ namespace Mentohub.Core.Services.Services
             currentUser.FirstName = userDTO.FirstName;
             currentUser.LastName = userDTO.LastName;
             currentUser.AboutMe = userDTO.AboutMe;
+            currentUser.PhoneNumber = userDTO.PhoneNumber;
 
             // Перевірка, чи користувач успадковується від IdentityUser
             // Якщо так, то оновити дату народження
