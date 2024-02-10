@@ -4,6 +4,7 @@ using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Microsoft.AspNetCore.Cors;
 using Mentohub.Domain.Filters;
 using Mentohub.Domain.Data.DTO.ResultDTO;
+using Mentohub.Core.Services.Services;
 
 namespace Mentohub.Controllers
 {
@@ -203,6 +204,12 @@ namespace Mentohub.Controllers
         public async Task<JsonResult> GetUserBoughtCourses([FromForm] string userID)
         {
             return Json(_courseService.GetUsersBoughtCourses(userID));
+        }
+
+        [HttpPost]
+        public JsonResult GetBlockItems([FromForm] int blockID)
+        {
+            return Json(_courseService.GetBlockElements(blockID));
         }
     }
 }

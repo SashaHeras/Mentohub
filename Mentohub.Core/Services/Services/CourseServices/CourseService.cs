@@ -28,6 +28,7 @@ namespace Mentohub.Core.Services.Services
         private readonly ICommentRepository _commentRepository;
         private readonly ICourseLanguageRepository _courseLanguageRepository;
         private readonly ICourseLevelRepository _courseLevelRepository;
+        private readonly ICourseBlockRepository _courseBlockRepository;
         private readonly ICRUD_UserRepository _cRUD_UserRepository;
 
         private readonly IMediaService _mediaService;
@@ -51,6 +52,7 @@ namespace Mentohub.Core.Services.Services
             ICourseLevelRepository courseLevelRepository,
             ICourseSubjectService courseSubjectService,
             ICourseLanguageService courseLanguageService,
+            ICourseBlockRepository courseBlockRepository,
             ICourseLevelService courseLevelService,
             ICRUD_UserRepository cRUD_UserRepository)
 
@@ -62,6 +64,7 @@ namespace Mentohub.Core.Services.Services
             _testRepository = testRepository;
             _courseViewsService = courseViewsService;
             _mediaService = mediaService;
+            _courseBlockRepository = courseBlockRepository;
             _tagRepository = tagRepository;
             _courseTagRepository = courseTagRepository;
             _subjectRepository = subjectRepository;
@@ -199,67 +202,14 @@ namespace Mentohub.Core.Services.Services
 
                 if (justFirstBlock == false)
                 {
-                    foreach (var item in block.CourseItems)
-                    {
-                        if (item.Lesson != null)
-                        {
-                            blockDTO.CourseItems.Add(new CourseElementDTO()
-                            {
-                                ElementName = item.Lesson.Theme,
-                                DateCreation = item.DateCreation,
-                                OrderNumber = item.OrderNumber,
-                                CourseId = item.CourseId,
-                                TypeId = (int)e_ItemType.Lesson,
-                                CourseItemId = item.id
-                            });
-                        }
-                        else if (item.Test != null)
-                        {
-                            blockDTO.CourseItems.Add(new CourseElementDTO()
-                            {
-                                ElementName = item.Test.Name,
-                                DateCreation = item.DateCreation,
-                                OrderNumber = item.OrderNumber,
-                                CourseId = item.CourseId,
-                                TypeId = (int)e_ItemType.Test,
-                                CourseItemId = item.id
-                            });
-                        }
-                    }
-
+                    blockDTO.CourseItems = GetBlockElements(block);
                     result.Add(blockDTO);
                 }
                 else
                 {
                     if (feelItems == true)
                     {
-                        foreach (var item in block.CourseItems)
-                        {
-                            if (item.Lesson != null)
-                            {
-                                blockDTO.CourseItems.Add(new CourseElementDTO()
-                                {
-                                    ElementName = item.Lesson.Theme,
-                                    DateCreation = item.DateCreation,
-                                    OrderNumber = item.OrderNumber,
-                                    CourseId = item.CourseId,
-                                    TypeId = (int)e_ItemType.Lesson,
-                                    CourseItemId = item.id
-                                });
-                            }
-                            else if (item.Test != null)
-                            {
-                                blockDTO.CourseItems.Add(new CourseElementDTO()
-                                {
-                                    ElementName = item.Test.Name,
-                                    DateCreation = item.DateCreation,
-                                    OrderNumber = item.OrderNumber,
-                                    CourseId = item.CourseId,
-                                    TypeId = (int)e_ItemType.Test,
-                                    CourseItemId = item.id
-                                });
-                            }
-                        }
+                        blockDTO.CourseItems = GetBlockElements(block);
                     }
 
                     result.Add(blockDTO);
@@ -269,6 +219,46 @@ namespace Mentohub.Core.Services.Services
 
             return result;
         }
+
+        public List<CourseElementDTO> GetBlockElements(int ID)
+        {
+            var block = _courseBlockRepository.FirstOrDefault(x => x.ID == ID);
+            return GetBlockElements(block);
+        }
+
+        private List<CourseElementDTO> GetBlockElements(CourseBlock block)
+        {
+            var blockDTO = CourseMapper.ToDTO(block);
+            foreach (var item in block.CourseItems)
+            {
+                if (item.Lesson != null)
+                {
+                    blockDTO.CourseItems.Add(new CourseElementDTO()
+                    {
+                        ElementName = item.Lesson.Theme,
+                        DateCreation = item.DateCreation,
+                        OrderNumber = item.OrderNumber,
+                        CourseId = item.CourseId,
+                        TypeId = (int)e_ItemType.Lesson,
+                        CourseItemId = item.id
+                    });
+                }
+                else if (item.Test != null)
+                {
+                    blockDTO.CourseItems.Add(new CourseElementDTO()
+                    {
+                        ElementName = item.Test.Name,
+                        DateCreation = item.DateCreation,
+                        OrderNumber = item.OrderNumber,
+                        CourseId = item.CourseId,
+                        TypeId = (int)e_ItemType.Test,
+                        CourseItemId = item.id
+                    });
+                }
+            }
+
+            return blockDTO.CourseItems;
+        } 
 
         public List<CommentDTO> GetCourseComments(int courseID, int count = 10)
         {

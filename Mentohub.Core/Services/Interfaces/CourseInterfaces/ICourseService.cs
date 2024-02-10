@@ -13,6 +13,8 @@ namespace Mentohub.Core.Services.Interfaces
 
         List<CourseBlockDTO> GetCourseElements(int Id, bool justFirstBlock = false);
 
+        public List<CourseElementDTO> GetBlockElements(int ID);
+
         List<CommentDTO> GetCourseComments(int courseID, int count = 10);
 
         Task<CourseDTO> Apply(CourseDTO courseDTO);

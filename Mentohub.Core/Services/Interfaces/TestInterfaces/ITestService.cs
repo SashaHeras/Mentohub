@@ -17,5 +17,7 @@ namespace Mentohub.Core.Services.Interfaces
         Task<PassTestResultDTO> ApplyTestResult(PassTestDTO data);
 
         TestDTO GetTestModel(int courseItemId);
+
+        void Delete(int ID);
     }
 }
