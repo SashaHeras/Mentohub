@@ -7,7 +7,7 @@ using Mentohub.Domain.Data.Entities.Order;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface IUserCourseService
+    public interface IUserCourseService : IService
     {
         UserCourse CreateUserCourse(UserCourseDTO data);
 

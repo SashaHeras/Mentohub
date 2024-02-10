@@ -4,7 +4,7 @@ using Mentohub.Domain.Entities;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface ITestService
+    public interface ITestService : IService
     {
         Test GetTest(int id);
 

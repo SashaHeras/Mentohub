@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface IMediaService
+    public interface IMediaService : IService
     {
         Task<string> SaveMedia(IFormFile? file, CourseDTO course);
 

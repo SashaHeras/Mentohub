@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface IQueueService
+    public interface IService
     {
-        Task SendMessageAsync(string message);
     }
 }

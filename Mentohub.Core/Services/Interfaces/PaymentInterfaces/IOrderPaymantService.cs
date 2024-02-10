@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Interfaces.PaymentInterfaces
 {
-    public interface IOrderPaymantService
+    public interface IOrderPaymantService : IService
     {
         ICollection<OrderPaymentDTO> GetOrderPayments(string id);
 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface IAzureService
+    public interface IAzureService : IService
     {
         Task<string> SaveInAsync(IFormFile file);
 

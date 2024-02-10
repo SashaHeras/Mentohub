@@ -7,11 +7,11 @@ using static Mentohub.Core.Services.Services.CourseService;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface ICourseService
+    public interface ICourseService : IService
     {
         List<CourseDTO> GetAuthorsCourses(string userId);
 
-        List<CourseElementDTO> GetCourseElements(int id);
+        List<CourseBlockDTO> GetCourseElements(int Id, bool justFirstBlock = false);
 
         List<CommentDTO> GetCourseComments(int courseID, int count = 10);
 

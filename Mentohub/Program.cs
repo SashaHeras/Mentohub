@@ -19,10 +19,9 @@ using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Repositories.Repositories.CourseRepositories;
 using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
 using Mentohub.Core.Repositories.Repositories.PaymentRepository;
-using Mentohub.Core.Services.Services.PaymentServices;
 using Mentohub.Core.Repositories.Repositories.PaymentRepositories;
-using Mentohub.Core.Services.Interfaces.PaymentInterfaces;
-using Microsoft.Owin.Cors;
+using Mentohub.Core.Services.Extentions;
+using System.Reflection;
 
 internal class Program
 {
@@ -61,6 +60,7 @@ internal class Program
         #region Repository DI
 
         builder.Services.AddScoped<IAnswerHistoryRepository, AnswerHistoryRepository>();
+        builder.Services.AddScoped<ICourseItemTypeRepository, CourseItemTypeRepository > ();
         builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
         builder.Services.AddScoped<ICourseItemRepository, CourseItemRepository>();
         builder.Services.AddScoped<ICourseRepository, CourseRepository>();
@@ -91,32 +91,9 @@ internal class Program
 
         #region Service DI
 
-        builder.Services.AddScoped<IAnswerHistoryService, AnswerHistoryService>();
-        builder.Services.AddScoped<IAnswerService, AnswerService>();
-        builder.Services.AddScoped<IAzureService, AzureService>();
-        builder.Services.AddScoped<ICourseItemService, CourseItemService>();
-        builder.Services.AddScoped<ICourseService, CourseService>();
-        builder.Services.AddScoped<ICommentService, CommentService>();
-        builder.Services.AddScoped<ILessonService, LessonService>();
-        builder.Services.AddScoped<IMediaService, MediaService>();
-        builder.Services.AddScoped<ITaskHistoryService, TaskHistoryService>();
-        builder.Services.AddScoped<ITaskService, TaskService>();
-        builder.Services.AddScoped<ITestHistoryService, TestHistoryService>();
-        builder.Services.AddScoped<ITestService, TestService>();
-        builder.Services.AddScoped<IUserService, UserService>();
-        builder.Services.AddScoped<ICourseViewService, CourseViewService>();
-        builder.Services.AddScoped<ICourseBlockService, CourseBlockService>();
-        builder.Services.AddScoped<IOverviewService, OverviewService>();
-        builder.Services.AddScoped<ICourseLevelService, CourseLevelService>();
-        builder.Services.AddScoped<ICourseSubjectService, CourseSubjectService>();
-        builder.Services.AddScoped<ICourseLanguageService, CourseLanguageService>();
+        var domainAssembly = Assembly.Load("Mentohub.Core");
         builder.Services.AddTransient<IEmailSender, EmailSender>();
-        builder.Services.AddScoped<IOrderService, OrderService>();
-        builder.Services.AddScoped<IUserCourseService, UserCourseService>();
-        builder.Services.AddScoped<IOrderItemSevice, OrderItemSevice>();
-        builder.Services.AddScoped<IOrderPaymantService, OrderPaymantService>();
-        builder.Services.AddScoped<ICurrencyService, CurrencyService>();
-        builder.Services.AddScoped<ILiqpayService, LiqpayService>();        
+        builder.Services.AddServices(domainAssembly);     
 
         #endregion
 

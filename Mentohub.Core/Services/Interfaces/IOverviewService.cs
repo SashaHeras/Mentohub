@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface IOverviewService
+    public interface IOverviewService : IService
     {
         public CourseOverviewDTO Apply(CourseOverviewDTO data);
 

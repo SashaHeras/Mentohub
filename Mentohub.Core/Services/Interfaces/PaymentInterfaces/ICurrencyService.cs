@@ -8,7 +8,7 @@ using Currency = Mentohub.Domain.Data.Entities.Order.Currency;
 
 namespace Mentohub.Core.Services.Interfaces.PaymentInterfaces
 {
-    public interface ICurrencyService
+    public interface ICurrencyService : IService
     {
         CurrencyDTO GetCurrency(int id);
 

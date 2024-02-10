@@ -3,7 +3,7 @@ using Mentohub.Domain.Entities;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface IAnswerService
+    public interface IAnswerService : IService
     {
         void RemoveAnswers(IQueryable<TaskAnswer> answers);
 

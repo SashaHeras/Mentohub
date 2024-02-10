@@ -1,5 +1,6 @@
 ﻿using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
+using Mentohub.Core.Repositories.Repositories.CourseRepositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.Entities.CourseEntities;
@@ -19,6 +20,7 @@ namespace Mentohub.Core.Services.Services
 
         private readonly ICourseRepository _courseRepository;
         private readonly ICourseItemRepository _courseItemRepository;
+        private readonly ICourseItemTypeRepository _courseItemTypeRepository;
         private readonly ICourseBlockRepository _courseBlockRepository;
 
         public LessonService(
@@ -29,6 +31,7 @@ namespace Mentohub.Core.Services.Services
             ICourseItemRepository courseItemRepository,
             IAzureService azureService,
             ICourseItemService courseItemService,
+            ICourseItemTypeRepository courseItemTypeRepository,
             ICourseBlockRepository courseBlockRepository)
         {
             _lessonRepository = lessonRepository;
@@ -39,6 +42,7 @@ namespace Mentohub.Core.Services.Services
             _azureService = azureService;
             _courseItemService = courseItemService;
             _courseBlockRepository = courseBlockRepository;
+            _courseItemTypeRepository = courseItemTypeRepository;
         }
 
         public async Task<int> Edit(IFormCollection form, Lesson lesson)
@@ -65,7 +69,7 @@ namespace Mentohub.Core.Services.Services
         public LessonDTO GetLesson(Guid id)
         {           
             var lesson = _lessonRepository.GetLessonById(id);
-            var courseItem = _courseItemRepository.FirstOrDefault(y => y.Id == lesson.CourseItemId);
+            var courseItem = _courseItemRepository.FirstOrDefault(y => y.id == lesson.CourseItemId);
             var course = _courseRepository.FirstOrDefault(x => x.Id == courseItem.CourseId);
 
             LessonDTO result = new LessonDTO()
@@ -137,7 +141,6 @@ namespace Mentohub.Core.Services.Services
 
                     CourseItem newCourseItem = new CourseItem()
                     {
-                        TypeId = (int)e_ItemType.Lesson,
                         StatusId = (int)e_ItemStatus.OK,
                         DateCreation = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
                         OrderNumber = countCurrentElements + 1,
@@ -151,12 +154,12 @@ namespace Mentohub.Core.Services.Services
 
                     _courseItemRepository.Add(newCourseItem);
 
-                    newLesson.CourseItemId = newCourseItem.Id;
+                    newLesson.CourseItemId = newCourseItem.id;
 
                     _lessonRepository.Add(newLesson);
 
                     lesson.Id = newLesson.Id;
-                    lesson.CourseItemId = newCourseItem.Id;
+                    lesson.CourseItemId = newCourseItem.id;
                 }
                 catch(Exception ex)
                 {
@@ -164,6 +167,8 @@ namespace Mentohub.Core.Services.Services
                     {
                         await _mediaService.DeleteFile(lesson.VideoPath);
                     }
+
+                    throw ex;
                 }
             }
             else
@@ -203,7 +208,7 @@ namespace Mentohub.Core.Services.Services
         public void Delete(Guid id)
         {
             var lesson = _lessonRepository.FirstOrDefault(x => x.Id == id);
-            var courseItem = _courseItemRepository.FirstOrDefault(x => x.Id == lesson.CourseItemId);
+            var courseItem = _courseItemRepository.FirstOrDefault(x => x.id == lesson.CourseItemId);
             courseItem.StatusId = (int)e_ItemStatus.DELETED;
 
             _courseItemRepository.Update(courseItem);
