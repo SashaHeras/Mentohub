@@ -18,22 +18,23 @@ namespace Mentohub.Tests
     public class UserControllerTests
     {
         private readonly UserController _controller;
-        Mock <ILogger<UserController>> _loggerMoq=new Mock<ILogger<UserController>>();
-        Mock <AllException> _exceptionMoq=new Mock<AllException>();
-        Mock <IUserService> _userServiceMoq=new Mock<IUserService>();
-        Mock <ICRUD_UserRepository> _cRUDMoq=new Mock<ICRUD_UserRepository>();
-        Mock <ICourseService> _courseServiceMoq=new Mock<ICourseService>();
+        Mock<ILogger<UserController>> _loggerMoq = new Mock<ILogger<UserController>>();
+        Mock<AllException> _exceptionMoq = new Mock<AllException>();
+        Mock<IUserService> _userServiceMoq = new Mock<IUserService>();
+        Mock<ICRUD_UserRepository> _cRUDMoq = new Mock<ICRUD_UserRepository>();
+        Mock<ICourseService> _courseServiceMoq = new Mock<ICourseService>();
 
         public UserControllerTests()
         {
             _controller = new UserController(
-             _loggerMoq.Object,
-            _userServiceMoq.Object,
-            _exceptionMoq.Object,
-            _cRUDMoq.Object,
-            _courseServiceMoq.Object
+                _loggerMoq.Object,
+                _userServiceMoq.Object,
+                _exceptionMoq.Object,
+                _cRUDMoq.Object,
+                _courseServiceMoq.Object
             );           
         }
+
         [Fact]
         public async Task Delete_User_Returns_JsonResult()
         {
@@ -43,6 +44,7 @@ namespace Mentohub.Tests
             Assert.NotNull(result);
             Assert.Equal(404, statusCode);
         }
+
         [Fact]
         public async Task Get_UserProfile_Returns_JsonResult()
         {
@@ -52,11 +54,13 @@ namespace Mentohub.Tests
             Assert.NotNull(result);
             Assert.Equal(404, statusCode);
         }
+
         [Fact]
         public async Task UpDate_UserProfile_Returns_JsonResult()
         {
             var userId404 = "CE1RBVsMEAZLXkRVBxRSF1BMSA8AWxBJA10UDVQBUhBaQQYO";
             var userId200 = "05b30034-6b07-4251-a20a-4a5e2ce91d84";
+
             var userDTO = new UserDTO()
             {
                 Id = userId200,
@@ -69,6 +73,7 @@ namespace Mentohub.Tests
                 UserRoles = null,
                 EncryptedID= "WUAHBQgIRVBLDhQEUxRSRFxESFcKCBdJUllDUVZaA09YEV0C",
             };
+
             var result = await _controller.UpdateUser(userDTO) as JsonResult;
             var statusCode = result.StatusCode;
             Assert.NotNull(result);

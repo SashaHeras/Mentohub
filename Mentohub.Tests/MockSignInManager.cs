@@ -1,11 +1,6 @@
 ﻿using Mentohub.Domain.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Mentohub.Tests
 {
@@ -16,8 +11,8 @@ namespace Mentohub.Tests
         public MockSignInManager(Mock<SignInManager<CurrentUser>> mock)
         {
             _mock = mock;
-           
         }
+
         public Task<SignInResult> PasswordSignInAsync(string userName, string password, bool isPersistent, bool lockoutOnFailure)
         {
             return Task.FromResult(SignInResult.Success);
@@ -38,5 +33,4 @@ namespace Mentohub.Tests
             return _mock;
         }
     }
-
 }
