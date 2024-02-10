@@ -328,26 +328,36 @@ namespace Mentohub.Core.Services.Services
             return result;
         }
 
-        public async Task<CourseDTO> ViewCourse(int CourseID, string UserID)
+        public async Task<CourseDTO> ViewCourse(int CourseID, string? UserID)
         {
-            var userID = MentoShyfr.Decrypt(UserID);
+            var userID = UserID != null ? MentoShyfr.Decrypt(UserID) : string.Empty;
             var user = await _cRUD_UserRepository.FindCurrentUserById(userID);
             var course = _courseRepository.FirstOrDefault(x => x.Id == CourseID)
                                            ?? throw new Exception("Course not found!");
 
             var result = CourseMapper.ToDTO(course);
-            result.IsBoughtByUser = user.UserCourses?.Any(x => x.CourseId == CourseID) ?? false;
+            if(user == null)
+            {
+                result.IsBoughtByUser = false;
+            }
+            else
+            {
+                result.IsBoughtByUser = user.UserCourses?.Any(x => x.CourseId == CourseID) ?? false;
+            }
 
             result.LanguageList = _courseLanguageService.GetLanguagesList();
             result.CourseLevelList = _courseLevelService.GetLevelsList();
 
-            var courseView = await _courseViewsService.TryAddUserView(CourseID, UserID);
-            if (courseView != null)
+            if (user != null)
             {
-                course.CourseViews = course.CourseViews == null ? new List<CourseViews>() : course.CourseViews;
+                var courseView = await _courseViewsService.TryAddUserView(CourseID, UserID);
+                if (courseView != null)
+                {
+                    course.CourseViews = course.CourseViews == null ? new List<CourseViews>() : course.CourseViews;
 
-                course.CourseViews.Add(courseView);
-                _courseRepository.Update(course);
+                    course.CourseViews.Add(courseView);
+                    _courseRepository.Update(course);
+                }
             }
 
             result.CourseViews = course.CourseViews.Count;

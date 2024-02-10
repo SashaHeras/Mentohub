@@ -65,7 +65,7 @@ namespace Mentohub.Controllers
         /// <param name="UserID"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> ViewCourse(int CourseID, string UserID)
+        public async Task<JsonResult> ViewCourse(int CourseID, string? UserID = null)
         {
             try
             {
