@@ -11,7 +11,7 @@ namespace Mentohub.Core.Services.Interfaces
     {
         List<CourseDTO> GetAuthorsCourses(string userId);
 
-        List<CourseElementDTO> GetCourseElements(int id);
+        List<CourseBlockDTO> GetCourseElements(int Id, bool justFirstBlock = false);
 
         List<CommentDTO> GetCourseComments(int courseID, int count = 10);
 

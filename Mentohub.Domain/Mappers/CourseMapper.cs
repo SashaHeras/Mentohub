@@ -91,6 +91,8 @@ namespace Mentohub.Domain.Mappers
                 Name = block.Name,
                 CourseID = block.CourseID,
                 OrderNumber = block.OrderNumber,
+                LessonsCount = block.CourseItems.Where(x=>x.Lesson != null).Count(),
+                TestCount = block.CourseItems.Where(x => x.Test != null).Count(),
                 ID = block.ID,
                 CourseItems = new List<CourseElementDTO>()
             };

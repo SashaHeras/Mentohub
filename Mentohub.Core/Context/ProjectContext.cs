@@ -72,7 +72,7 @@ namespace Mentohub.Core.Context
             modelBuilder.Entity<Lesson>().HasKey(x => x.Id);
             modelBuilder.Entity<Course>().HasKey(c => c.Id);
             modelBuilder.Entity<Test>().HasKey(c => c.Id);
-            modelBuilder.Entity<CourseItem>().HasKey(c => c.Id);
+            modelBuilder.Entity<CourseItem>().HasKey(c => c.id);
             modelBuilder.Entity<TaskAnswer>().HasKey(c => c.Id);
             modelBuilder.Entity<TestTask>().HasKey(c => c.Id);
             modelBuilder.Entity<AnswerHistory>().HasKey(c => c.Id);

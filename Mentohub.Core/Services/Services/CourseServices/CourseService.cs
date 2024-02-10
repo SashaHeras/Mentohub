@@ -1,7 +1,6 @@
 ﻿using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
-using Mentohub.Core.Repositories.Repositories.CourseRepositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Data.DTO.CourseDTOs;
@@ -186,46 +185,87 @@ namespace Mentohub.Core.Services.Services
         /// <returns>
         /// Elements list in Json format
         /// </returns>
-        public List<CourseElementDTO> GetCourseElements(int Id)
+        public List<CourseBlockDTO> GetCourseElements(int Id, bool justFirstBlock = false)
         {
-            var result = new List<CourseElementDTO>();
+            var result = new List<CourseBlockDTO>();
             var course = _courseRepository.FirstOrDefault(x => x.Id == Id)
                                            ?? throw new Exception("Course not found");
 
-            var courseItemsIDs = course.CourseItems.Select(x => x.Id).ToList();
-            var tests = _testRepository.GetAll(x => courseItemsIDs.Contains(x.CourseItemId)).ToList();
-            var lessons = _lessonRepository.GetAll(x => courseItemsIDs.Contains(x.CourseItemId)).ToList();
-
-            if (tests.Count != 0 || lessons.Count != 0)
+            var items = course.CourseBlocks.OrderBy(x => x.ID);
+            bool feelItems = true;
+            foreach(var block in items)
             {
-                foreach (var t in tests)
-                {
-                    result.Add(new CourseElementDTO()
-                    {
-                        CourseItemId = t.CourseItemId,
-                        TypeId = (int)e_ItemType.Test,
-                        CourseId = course.Id,
-                        DateCreation = t.CourseItem.DateCreation,
-                        OrderNumber = t.CourseItem.OrderNumber,
-                        ElementName = t.Name
-                    });
-                }
+                CourseBlockDTO blockDTO = CourseMapper.ToDTO(block);
 
-                foreach (var l in lessons)
+                if (justFirstBlock == false)
                 {
-                    result.Add(new CourseElementDTO()
+                    foreach (var item in block.CourseItems)
                     {
-                        CourseItemId = l.CourseItemId,
-                        TypeId = (int)e_ItemType.Lesson,
-                        CourseId = course.Id,
-                        DateCreation = l.CourseItem.DateCreation,
-                        OrderNumber = l.CourseItem.OrderNumber,
-                        ElementName = l.Theme
-                    });
+                        if (item.Lesson != null)
+                        {
+                            blockDTO.CourseItems.Add(new CourseElementDTO()
+                            {
+                                ElementName = item.Lesson.Theme,
+                                DateCreation = item.DateCreation,
+                                OrderNumber = item.OrderNumber,
+                                CourseId = item.CourseId,
+                                TypeId = (int)e_ItemType.Lesson,
+                                CourseItemId = item.id
+                            });
+                        }
+                        else if (item.Test != null)
+                        {
+                            blockDTO.CourseItems.Add(new CourseElementDTO()
+                            {
+                                ElementName = item.Test.Name,
+                                DateCreation = item.DateCreation,
+                                OrderNumber = item.OrderNumber,
+                                CourseId = item.CourseId,
+                                TypeId = (int)e_ItemType.Test,
+                                CourseItemId = item.id
+                            });
+                        }
+                    }
+
+                    result.Add(blockDTO);
+                }
+                else
+                {
+                    if (feelItems == true)
+                    {
+                        foreach (var item in block.CourseItems)
+                        {
+                            if (item.Lesson != null)
+                            {
+                                blockDTO.CourseItems.Add(new CourseElementDTO()
+                                {
+                                    ElementName = item.Lesson.Theme,
+                                    DateCreation = item.DateCreation,
+                                    OrderNumber = item.OrderNumber,
+                                    CourseId = item.CourseId,
+                                    TypeId = (int)e_ItemType.Lesson,
+                                    CourseItemId = item.id
+                                });
+                            }
+                            else if (item.Test != null)
+                            {
+                                blockDTO.CourseItems.Add(new CourseElementDTO()
+                                {
+                                    ElementName = item.Test.Name,
+                                    DateCreation = item.DateCreation,
+                                    OrderNumber = item.OrderNumber,
+                                    CourseId = item.CourseId,
+                                    TypeId = (int)e_ItemType.Test,
+                                    CourseItemId = item.id
+                                });
+                            }
+                        }
+                    }
+
+                    result.Add(blockDTO);
+                    feelItems = false;
                 }
             }
-
-            result = result.OrderBy(x => x.OrderNumber).ToList();
 
             return result;
         }
@@ -322,7 +362,7 @@ namespace Mentohub.Core.Services.Services
                    Name = x.Name
                }).ToList();
 
-            course.CourseElementsList = GetCourseElements(course.Id);
+            course.CourseElementsList = GetCourseElements(course.Id, true);
         }
 
         public List<CourseDTO> MostFamoustList()
@@ -351,8 +391,8 @@ namespace Mentohub.Core.Services.Services
             var course = _courseRepository.FirstOrDefault(x => x.Id == ID)
                                            ?? throw new Exception("Unknown course!");
 
-            var itemsIdList = course.CourseItems.Select(x => x.Id).ToList();
-            var courseItems = _courseItemRepository.GetAll(x => itemsIdList.Contains(x.Id))
+            var itemsIdList = course.CourseItems.Select(x => x.id).ToList();
+            var courseItems = _courseItemRepository.GetAll(x => itemsIdList.Contains(x.id))
                                                    .Include(x => x.Test)
                                                    .Include(x => x.Lesson)
                                                    .ToList();

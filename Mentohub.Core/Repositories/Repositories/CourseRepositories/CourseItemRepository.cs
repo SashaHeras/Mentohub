@@ -23,7 +23,7 @@ namespace Mentohub.Core.Repositories.Repositories.CourseRepositories
         /// <returns></returns>
         public CourseItem GetCourseItemById(int? courseItemId)
         {
-            return GetAll().Where(ci => ci.Id == courseItemId)
+            return GetAll().Where(ci => ci.id == courseItemId)
                            .Include(x => x.Lesson)
                            .Include(x => x.Test)
                            .Include(x => x.Course)

@@ -67,6 +67,6 @@ namespace Mentohub.Domain.Data.DTO.CourseDTOs
 
         public List<TagDTO> Tags { get; set; }
 
-        public List<CourseElementDTO> CourseElementsList { get; set; }
+        public List<CourseBlockDTO> CourseElementsList { get; set; }
     }
 }

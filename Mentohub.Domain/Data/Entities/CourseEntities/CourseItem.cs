@@ -4,9 +4,7 @@ namespace Mentohub.Domain.Data.Entities.CourseEntities
 {
     public class CourseItem
     {
-        public int Id { get; set; }
-
-        public int TypeId { get; set; }
+        public int id { get; set; }
 
         public int CourseId { get; set; }
         public int CourseBlockID { get; set; }

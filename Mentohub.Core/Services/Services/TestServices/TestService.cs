@@ -101,7 +101,6 @@ namespace Mentohub.Core.Services.Services
                     DateCreation = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
                     CourseId = data.CourseID,
                     StatusId = (int)e_ItemStatus.OK,
-                    TypeId = (int)e_ItemType.Test,
                     OrderNumber = sameCourseItems.Count > 0 ? sameCourseItems.Count + 1 : 1,
                     CourseBlockID = data.CourseBlockID
                 };
@@ -111,12 +110,12 @@ namespace Mentohub.Core.Services.Services
                 test = new Test()
                 {
                     Name = data.Name,
-                    CourseItemId = newCourseItem.Id,
+                    CourseItemId = newCourseItem.id,
                 };
 
                 _testRepository.Add(test);
 
-                data.CourseItemId = newCourseItem.Id;
+                data.CourseItemId = newCourseItem.id;
                 data.Id = test.Id;
             }
             else

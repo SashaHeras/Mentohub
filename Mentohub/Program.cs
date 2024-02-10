@@ -19,10 +19,7 @@ using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Repositories.Repositories.CourseRepositories;
 using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
 using Mentohub.Core.Repositories.Repositories.PaymentRepository;
-using Mentohub.Core.Services.Services.PaymentServices;
 using Mentohub.Core.Repositories.Repositories.PaymentRepositories;
-using Mentohub.Core.Services.Interfaces.PaymentInterfaces;
-using Microsoft.Owin.Cors;
 using Mentohub.Core.Services.Extentions;
 using System.Reflection;
 
@@ -63,6 +60,7 @@ internal class Program
         #region Repository DI
 
         builder.Services.AddScoped<IAnswerHistoryRepository, AnswerHistoryRepository>();
+        builder.Services.AddScoped<ICourseItemTypeRepository, CourseItemTypeRepository > ();
         builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
         builder.Services.AddScoped<ICourseItemRepository, CourseItemRepository>();
         builder.Services.AddScoped<ICourseRepository, CourseRepository>();

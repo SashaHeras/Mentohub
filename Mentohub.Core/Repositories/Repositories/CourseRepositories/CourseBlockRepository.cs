@@ -23,17 +23,13 @@ namespace Mentohub.Core.Repositories.Repositories.CourseRepositories
         {
             return GetAll()
                    .Where(x => x.ID == id)
-                   .Include(x => x.Course)
-                   .Include(x => x.CourseItems)
                    .FirstOrDefault();
         }
 
         public IQueryable<CourseBlock> GetCourseBlocks(int courseID)
         {
             return GetAll()
-                   .Where(x => x.CourseID == courseID)
-                   .Include(x => x.Course)
-                   .Include(x => x.CourseItems);
+                   .Where(x => x.CourseID == courseID);
         }
     }
 }
