@@ -4,6 +4,7 @@ using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Repositories;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static MassTransit.ValidationResultExtensions;
 
 namespace Mentohub.Tests
 {
@@ -68,11 +70,26 @@ namespace Mentohub.Tests
                 DateOfBirth= new DateTime(),
                 UserRoles = null,
                 EncryptedID= "WUAHBQgIRVBLDhQEUxRSRFxESFcKCBdJUllDUVZaA09YEV0C",
+                PhoneNumber="+380501111111",
             };
             var result = await _controller.UpdateUser(userDTO) as JsonResult;
             var statusCode = result.StatusCode;
             Assert.NotNull(result);
             Assert.Equal(200, statusCode);
         }
+        [Fact]
+        public async Task AddToUserRoleAuthor_Returns_JsonResult()
+        {
+            var userId = "XxRQAAFaTlJLWUQFBhRSQlxDSA8NAEFJAgEUUVEMUBdbEVdU";
+            var result = await _controller.AddToUserRoleAuthor(userId) as JsonResult;
+            var statusCode = result.StatusCode;
+            Assert.NotNull(result);
+            Assert.Equal(200, statusCode);
+        }
+        //[Fact]
+        //public async Task AddUserRoles_Returns_JsonResult()
+        //{
+        //    var 
+        //}
     }
 }

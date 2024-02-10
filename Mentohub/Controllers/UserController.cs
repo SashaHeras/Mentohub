@@ -199,16 +199,18 @@ namespace Mentohub.Controllers
         public async Task<JsonResult> AddUserRoles([FromForm]string userId,
             [FromForm]string roleId)
         {
-            var decreptedId = MentoShyfr.Decrypt(userId);
-            var user=await _cRUD.FindCurrentUserById(decreptedId);
             try
             {              
                 if( await _userService.AddRoleToUserListRoles(userId, roleId))
                 {
                     var UserDTO = await _userService.GetProfile(userId);
-                    return Json(new{ IsError = false,UserDTO});
+                    var result= Json(new { IsError = false, UserDTO ,StatusCode=200});
+                    result.StatusCode = 200;
+                    return result;
                 }
-                return Json(new { IsError = true, Message = "Add role is failed" });
+                var resultError= Json(new { IsError = true, Message = "Add role is failed",StatusCode=404 });
+                resultError.StatusCode = 404;
+                return resultError;
             }
             catch(Exception ex)
             {
@@ -217,7 +219,9 @@ namespace Mentohub.Controllers
                     message = "Error when add user`s role",
                     error = ex.Message // інформація про помилку
                 };
-                return Json(new { IsError = true, errorResponse });
+                var result= Json(new { IsError = true, errorResponse,StatusCode=500 });
+                result.StatusCode = 500;
+                return result;
             }           
         }
 
@@ -235,11 +239,16 @@ namespace Mentohub.Controllers
 
             if (!string.IsNullOrEmpty(avatarUrl))
             {
-                return new JsonResult(new { success = true, avatarUrl });
+                var result200 = Json(new { IsError = false, Message = avatarUrl, StatusCode = 200 });
+                result200.StatusCode = 200;
+                return result200;
             }
 
             // Якщо аватарка не знайдена або виникла помилка
-            return new JsonResult(new { success = false, message = "Error when getting an avatar" });
+            var result = Json(new { success = false, message = "Error when getting an avatar",StatusCode=404 });
+            result.StatusCode = 404;
+            return result;
+            
         }
 
         [Route("GetEncryptedUserID")]
@@ -256,18 +265,27 @@ namespace Mentohub.Controllers
             try
             {
                 var result = await _userService.AddRoleAuthor(userId);
-
-                return Json(new { IsError = false, Message = "Success" });
+                var jsonResult= Json(new { IsError = false, Message = "Success", StatusCode = 200 });
+                jsonResult.StatusCode = 200;
+                return jsonResult;
             }
 
             catch (AllException ex)
             {
-                return Json(new { IsError = true, NeedFillFields = true, 
-                    Message = ex.NotificationMessage("Please fill out the required fields!") });
+                var result= Json(new
+                {
+                    IsError = true,
+                    NeedFillFields = true,
+                    Message = ex.NotificationMessage("Please fill out the required fields!")
+                });
+                result.StatusCode = 404;
+                return result;
             }
             catch (Exception ex)
             {
-                return Json(new { IsError = true, Message=ex.Message });
+                var result = Json(new { IsError = true, Message = ex.Message, StatusCode = 500 });
+                result.StatusCode = 500;
+                return result;
             }
         }
 
