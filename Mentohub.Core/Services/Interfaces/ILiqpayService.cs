@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface ILiqpayService
+    public interface ILiqpayService : IService
     {
         public LiqPayCheckoutFormModel GenerateOrderPayModel(string orderID);
 

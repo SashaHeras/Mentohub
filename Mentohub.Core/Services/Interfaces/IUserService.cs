@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface IUserService
+    public interface IUserService : IService
     {
         public IList<CurrentUser> GetAllUsers();
         public Task<CurrentUser> CreateUser( RegisterDTO model);

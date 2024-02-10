@@ -3,7 +3,7 @@ using Mentohub.Domain.Filters;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface ICommentService
+    public interface ICommentService : IService
     {
         public CommentDTO Edit(CommentDTO data);
 

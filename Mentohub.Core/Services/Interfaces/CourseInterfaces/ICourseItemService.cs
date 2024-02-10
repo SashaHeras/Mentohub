@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface ICourseItemService
+    public interface ICourseItemService : IService
     {
         CourseItem GetCourseItem(int id);
 

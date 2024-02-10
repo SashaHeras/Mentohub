@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface ILessonService
+    public interface ILessonService : IService
     {
         LessonDTO GetLesson(Guid id);
 

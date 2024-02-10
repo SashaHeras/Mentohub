@@ -2,7 +2,7 @@
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface ICourseViewService
+    public interface ICourseViewService : IService
     {
         IQueryable<CourseViews> ViewsByCourse(int CourseID);
 

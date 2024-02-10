@@ -2,7 +2,7 @@
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface ICourseBlockService
+    public interface ICourseBlockService : IService
     {
         public CourseBlockDTO Edit(CourseBlockDTO data);
     }
