@@ -4,6 +4,7 @@ using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Helpers;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.ServiceBus;
 using Swashbuckle.AspNetCore.Annotations;
@@ -49,11 +50,15 @@ namespace Mentohub.Controllers
                 if (deletedUser)
                 {
                     _logger.LogInformation("User deleted successfully.");
-                    return Json(new { IsError = false, Message = "User deleted successfully " });                      
+                    var result= Json(new { IsError = false, Message = "User deleted successfully " });
+                    result.StatusCode = 200;
+                    return result;
                 }
                 else
                 {
-                    return Json(new { IsError = true, Message = "User not found" });                   
+                    var result = Json(new { IsError = true, Message = "User not found"});
+                    result.StatusCode = 404;
+                    return result;                 
                 }
             }
             catch(Exception ex)
@@ -63,8 +68,9 @@ namespace Mentohub.Controllers
                     message = "Error when deleting a user",
                     error = ex.Message // інформація про помилку
                 };
-
-                return Json(new { IsError = true, errorResponse }); 
+                var result = Json(new { IsError = true, errorResponse});
+                result.StatusCode = 500;
+                return result;
             }   
         }
 
@@ -80,18 +86,18 @@ namespace Mentohub.Controllers
         {
             try
             {
-                var profile = await _userService.GetProfile(id);
-                if (profile != null)
+                var profile = await _userService.GetProfile(id);               
+                if(profile == null)
                 {
-                    return new JsonResult(profile)
+                    return new JsonResult(("Not Found"))
                     {
-                        StatusCode = 200
-                    };
-                }                    
-                else
-                {
-                    return _exception.NotFoundObjectResult("Not Found");
+                        StatusCode = 404
+                    }; 
                 }
+                return new JsonResult(profile)
+                {
+                    StatusCode = 200
+                };
             }
             catch(Exception ex) 
             {
@@ -119,20 +125,22 @@ namespace Mentohub.Controllers
         [SwaggerResponse(200, "User updated successfully")]
         [SwaggerResponse(400, "Invalid input")]
         [SwaggerResponse(404, "User not found")]
-        public async Task<IActionResult> UpdateUser([FromForm] UserDTO userDTO)
+        public async Task<JsonResult> UpdateUser([FromForm] UserDTO userDTO)
         {
             try
             {               
                 // Логіка оновлення інформації про користувача
                 var updatedUser = await _userService.UpdateUser(userDTO);
-                if (updatedUser)
+                if (!updatedUser)
                 {
-                    return Json(new { IsError = false, Message = "Success" });
+                    var result404 = Json(new { IsError = true, Message = "User not found", StatusCode = 404 });
+                    result404.StatusCode = 404;
+                    return result404;
+                    
                 }
-                else
-                {
-                    return Json(new { IsError = true, Message = "User not found" });                   
-                }
+                var result = Json(new { IsError = false, Message = "Success", StatusCode = 200 });
+                result.StatusCode = 200;
+                return result;
             }
             catch(Exception ex)
             {
@@ -141,8 +149,9 @@ namespace Mentohub.Controllers
                     message = "Error when updating a user",
                     error = ex.Message // інформація про помилку
                 };
-
-                return Json(new { IsError = true, errorResponse }); 
+                var result = Json(new { IsError = true, errorResponse, StatusCode = 500 });
+                result.StatusCode = 500;
+                return result;
             }            
         }
 

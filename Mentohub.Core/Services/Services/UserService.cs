@@ -237,17 +237,15 @@ namespace Mentohub.Core.Services.Services
             {
                 throw new Exception("It is not data");
             }
-
             CurrentUser currentUser = await _userRepository.FindCurrentUserById(userDTO.Id);
             if (currentUser == null)
             {
                 return false;
             }
-
             currentUser.FirstName = userDTO.FirstName;
             currentUser.LastName = userDTO.LastName;
             currentUser.AboutMe = userDTO.AboutMe;
-
+            currentUser.UserName = userDTO.Name;
             // Перевірка, чи користувач успадковується від IdentityUser
             // Якщо так, то оновити дату народження
             if (currentUser is IdentityUser)

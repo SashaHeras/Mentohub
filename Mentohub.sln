@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mentohub.Domain", "Mentohub
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mentohub.Core", "Mentohub.Core\Mentohub.Core.csproj", "{D09E5FB1-69BD-424E-B702-778D8926CBF5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mentohub.Tests", "Mentohub.Tests\Mentohub.Tests.csproj", "{72F5FD1D-2B1B-4107-BB74-B4CA5D6FCA56}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{D09E5FB1-69BD-424E-B702-778D8926CBF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D09E5FB1-69BD-424E-B702-778D8926CBF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D09E5FB1-69BD-424E-B702-778D8926CBF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72F5FD1D-2B1B-4107-BB74-B4CA5D6FCA56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72F5FD1D-2B1B-4107-BB74-B4CA5D6FCA56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72F5FD1D-2B1B-4107-BB74-B4CA5D6FCA56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72F5FD1D-2B1B-4107-BB74-B4CA5D6FCA56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

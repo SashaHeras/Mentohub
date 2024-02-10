@@ -70,13 +70,7 @@ namespace Mentohub.Core.Repositories.Repositories
         /// <returns></returns>
         public async Task<CurrentUser> FindCurrentUserById(string id)
         {
-            CurrentUser user = await _userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                return _exception.NotFoundObject("Customer is not found");
-            }
-
-            return user;
+            return await _userManager.FindByIdAsync(id); 
         }
         /// <summary>
         /// оновлення інформації про аватарку користувача
