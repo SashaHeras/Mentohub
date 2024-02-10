@@ -3,7 +3,7 @@ using Mentohub.Domain.Entities;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface ITaskService
+    public interface ITaskService : IService
     {
         IQueryable<TestTask> GetTasks(int testId);
 

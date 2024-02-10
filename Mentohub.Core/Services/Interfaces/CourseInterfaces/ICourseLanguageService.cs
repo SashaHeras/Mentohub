@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface ICourseLanguageService
+    public interface ICourseLanguageService : IService
     {
         List<KeyValuePair<int, string>> GetLanguagesList(bool withCourseCount = false);
     }

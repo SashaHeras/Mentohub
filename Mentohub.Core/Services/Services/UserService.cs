@@ -30,19 +30,21 @@ namespace Mentohub.Core.Services.Services
         private readonly ICRUD_UserRepository _userRepository;
         private readonly ILogger<UserService> _logger;
         private readonly SignInManager<CurrentUser> _signInManager;
-        private readonly IHubContext<SignalRHub> _hubContext;
-        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IMediaService _mediaService;
         private readonly IEmailSender _emailSender;
+
         /// <summary>
         /// конструктор сервісу з параметром
         /// </summary>
         /// <param name="cRUD"></param>
-        public UserService(ICRUD_UserRepository cRUD, UserManager<CurrentUser> userManager
-            , RoleManager<IdentityRole> roleManager, AllException exciption,
-            ILogger<UserService> logger, SignInManager<CurrentUser> signInManager,
-            IHubContext<SignalRHub> hubContext, IWebHostEnvironment webHostEnvironment,
-            IEmailSender emailSender, IMediaService mediaService)
+        public UserService(ICRUD_UserRepository cRUD, 
+            UserManager<CurrentUser> userManager, 
+            RoleManager<IdentityRole> roleManager,
+            AllException exciption,
+            ILogger<UserService> logger, 
+            SignInManager<CurrentUser> signInManager,
+            IEmailSender emailSender, 
+            IMediaService mediaService)
         {
             _userRepository = cRUD;
             _userManager = userManager;
@@ -50,8 +52,6 @@ namespace Mentohub.Core.Services.Services
             _exciption = exciption;
             _logger = logger;
             _signInManager = signInManager;
-            _hubContext = hubContext;
-            _webHostEnvironment = webHostEnvironment;
             _mediaService = mediaService;
             _emailSender = emailSender;
         }

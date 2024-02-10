@@ -7,7 +7,7 @@ using static Mentohub.Core.Services.Services.CourseService;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface ICourseService
+    public interface ICourseService : IService
     {
         List<CourseDTO> GetAuthorsCourses(string userId);
 

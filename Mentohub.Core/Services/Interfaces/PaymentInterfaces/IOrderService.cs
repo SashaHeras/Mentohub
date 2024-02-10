@@ -3,7 +3,7 @@ using Mentohub.Domain.Data.Entities.Order;
 
 namespace Mentohub.Core.Services.Interfaces
 {
-    public interface IOrderService
+    public interface IOrderService : IService
     {
         Task<Order> CreateOrder(string userID);
 
