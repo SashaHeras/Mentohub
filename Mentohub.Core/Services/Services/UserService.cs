@@ -187,7 +187,8 @@ namespace Mentohub.Core.Services.Services
                 LastName = currentUser.LastName,
                 AboutMe = currentUser.AboutMe,
                 DateOfBirth = currentUser.DateOfBirth ?? DateTime.Now,
-                FirstName = currentUser.FirstName
+                FirstName = currentUser.FirstName,
+                PhoneNumber = currentUser.PhoneNumber
             };
 
             return dto;
@@ -213,6 +214,7 @@ namespace Mentohub.Core.Services.Services
             {
                 return _exciption.NotFoundObject("Wrong email or password");
             }
+
             return _exciption.NotFoundObject("User is not found");
         }
 
@@ -246,6 +248,8 @@ namespace Mentohub.Core.Services.Services
             currentUser.LastName = userDTO.LastName;
             currentUser.AboutMe = userDTO.AboutMe;
             currentUser.UserName = userDTO.Name;
+            currentUser.PhoneNumber = userDTO.PhoneNumber;
+
             // Перевірка, чи користувач успадковується від IdentityUser
             // Якщо так, то оновити дату народження
             if (currentUser is IdentityUser)
@@ -369,8 +373,10 @@ namespace Mentohub.Core.Services.Services
                 await _roleManager.DeleteAsync(role);
                 return true;
             }
+
             return false;
         }
+
         /// <summary>
         /// створює роль
         /// </summary>
@@ -387,6 +393,7 @@ namespace Mentohub.Core.Services.Services
                     return true;
                 }
             }
+
             return false;
         }
         public async Task<ChangeRoleDTO?> GetChangeRoleDTO(string userId)
@@ -396,6 +403,7 @@ namespace Mentohub.Core.Services.Services
             {
                 return null;
             }
+
             // получем список ролей пользователя
             var userRoles = await _userManager.GetRolesAsync(user);
             var allRoles = _roleManager.Roles.ToList();
@@ -410,6 +418,7 @@ namespace Mentohub.Core.Services.Services
 
             return model;
         }
+
         /// <summary>
         /// додавання ролі автора користувачу
         /// </summary>
@@ -438,6 +447,7 @@ namespace Mentohub.Core.Services.Services
             await _userManager.AddToRoleAsync(user, identityRole.Name);
             return user.Id;
         }
+
         /// <summary>
         /// зміна пароля у разі якщо користувач забув пароль
         /// </summary>
@@ -451,6 +461,7 @@ namespace Mentohub.Core.Services.Services
             {
                 return "User not found.";
             }
+
             var newPassword = GenerateRandomPassword();
             var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
             var result = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
@@ -461,8 +472,10 @@ namespace Mentohub.Core.Services.Services
 
                 return "Password reset successfully. Check your email for the new password.";
             }
+
             throw new Exception("Failed to reset password.");
         }
+
         /// <summary>
         /// генерація нового пароля
         /// </summary>
@@ -478,6 +491,7 @@ namespace Mentohub.Core.Services.Services
             }
             return password.ToString();
         }
+
         /// <summary>
         /// зміна пароля користувачем
         /// </summary>
@@ -492,11 +506,13 @@ namespace Mentohub.Core.Services.Services
             {
                 return false;
             }
+
             var passwordChangeResult = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
             if (!passwordChangeResult.Succeeded)
             {
                 return false;
             }
+
             return true;
         }
     }   
