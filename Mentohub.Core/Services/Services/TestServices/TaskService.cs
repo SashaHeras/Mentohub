@@ -28,9 +28,28 @@ namespace Mentohub.Core.Services.Services
             return _taskRepository.GetTaskByTestId(testId).OrderBy(t => t.OrderNumber);
         }
 
-        public TestTask GetTask(int id)
+        public TaskDTO GetTask(int id)
         {
-            return _taskRepository.GetById(id);
+            TestTask task = _taskRepository.GetById(id);
+
+            TaskDTO data = new TaskDTO()
+            {
+                Id = task.Id,
+                Name = task.Name,
+                OrderNumber = task.OrderNumber,
+                IsFewAnswersCorrect = task.IsFewAnswersCorrect,
+                Mark = task.Mark,
+                TestId = task.TestId,
+                Answers = task.TaskAnswers.Select(x => new AnswerDTO()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    IsChecked = x.IsCorrect,
+                    TaskId = x.TaskId
+                }).ToList(),
+            };
+
+            return data;
         }
 
         public async Task<TestTask> UpdateTask(TestTask task)
@@ -60,7 +79,7 @@ namespace Mentohub.Core.Services.Services
                     IsFewAnswersCorrect = data.IsFewAnswersCorrect
                 };
 
-                _taskRepository.Add(task);
+                task = _taskRepository.Add(task);
             }
             else
             {
@@ -74,6 +93,30 @@ namespace Mentohub.Core.Services.Services
 
             data.OrderNumber = task.OrderNumber;
             data.Id = task.Id;
+
+            foreach(var answer in data.Answers)
+            {
+                var currAnswer = _answerRepository.FirstOrDefault(x => x.Id == answer.Id);
+                if(currAnswer != null)
+                {
+                    currAnswer.Name = answer.Name;
+                    currAnswer.IsCorrect = answer.IsChecked;
+
+                    _answerRepository.Update(currAnswer);
+                }
+                else
+                {
+                    currAnswer = _answerRepository.Add(new TaskAnswer()
+                    {
+                        Name = answer.Name,
+                        IsCorrect = answer.IsChecked,
+                        TaskId = task.Id
+                    });
+                }
+
+                answer.Id = currAnswer.Id;
+                answer.TaskId = currAnswer.TaskId;
+            }
 
             return data;
         }
@@ -103,7 +146,7 @@ namespace Mentohub.Core.Services.Services
 
         public void DeleteTask(int ID)
         {
-            var task = GetTask(ID);
+            var task = _taskRepository.FirstOrDefault(x=>x.Id == ID);
             var allTasksAfter = GetTasksAfter(task.TestId, task.OrderNumber);
             int currentOrderNumber = task.OrderNumber;
 

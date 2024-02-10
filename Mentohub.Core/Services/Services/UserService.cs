@@ -28,6 +28,7 @@ namespace Mentohub.Core.Services.Services
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly AllException _exciption;
         private readonly ICRUD_UserRepository _userRepository;
+        private readonly IAzureService _azureService;
         private readonly ILogger<UserService> _logger;
         private readonly SignInManager<CurrentUser> _signInManager;
         private readonly IMediaService _mediaService;
@@ -43,7 +44,8 @@ namespace Mentohub.Core.Services.Services
             AllException exciption,
             ILogger<UserService> logger, 
             SignInManager<CurrentUser> signInManager,
-            IEmailSender emailSender, 
+            IEmailSender emailSender,
+            IAzureService azureService,
             IMediaService mediaService)
         {
             _userRepository = cRUD;
@@ -53,6 +55,7 @@ namespace Mentohub.Core.Services.Services
             _logger = logger;
             _signInManager = signInManager;
             _mediaService = mediaService;
+            _azureService = azureService;
             _emailSender = emailSender;
         }
 
@@ -158,9 +161,15 @@ namespace Mentohub.Core.Services.Services
                 return _exciption.ArgumentNullException("No file"); // Помилка: відсутні дані файлу.
             }
 
+            var currentUserID = MentoShyfr.Decrypt(userId);
+            var user = _userRepository.FindByID(currentUserID);
+            if(user.Image != null)
+            {
+                await _azureService.DeleteFromAzure(user.Image);
+            }            
+
             var avatarUrl = await _mediaService.SaveFile(avatar);
 
-            var currentUserID = MentoShyfr.Decrypt(userId);
             await _userRepository.UpdateAvatarUrl(currentUserID, avatarUrl);
 
             _logger.LogInformation("avatar is successfully saved");

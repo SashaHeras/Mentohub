@@ -155,8 +155,8 @@ namespace Mentohub.Controllers
             return Json(result);
         }
 
-        [HttpGet]
-        public JsonResult GetTask(int ID)
+        [HttpPost]
+        public JsonResult GetTask([FromForm] int ID)
         {
             var res = _taskService.GetTask(ID);
             return Json(res);

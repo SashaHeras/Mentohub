@@ -9,7 +9,7 @@ namespace Mentohub.Core.Services.Interfaces
 
         List<TaskDTO> GetTasksList(int testId);
 
-        TestTask GetTask(int id);
+        public TaskDTO GetTask(int id);
 
         Task<TestTask> UpdateTask(TestTask task);
 
