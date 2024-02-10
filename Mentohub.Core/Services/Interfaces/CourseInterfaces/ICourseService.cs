@@ -29,6 +29,8 @@ namespace Mentohub.Core.Services.Interfaces
 
         public List<CourseDTO> GetAuthorsToCourses(string authorID);
 
+        public List<CourseDTO> GetUsersBoughtCourses(string authorID);
+
         public AuthorInfoDTO GetAuthorInfoDTO(string encriptId);
 
         public AdditionalListModel GetAdditionalList();

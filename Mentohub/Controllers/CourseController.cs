@@ -198,5 +198,11 @@ namespace Mentohub.Controllers
         {
             return Json(_courseSubjectService.SubjectsList());
         }
+
+        [HttpPost]
+        public async Task<JsonResult> GetUserBoughtCourses([FromForm] string userID)
+        {
+            return Json(_courseService.GetUsersBoughtCourses(userID));
+        }
     }
 }

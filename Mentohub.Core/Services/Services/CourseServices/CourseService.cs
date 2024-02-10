@@ -330,10 +330,13 @@ namespace Mentohub.Core.Services.Services
 
         public async Task<CourseDTO> ViewCourse(int CourseID, string UserID)
         {
+            var userID = MentoShyfr.Decrypt(UserID);
+            var user = await _cRUD_UserRepository.FindCurrentUserById(userID);
             var course = _courseRepository.FirstOrDefault(x => x.Id == CourseID)
                                            ?? throw new Exception("Course not found!");
 
             var result = CourseMapper.ToDTO(course);
+            result.IsBoughtByUser = user.UserCourses?.Any(x => x.CourseId == CourseID) ?? false;
 
             result.LanguageList = _courseLanguageService.GetLanguagesList();
             result.CourseLevelList = _courseLevelService.GetLevelsList();
@@ -515,6 +518,18 @@ namespace Mentohub.Core.Services.Services
                                 .ToList();
 
             return result;
+        }
+
+
+        public List<CourseDTO> GetUsersBoughtCourses(string authorID)
+        {
+            var userID = MentoShyfr.Decrypt(authorID);
+            var user = _cRUD_UserRepository.FindByID(userID);
+            var courses = user.UserCourses?.Select(x => x.Course)
+                                           .Select(x => CourseMapper.ToDTO(x))
+                                           .ToList() ?? new List<CourseDTO>();
+
+            return courses;
         }
 
         public AdditionalListModel GetAdditionalList()
