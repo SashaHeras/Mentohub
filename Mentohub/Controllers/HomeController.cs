@@ -76,13 +76,13 @@ namespace Mentohub.Controllers
             var createOrder = new CreateOrderPayment();
             try
             {
-               if (response.Status == LiqPayResponseStatus.Sandbox)
+                if (response.Status == LiqPayResponseStatus.Sandbox)
                 {                  
                     var order = _orderService.GetOrder(orderID);
                     order.Ordered = DateTime.Now;       
-                    createOrder.OrderId=orderID;
-                    createOrder.CurrencyId=currency.ID;
-                    createOrder.Total=order.Total; 
+                    createOrder.OrderId = orderID;
+                    createOrder.CurrencyId = currency.ID;
+                    createOrder.Total = order.Total; 
                     _orderPaymantService.CreateOrderPaymant(createOrder);
                     _orderService.UpdateOrder(order);
                     var model = _liqpayService.GenerateOrderPayModel(orderID);
@@ -96,7 +96,7 @@ namespace Mentohub.Controllers
             }
             catch(Exception ex)
             {
-                    return Json(new { IsError = true, ex.Message });
+                return Json(new { IsError = true, ex.Message });
             }
 
             return Json(new { IsError = true, Message = "The payment was unsuccessful" });
