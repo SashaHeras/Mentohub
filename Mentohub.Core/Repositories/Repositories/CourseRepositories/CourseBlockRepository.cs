@@ -31,5 +31,11 @@ namespace Mentohub.Core.Repositories.Repositories.CourseRepositories
             return GetAll()
                    .Where(x => x.CourseID == courseID);
         }
+
+        public void Delete(CourseBlock block)
+        {
+            repositoryContext.CourseBlocks.Remove(block);
+            repositoryContext.SaveChanges();
+        }
     }
 }

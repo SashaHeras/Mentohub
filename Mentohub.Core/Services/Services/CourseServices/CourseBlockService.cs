@@ -47,7 +47,8 @@ namespace Mentohub.Core.Services.Services
                 {
                     CourseID = data.CourseID,
                     Name = data.Name,
-                    OrderNumber = courseBlocksCnt + 1
+                    OrderNumber = courseBlocksCnt + 1,
+                    CourseItems = new List<CourseItem>()
                 };
 
                 _courseBlockRepository.Add(block);
@@ -80,6 +81,8 @@ namespace Mentohub.Core.Services.Services
                     _testService.Delete(item.Test.Id);
                 }
             }
+
+            _courseBlockRepository.Delete(block);
         }
     }
 }
