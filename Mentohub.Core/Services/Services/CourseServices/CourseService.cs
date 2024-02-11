@@ -210,7 +210,7 @@ namespace Mentohub.Core.Services.Services
                                 OrderNumber = item.OrderNumber,
                                 CourseId = item.CourseId,
                                 TypeId = (int)e_ItemType.Lesson,
-                                CourseItemId = item.id
+                                CourseItemId = item.Id
                             });
                         }
                         else if (item.Test != null)
@@ -222,7 +222,7 @@ namespace Mentohub.Core.Services.Services
                                 OrderNumber = item.OrderNumber,
                                 CourseId = item.CourseId,
                                 TypeId = (int)e_ItemType.Test,
-                                CourseItemId = item.id
+                                CourseItemId = item.Id
                             });
                         }
                     }
@@ -244,7 +244,7 @@ namespace Mentohub.Core.Services.Services
                                     OrderNumber = item.OrderNumber,
                                     CourseId = item.CourseId,
                                     TypeId = (int)e_ItemType.Lesson,
-                                    CourseItemId = item.id
+                                    CourseItemId = item.Id
                                 });
                             }
                             else if (item.Test != null)
@@ -256,7 +256,7 @@ namespace Mentohub.Core.Services.Services
                                     OrderNumber = item.OrderNumber,
                                     CourseId = item.CourseId,
                                     TypeId = (int)e_ItemType.Test,
-                                    CourseItemId = item.id
+                                    CourseItemId = item.Id
                                 });
                             }
                         }
@@ -391,8 +391,8 @@ namespace Mentohub.Core.Services.Services
             var course = _courseRepository.FirstOrDefault(x => x.Id == ID)
                                            ?? throw new Exception("Unknown course!");
 
-            var itemsIdList = course.CourseItems.Select(x => x.id).ToList();
-            var courseItems = _courseItemRepository.GetAll(x => itemsIdList.Contains(x.id))
+            var itemsIdList = course.CourseItems.Select(x => x.Id).ToList();
+            var courseItems = _courseItemRepository.GetAll(x => itemsIdList.Contains(x.Id))
                                                    .Include(x => x.Test)
                                                    .Include(x => x.Lesson)
                                                    .ToList();
@@ -588,6 +588,11 @@ namespace Mentohub.Core.Services.Services
             _courseTagRepository.Add(ct);
 
             return CourseMapper.ToDTO(tag);
+        }
+
+        public List<CourseElementDTO> GetCourseElements(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
