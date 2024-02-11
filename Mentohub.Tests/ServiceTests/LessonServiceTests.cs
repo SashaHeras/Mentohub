@@ -1,4 +1,5 @@
 ﻿using Mentohub.Core.AllExceptions;
+using Mentohub.Core.Context;
 using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
@@ -25,6 +26,7 @@ namespace Mentohub.Tests.ServiceTests
     public class LessonServiceTests
     {
         ILessonService _lessonService;
+        Mock<ProjectContext> _context = new Mock<ProjectContext>();
         Mock< ILessonRepository> _lessonRepository=new Mock<ILessonRepository>();
         Mock< ICourseService> _courseService=new Mock<ICourseService>();
         Mock< IMediaService> _mediaService=new Mock<IMediaService>();
@@ -38,16 +40,17 @@ namespace Mentohub.Tests.ServiceTests
         public LessonServiceTests() 
         {
             _lessonService = new LessonService(
+                     _context.Object,
                     _lessonRepository.Object,
                     _courseService.Object,
                     _mediaService.Object,
                     _courseRepository.Object,
                     _courseItemRepository.Object,
                     _azureService.Object,
-                    _courseItemService.Object,                                      
+                    _courseItemService.Object,
                     _courseItemTypeRepository.Object,
-                    _courseBlockRepository.Object);
-            
+                    _courseBlockRepository.Object
+                    );    
         }
         [Fact]
         public async Task Edit_Returns_Correct_CourseId()
@@ -78,12 +81,8 @@ namespace Mentohub.Tests.ServiceTests
             _courseItemService.Setup(mock => mock.UpdateCourseItem(It.IsAny<CourseItem>())).Returns((Task<CourseItem>)Task.CompletedTask);
 
             _mediaService.Setup(mock => mock.DeleteMediaFromProject(It.IsAny<IFormFile>()));
-
-            
-
             // Act
             var result = await _lessonService.Edit(form, lesson);
-
             // Assert
             Assert.Equal(courseId, result);
         }

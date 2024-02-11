@@ -74,7 +74,7 @@ namespace Mentohub.Core.Services.Services
         public LessonDTO GetLesson(Guid id)
         {           
             var lesson = _lessonRepository.GetLessonById(id);
-            var courseItem = _courseItemRepository.FirstOrDefault(y => y.id == lesson.CourseItemId);
+            var courseItem = _courseItemRepository.FirstOrDefault(y => y.Id == lesson.CourseItemId);
             var course = _courseRepository.FirstOrDefault(x => x.Id == courseItem.CourseId);
 
             LessonDTO result = new LessonDTO()
@@ -159,12 +159,12 @@ namespace Mentohub.Core.Services.Services
 
                     _courseItemRepository.Add(newCourseItem);
 
-                    newLesson.CourseItemId = newCourseItem.id;
+                    newLesson.CourseItemId = newCourseItem.Id;
 
                     _lessonRepository.Add(newLesson);
 
                     lesson.Id = newLesson.Id;
-                    lesson.CourseItemId = newCourseItem.id;
+                    lesson.CourseItemId = newCourseItem.Id;
                 }
                 catch(Exception ex)
                 {
@@ -173,7 +173,7 @@ namespace Mentohub.Core.Services.Services
                         await _mediaService.DeleteFile(lesson.VideoPath);
                     }
 
-                    throw ex;
+                    throw;
                 }
             }
             else
@@ -213,12 +213,14 @@ namespace Mentohub.Core.Services.Services
         public async Task Delete(Guid id)
         {
             var lesson = _lessonRepository.FirstOrDefault(x => x.Id == id);
-            var courseItem = _courseItemRepository.FirstOrDefault(x => x.id == lesson.CourseItemId);
+            var courseItem = _courseItemRepository.FirstOrDefault(x => x.Id == lesson.CourseItemId);
 
             await _azureService.DeleteFromAzure(lesson.VideoPath);
 
             _context.Lessons.Remove(lesson);
             _context.CourseItem.Remove(courseItem);
         }
+
+        
     }
 }
