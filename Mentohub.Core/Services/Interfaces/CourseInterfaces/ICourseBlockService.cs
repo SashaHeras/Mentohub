@@ -5,5 +5,7 @@ namespace Mentohub.Core.Services.Interfaces
     public interface ICourseBlockService : IService
     {
         public CourseBlockDTO Edit(CourseBlockDTO data);
+
+        public Task Delete(int ID);
     }
 }

@@ -22,6 +22,7 @@ namespace Mentohub.Controllers
         private readonly IUserService _userService;
         private readonly ICRUD_UserRepository _cRUD;
         private readonly ICourseService _courseService;
+        private readonly IAzureService _azureService;
 
         public UserController(
             ILogger<UserController> logger, 
@@ -163,8 +164,8 @@ namespace Mentohub.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("uploadAvatar")]
-        [SwaggerOperation(Summary ="Download user's avatar")]
-        public async Task<JsonResult> UploadAvatar(IFormFile avatar, string id)
+        [SwaggerOperation(Summary = "Download user's avatar")]
+        public async Task<JsonResult> UploadAvatar([FromForm] IFormFile avatar, [FromForm] string id)
         {
             try
             { 
@@ -175,7 +176,7 @@ namespace Mentohub.Controllers
                 }
                 return Json(new { IsError = true, Message = "Not file for download" });                
             }
-           catch (Exception ex)
+            catch (Exception ex)
             {
                 var errorResponse = new
                 {

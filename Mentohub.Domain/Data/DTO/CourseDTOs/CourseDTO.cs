@@ -47,6 +47,8 @@ namespace Mentohub.Domain.Data.DTO.CourseDTOs
 
         public int CourseSubjectId { get; set; }
 
+        public bool IsBoughtByUser { get; set; }
+
         public List<CourseSubjectDTO> SubjectsList { get; set; }
 
         public int LanguageId { get; set; }

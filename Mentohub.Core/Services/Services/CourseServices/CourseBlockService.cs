@@ -1,4 +1,5 @@
-﻿using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
+﻿using Mentohub.Core.Repositories.Intefaces;
+using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Mentohub.Domain.Data.Entities.CourseEntities;
@@ -9,15 +10,24 @@ namespace Mentohub.Core.Services.Services
     public class CourseBlockService : ICourseBlockService
     {
         private readonly ICourseBlockRepository _courseBlockRepository;
+        private readonly ICourseItemRepository _courseItemRepository;
+        private readonly ILessonService _lessonService;
+        private readonly ITestService _testService;
         private readonly ICourseRepository _courseRepository;
 
         public CourseBlockService(
             ICourseBlockRepository courseBlockRepository,
-            ICourseRepository courseRepository
+            ICourseRepository courseRepository,
+            ICourseItemRepository courseItemRepository,
+            ITestService testService,
+            ILessonService lessonService
         )
         {
             _courseBlockRepository = courseBlockRepository;
             _courseRepository = courseRepository;
+            _courseItemRepository = courseItemRepository;
+            _lessonService = lessonService;
+            _testService = testService;
         }
 
         public CourseBlockDTO Edit(CourseBlockDTO data)
@@ -53,6 +63,23 @@ namespace Mentohub.Core.Services.Services
             data = CourseMapper.ToDTO(block);
 
             return data;
+        }
+
+        public async Task Delete(int ID)
+        {
+            var block = _courseBlockRepository.FirstOrDefault(x => x.ID == ID);
+            var items = block.CourseItems.ToList();
+
+            foreach(var item in items)
+            {
+                if(item.Lesson != null)
+                {
+                    await _lessonService.Delete(item.Lesson.Id);
+                }
+                else if(item.Test != null) {
+                    _testService.Delete(item.Test.Id);
+                }
+            }
         }
     }
 }

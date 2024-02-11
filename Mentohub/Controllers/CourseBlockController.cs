@@ -35,5 +35,18 @@ namespace Mentohub.Controllers
                 return Json(new { IsError = true, Message = ex.Message });
             }
         }
+
+        public async Task<JsonResult> Delete([FromForm] int blockID)
+        {
+            try
+            {
+                await _courseBlockService.Delete(blockID);
+                return Json(new { IsError = false, Message = "Success" });
+            }
+            catch(Exception ex)
+            {
+                return Json(new { IsError = true, Message = ex.Message });
+            }
+        }
     }
 }

@@ -15,10 +15,10 @@ namespace Mentohub.Core.Services.Interfaces
 
         void UpdateLesson(Lesson newLesson);
 
+        public Task Delete(Guid id);
+
         LessonDTO GetLessonByCourseItem(int courseItemId);
 
         Task<LessonDTO> Apply(LessonDTO lesson);
-
-        void Delete(Guid id);
     }
 }

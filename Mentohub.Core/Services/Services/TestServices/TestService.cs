@@ -1,4 +1,5 @@
-﻿using Mentohub.Core.Repositories.Intefaces;
+﻿using Mentohub.Core.Context;
+using Mentohub.Core.Repositories.Intefaces;
 using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Core.Repositories.Interfaces.CourseInterfaces;
 using Mentohub.Core.Services.Interfaces;
@@ -8,11 +9,13 @@ using Mentohub.Domain.Data.Entities.CourseEntities;
 using Mentohub.Domain.Data.Enums;
 using Mentohub.Domain.Entities;
 using Mentohub.Domain.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Mentohub.Core.Services.Services
 {
     public class TestService : ITestService
     {
+        private readonly ProjectContext _context;
         private readonly ITestRepository _testRepository;
         private readonly ICRUD_UserRepository _userRepository;
         private readonly ICourseItemRepository _courseItemRepository;
@@ -27,6 +30,7 @@ namespace Mentohub.Core.Services.Services
         private readonly IAnswerHistoryService _answerHistoryService;
 
         public TestService(
+            ProjectContext context,
             ICourseItemService courseItemService,
             ITestHistoryService testHistoryService,
             ITaskHistoryService taskHistoryService,
@@ -42,6 +46,7 @@ namespace Mentohub.Core.Services.Services
             _testRepository = testRepository;
             _courseItemRepository = courseItemRepository;
             _courseItemService = courseItemService;
+            _context = context;
             _testHistoryService = testHistoryService;
             _taskHistoryService = taskHistoryService;
             _answerHistoryService = answerHistoryService;
@@ -203,6 +208,30 @@ namespace Mentohub.Core.Services.Services
             _testHistoryRepository.Add(testHistory);
 
             return result;
+        }
+
+        public void Delete(int ID)
+        {
+            var test = _testRepository.FirstOrDefault(x => x.Id == ID);
+            var courseItem = test.CourseItem;
+
+            var answerHistories = test.TestTasks.SelectMany(x => x.TaskAnswers).SelectMany(x => x.AnswerHistory).ToList();
+            _context.AnswerHistory.RemoveRange(answerHistories);
+
+            var taskHistories = test.TestTasks.SelectMany(x => x.TaskHistory).ToList();
+            _context.TaskHistory.RemoveRange(taskHistories);
+
+            var testHistories = test.TestHistory.ToList();
+            _context.TestHistory.RemoveRange(testHistories);
+
+            var answers = test.TestTasks.SelectMany(x => x.TaskAnswers).ToList();
+            _context.TaskAnswers.RemoveRange(answers);
+
+            var tasks = test.TestTasks.ToList();
+            _context.TestTasks.RemoveRange(tasks);
+
+            _context.Tests.Remove(test);
+            _context.CourseItem.Remove(courseItem);
         }
     }
 }

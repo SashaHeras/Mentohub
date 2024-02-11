@@ -55,23 +55,28 @@ namespace Mentohub.Core.Services.Services.PaymentServices
             };
 
             orderPayment = _orderPaymentRepository.AddOrderPayment(orderPayment);
-            var currentUserCoursesNumber = _userCourseRepository.GetAll().Count();
+            var currentUserCoursesNumber = _userCourseRepository.GetAll().Max(x => x.Id);
             foreach (var item in orderItem)
-            {               
+            {
+                ++currentUserCoursesNumber; 
                 var userCourse = new UserCourse()
                 {
-                    Id = ++currentUserCoursesNumber,
+                    Id = currentUserCoursesNumber,
                     Created = DateTime.Now,
                     CourseId = (int)item.CourseID,
                     OrderItemId = (int)item.ID,
                     UserId = order.UserID,
                     OrderPaymentId = orderPayment.ID
                 };
+
                 userCourses.Add(userCourse);
             }
+
             _userCourseRepository.AddList(userCourses);
-            orderPayment.UserCourses= userCourses;
-            _orderPaymentRepository.UpdateOrderPayment(orderPayment);            
+
+            orderPayment.UserCourses = userCourses;
+            _orderPaymentRepository.UpdateOrderPayment(orderPayment);   
+            
             return orderPayment;
         }
 

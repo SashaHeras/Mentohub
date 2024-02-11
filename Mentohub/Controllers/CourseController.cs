@@ -4,6 +4,7 @@ using Mentohub.Domain.Data.DTO.CourseDTOs;
 using Microsoft.AspNetCore.Cors;
 using Mentohub.Domain.Filters;
 using Mentohub.Domain.Data.DTO.ResultDTO;
+using Mentohub.Core.Services.Services;
 
 namespace Mentohub.Controllers
 {
@@ -65,7 +66,7 @@ namespace Mentohub.Controllers
         /// <param name="UserID"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<JsonResult> ViewCourse(int CourseID, string UserID)
+        public async Task<JsonResult> ViewCourse(int CourseID, string? UserID = null)
         {
             try
             {
@@ -197,6 +198,18 @@ namespace Mentohub.Controllers
         public JsonResult GetSubjectsList()
         {
             return Json(_courseSubjectService.SubjectsList());
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetUserBoughtCourses([FromForm] string userID)
+        {
+            return Json(_courseService.GetUsersBoughtCourses(userID));
+        }
+
+        [HttpPost]
+        public JsonResult GetBlockItems([FromForm] int blockID)
+        {
+            return Json(_courseService.GetBlockElements(blockID));
         }
     }
 }
