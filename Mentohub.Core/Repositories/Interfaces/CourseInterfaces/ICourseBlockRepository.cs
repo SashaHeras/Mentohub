@@ -13,5 +13,7 @@ namespace Mentohub.Core.Repositories.Interfaces.CourseInterfaces
         public CourseBlock GetById(int id);
 
         public IQueryable<CourseBlock> GetCourseBlocks(int courseID);
+
+        public void Delete(CourseBlock block);
     }
 }

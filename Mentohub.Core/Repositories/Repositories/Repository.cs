@@ -8,7 +8,7 @@ namespace Mentohub.Core.Repositories.Repositories
 {
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, new()
     {
-        private readonly ProjectContext repositoryContext;
+        protected readonly ProjectContext repositoryContext;
 
         // Конструктор
         public Repository(ProjectContext repositoryContext)

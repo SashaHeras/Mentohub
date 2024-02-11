@@ -448,12 +448,10 @@ namespace Mentohub.Core.Services.Services
                     x => x.Checked == true &&
                     x.Price >= filter.PriceFrom &&
                     x.Price <= filter.PriceTo &&
-                    (filter.SearchText == string.Empty ? true :
-                        
+                    (filter.SearchText == string.Empty ? true :                        
                             x.Name.Contains(filter.SearchText) ||
                             x.CourseTags.Select(x => x.Tag.Name).Contains(filter.SearchText) ||
-                            x.Category.Name.Contains(filter.SearchText)
-                        
+                            x.Category.Name.Contains(filter.SearchText)                        
                     ) &&
                     (filter.CategoryID == -1 ? true : x.CourseSubjectId == filter.CategoryID) &&
                     (filter.Level == -1 ? true : x.CourseLevelID == filter.Level) &&
