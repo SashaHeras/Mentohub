@@ -441,7 +441,7 @@ namespace Mentohub.Core.Services.Services
 
             var result = blocks;
 
-            courseDTO.CourseElementsList = result;
+            courseDTO.CourseElementsList = result.OrderBy(x => x.ID).ToList();
 
             return courseDTO;
         }
