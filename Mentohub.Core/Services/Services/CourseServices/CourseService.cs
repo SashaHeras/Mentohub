@@ -549,8 +549,17 @@ namespace Mentohub.Core.Services.Services
                                            .Select(x => CourseMapper.ToDTO(x))
                                            .ToList() ?? new List<CourseDTO>();
 
-            courses.AddRange(_courseRepository.GetAll(x => x.AuthorId == userID).Select(x => CourseMapper.ToDTO(x)).ToList());
+            var authorsCourses = _courseRepository.GetAll(x => x.AuthorId == userID)
+                                                  .ToList()
+                                                  .Select(x => CourseMapper.ToDTO(x))
+                                                  .ToList();
 
+            authorsCourses.ForEach(x =>
+            {
+                x.IsBoughtByUser = true;
+            });
+
+            courses.AddRange(authorsCourses);
             return courses;
         }
 

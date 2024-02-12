@@ -4,5 +4,7 @@
     {
         public string Data { get; set; }
         public string Signature { get; set; }
+
+        public string OrderID { get; set; }
     }
 }

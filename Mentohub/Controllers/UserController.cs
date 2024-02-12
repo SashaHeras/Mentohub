@@ -1,8 +1,11 @@
 ﻿using Mentohub.Core.AllExceptions;
 using Mentohub.Core.Repositories.Interfaces;
+using Mentohub.Core.Repositories.Interfaces.PaymentInterfaces;
 using Mentohub.Core.Services.Interfaces;
 using Mentohub.Domain.Data.DTO;
+using Mentohub.Domain.Data.DTO.Payment;
 using Mentohub.Domain.Helpers;
+using Mentohub.Domain.Mappers;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +25,7 @@ namespace Mentohub.Controllers
         private readonly IUserService _userService;
         private readonly ICRUD_UserRepository _cRUD;
         private readonly ICourseService _courseService;
+        private readonly IOrderRepository _orderRepository;
         private readonly IAzureService _azureService;
 
         public UserController(
@@ -29,7 +33,8 @@ namespace Mentohub.Controllers
             IUserService userService,
             AllException exception, 
             ICRUD_UserRepository cRUD_UserRepository,
-            ICourseService courseService
+            ICourseService courseService,
+            IOrderRepository orderRepository
         )
         {
             _logger = logger;
@@ -37,6 +42,7 @@ namespace Mentohub.Controllers
             _exception = exception;
             _cRUD = cRUD_UserRepository;
             _courseService = courseService;
+            _orderRepository = orderRepository;
         }
         
         [HttpDelete]
@@ -303,6 +309,39 @@ namespace Mentohub.Controllers
             {
                 return Json(new { IsError = true, Message = ex.Message });
             }
+        }
+
+        [HttpPost]
+        [Route("GetActiveOrder")]
+        public JsonResult GetActiveOrder([FromForm] string authorID)
+        {
+            var orderDTO = new OrderDTO();
+            var currentUser = MentoShyfr.Decrypt(authorID);
+            var order = _orderRepository.GetAll(x => x.Ordered == null && x.UserID == currentUser).FirstOrDefault();
+
+            if(order == null)
+            {
+                return Json(null);
+            }
+
+            orderDTO = new OrderDTO()
+            {
+                ID = order.ID,
+                Created = order.Created,
+                Total = order.Total,
+                UserID = order.UserID,
+                Items = order.OrderItems.Select(x => new OrderItemDTO()
+                {
+                    ID = x.ID,
+                    CourseID = x.CourseID,
+                    Course = CourseMapper.ToDTO(x.Course),
+                    Total = x.Total,
+                    Pos = x.Pos,
+                    Price = x.Price
+                }).ToList()
+            };
+
+            return Json(orderDTO);
         }
     }
 }

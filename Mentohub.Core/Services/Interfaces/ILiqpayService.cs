@@ -12,7 +12,7 @@ namespace Mentohub.Core.Services.Interfaces
 {
     public interface ILiqpayService : IService
     {
-        public LiqPayCheckoutFormModel GenerateOrderPayModel(string orderID);
+        public LiqPayCheckoutFormModel GenerateOrderPayModel(string orderID, string url);
 
         /// <summary>
         /// Формування сигнатури

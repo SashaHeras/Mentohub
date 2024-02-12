@@ -47,60 +47,7 @@ namespace Mentohub.Controllers
 
         public IActionResult Index()
         {
-            var order = _config["OrderID:ID"];
-            var model = _liqpayService.GenerateOrderPayModel(order);
-            return View(model);
-        }
-
-        /// <summary>
-        /// На цю сторінку LiqPay відправляє результат оплати. Вона вказана в data.result_url
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public async Task<IActionResult> Redirect()
-        {
-            // --- Перетворюю відповідь LiqPay в Dictionary<string, string> для зручності:
-            var orderID = Request.Query["order_id"];
-
-            var liqpayClient = new LiqPayClient(_config["Payment:Public"], _config["Payment:Private"]);
-
-            var invoiceRequest = new LiqPayRequest()
-            {
-                OrderId = orderID,
-                Action = LiqPayRequestAction.Status,
-            };
-
-            LiqPayResponse response = await liqpayClient.RequestAsync("request", invoiceRequest);
-            //LiqPayResponse response = liqPayApi.SendPaymentRequest(invoiceRequest);
-            var currency = _currencyService.GetCurrencyByCode("UAN");
-            var createOrder = new CreateOrderPayment();
-            try
-            {
-                if (response.Status == LiqPayResponseStatus.Sandbox)
-                {                  
-                    var order = _orderService.GetOrder(orderID);
-                    order.Ordered = DateTime.Now;       
-                    createOrder.OrderId = orderID;
-                    createOrder.CurrencyId = currency.ID;
-                    createOrder.Total = order.Total; 
-                    _orderPaymantService.CreateOrderPaymant(createOrder);
-                    _orderService.UpdateOrder(order);
-                    var model = _liqpayService.GenerateOrderPayModel(orderID);
-
-                    return View("~/Views/Home/Index.cshtml", model);
-                }
-                if (response.Status == LiqPayResponseStatus.Error)
-                {
-                    return Json(new { IsError = true, Message = "An unforeseen error occurred" });
-                }
-            }
-            catch(Exception ex)
-            {
-                return Json(new { IsError = true, ex.Message });
-            }
-
-            return Json(new { IsError = true, Message = "The payment was unsuccessful" });
-
+            return View(null);
         }
 
         public JsonResult Load()

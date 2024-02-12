@@ -29,7 +29,7 @@ namespace Mentohub.Core.Services.Services
             _config = config;
         }
 
-        public LiqPayCheckoutFormModel GenerateOrderPayModel(string orderID)
+        public LiqPayCheckoutFormModel GenerateOrderPayModel(string orderID, string? url = null)
         {
             var order = _orderService.GetOrder(orderID);
 
@@ -48,7 +48,7 @@ namespace Mentohub.Core.Services.Services
                 description = "Оплата замовлення. Придбані курси: " + string.Join(',', order.OrderItems.Select(x => { return " " + x.Course.Name; })),
                 order_id = orderID,
                 sandbox = 1,
-                result_url = "https://localhost:7236/Home/Redirect?order_id=" + orderID,
+                result_url = (url ?? string.Empty) + "?order_id=" + orderID,
             };
 
             var json_string = JsonConvert.SerializeObject(signature_source);
@@ -58,6 +58,7 @@ namespace Mentohub.Core.Services.Services
             var model = new LiqPayCheckoutFormModel();
             model.Data = data_hash;
             model.Signature = signature_hash;
+            model.OrderID = orderID;
 
             return model;
         }
