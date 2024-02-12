@@ -219,8 +219,8 @@ namespace Mentohub.Core.Services.Services
 
             _context.Lessons.Remove(lesson);
             _context.CourseItem.Remove(courseItem);
-        }
 
-        
+            _context.SaveChanges();
+        }        
     }
 }
