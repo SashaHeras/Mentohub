@@ -108,14 +108,15 @@ namespace Mentohub.Core.Services.Services
                 {
                     currAnswer = _answerRepository.Add(new TaskAnswer()
                     {
+                        Id= _answerRepository.GetAll().ToList().Count+1,
                         Name = answer.Name,
                         IsCorrect = answer.IsChecked,
                         TaskId = task.Id
                     });
                 }
-
-                answer.Id = currAnswer.Id;
-                answer.TaskId = currAnswer.TaskId;
+               
+                //answer.Id = currAnswer.Id;
+                //answer.TaskId = currAnswer.TaskId;
             }
 
             return data;
