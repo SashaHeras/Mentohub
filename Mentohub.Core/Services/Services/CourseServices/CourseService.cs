@@ -387,12 +387,31 @@ namespace Mentohub.Core.Services.Services
             return courses;
         }
 
-        public CourseDTO GetCourseInfo(int ID)
+        public CourseDTO GetCourseInfo(int ID, string? userID = null)
         {
             var course = _courseRepository.FirstOrDefault(x => x.Id == ID)
                                            ?? throw new Exception("Unknown course!");
 
             var courseDTO = CourseMapper.ToDTO(course);
+
+            if (userID != null)
+            {
+                var currentUserID = MentoShyfr.Decrypt(userID);
+                var currentUser = _cRUD_UserRepository.FindByID(currentUserID);
+                if(currentUser == null)
+                {
+                    throw new Exception("Unknown user!");
+                }
+
+                if (course.AuthorId == currentUser.Id)
+                {
+                    courseDTO.IsBoughtByUser = true;
+                }
+                else
+                {
+                    courseDTO.IsBoughtByUser = currentUser.UserCourses?.Any(x => x.CourseId == course.Id) ?? false;
+                }
+            }
 
             var itemsIdList = course.CourseItems.Select(x => x.id).ToList();
             var courseItems = _courseItemRepository.GetAll(x => itemsIdList.Contains(x.id))
@@ -522,7 +541,6 @@ namespace Mentohub.Core.Services.Services
             return result;
         }
 
-
         public List<CourseDTO> GetUsersBoughtCourses(string authorID)
         {
             var userID = MentoShyfr.Decrypt(authorID);
@@ -530,6 +548,8 @@ namespace Mentohub.Core.Services.Services
             var courses = user.UserCourses?.Select(x => x.Course)
                                            .Select(x => CourseMapper.ToDTO(x))
                                            .ToList() ?? new List<CourseDTO>();
+
+            courses.AddRange(_courseRepository.GetAll(x => x.AuthorId == userID).Select(x => CourseMapper.ToDTO(x)).ToList());
 
             return courses;
         }

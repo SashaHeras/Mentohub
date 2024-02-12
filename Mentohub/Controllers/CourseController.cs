@@ -85,7 +85,7 @@ namespace Mentohub.Controllers
         /// <param name="ID"></param>
         /// <returns></returns>
         [HttpPost]
-        public JsonResult GetCourseInfoList(int ID)
+        public JsonResult GetCourseInfoList([FromForm] int ID, [FromForm] string? userID = null)
         {
             try
             {
