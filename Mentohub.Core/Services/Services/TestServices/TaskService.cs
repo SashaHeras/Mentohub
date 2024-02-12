@@ -94,7 +94,8 @@ namespace Mentohub.Core.Services.Services
             data.OrderNumber = task.OrderNumber;
             data.Id = task.Id;
 
-            foreach(var answer in data.Answers)
+            var currentAnswerID = 0;
+            foreach (var answer in data.Answers)
             {
                 var currAnswer = _answerRepository.FirstOrDefault(x => x.Id == answer.Id);
                 if(currAnswer != null)
@@ -103,20 +104,23 @@ namespace Mentohub.Core.Services.Services
                     currAnswer.IsCorrect = answer.IsChecked;
 
                     _answerRepository.Update(currAnswer);
+
+                    currentAnswerID = currAnswer.Id;
                 }
                 else
                 {
+                    currentAnswerID = _answerRepository.GetAll().ToList().Count + 1;
                     currAnswer = _answerRepository.Add(new TaskAnswer()
                     {
-                        Id= _answerRepository.GetAll().ToList().Count+1,
+                        Id = currentAnswerID,
                         Name = answer.Name,
                         IsCorrect = answer.IsChecked,
                         TaskId = task.Id
                     });
                 }
                
-                //answer.Id = currAnswer.Id;
-                //answer.TaskId = currAnswer.TaskId;
+                answer.Id = currentAnswerID;
+                answer.TaskId = task.Id;
             }
 
             return data;
