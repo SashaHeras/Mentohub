@@ -89,7 +89,7 @@ namespace Mentohub.Controllers
         {
             try
             {
-                return Json(_courseService.GetCourseInfoList(ID));
+                return Json(_courseService.GetCourseInfo(ID));
             }
             catch(Exception ex)
             {

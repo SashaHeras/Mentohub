@@ -389,10 +389,12 @@ namespace Mentohub.Core.Services.Services
             return courses;
         }
 
-        public List<CourseBlockDTO> GetCourseInfoList(int ID)
+        public CourseDTO GetCourseInfo(int ID)
         {
             var course = _courseRepository.FirstOrDefault(x => x.Id == ID)
                                            ?? throw new Exception("Unknown course!");
+
+            var courseDTO = CourseMapper.ToDTO(course);
 
             var itemsIdList = course.CourseItems.Select(x => x.id).ToList();
             var courseItems = _courseItemRepository.GetAll(x => itemsIdList.Contains(x.id))
@@ -439,7 +441,9 @@ namespace Mentohub.Core.Services.Services
 
             var result = blocks;
 
-            return result;
+            courseDTO.CourseElementsList = result;
+
+            return courseDTO;
         }
 
         public List<CourseDTO> List(SearchFilterModel filter, out int totalCount)
