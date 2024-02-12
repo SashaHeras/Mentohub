@@ -1,8 +1,9 @@
-﻿using Mentohub.Core.Services.Interfaces;
+﻿using LiqPay.SDK.Dto.Enums;
+using LiqPay.SDK.Dto;
+using LiqPay.SDK;
+using Mentohub.Core.Services.Interfaces;
 using Mentohub.Core.Services.Interfaces.PaymentInterfaces;
-using Mentohub.Core.Services.Services.PaymentServices;
-using Mentohub.Domain.Data.DTO;
-using Mentohub.Domain.Data.Entities.Order;
+using Mentohub.Domain.Helpers;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Transactions;
@@ -18,15 +19,74 @@ namespace Mentohub.Controllers
         private readonly ICurrencyService _currencyService;
         private readonly IOrderPaymantService _orderPaymentService;
         private readonly IUserCourseService _useCourseService;
+        private readonly IConfiguration _config;
+        private readonly ILiqpayService _liqpayService;
         public PaymentController(IOrderService orderService, ICurrencyService currencyService,
-            IOrderPaymantService orderPaymentService, IUserCourseService useCourseService)
+            IOrderPaymantService orderPaymentService, IUserCourseService useCourseService,
+            IConfiguration config, ILiqpayService liqpayService)
         {
             _orderService = orderService;
             _currencyService = currencyService;
             _orderPaymentService = orderPaymentService;
             _useCourseService = useCourseService;
+            _config = config;
+            _liqpayService = liqpayService;
         }
+        public IActionResult Index()
+        {
+            var order = _config["OrderID:ID"];
+            var model = _liqpayService.GenerateOrderPayModel(order);
+            return View(model);
+        }
+        /// <summary>
+        /// На цю сторінку LiqPay відправляє результат оплати. Вона вказана в data.result_url
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> Redirect()
+        {
+            // --- Перетворюю відповідь LiqPay в Dictionary<string, string> для зручності:
+            var orderID = Request.Query["order_id"];
 
+            var liqpayClient = new LiqPayClient(_config["Payment:Public"], _config["Payment:Private"]);
+
+            var invoiceRequest = new LiqPayRequest()
+            {
+                OrderId = orderID,
+                Action = LiqPayRequestAction.Status,
+            };
+
+            LiqPayResponse response = await liqpayClient.RequestAsync("request", invoiceRequest);
+            var currency = _currencyService.GetCurrencyByCode("UAN");
+            var createOrder = new CreateOrderPayment();
+            try
+            {
+                if (response.Status == LiqPayResponseStatus.Sandbox)
+                {
+                    var order = _orderService.GetOrder(orderID);
+                    order.Ordered = DateTime.Now;
+                    createOrder.OrderId = orderID;
+                    createOrder.CurrencyId = currency.ID;
+                    createOrder.Total = order.Total;
+                    _orderPaymentService.CreateOrderPaymant(createOrder);
+                    _orderService.UpdateOrder(order);
+                    var model = _liqpayService.GenerateOrderPayModel(orderID);
+
+                    return View("~/Views/Home/Index.cshtml", model);
+                }
+                if (response.Status == LiqPayResponseStatus.Error)
+                {
+                    return Json(new { IsError = true, Message = "An unforeseen error occurred" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { IsError = true, ex.Message });
+            }
+
+            return Json(new { IsError = true, Message = "The payment was unsuccessful" });
+
+        }
         [HttpPost]
         [Route("CreateOrder")]
         public async Task<JsonResult> CreateOrder([FromForm] string userID, [FromForm] int courseId)

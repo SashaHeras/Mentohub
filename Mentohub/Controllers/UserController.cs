@@ -134,12 +134,12 @@ namespace Mentohub.Controllers
                 var updatedUser = await _userService.UpdateUser(userDTO);
                 if (!updatedUser)
                 {
-                    var result404 = Json(new { IsError = true, Message = "User not found", StatusCode = 404 });
-                    result404.StatusCode = 404;
-                    return result404;
+                    var result400 = Json(new { IsError = true, Message = "Invalid input", StatusCode = 400 });
+                    result400.StatusCode = 400;
+                    return result400;
                     
                 }
-                var result = Json(new { IsError = false, Message = "Success", StatusCode = 200 });
+                var result = Json(new { IsError = false, Message = "User updated successfully", StatusCode = 200 });
                 result.StatusCode = 200;
                 return result;
             }

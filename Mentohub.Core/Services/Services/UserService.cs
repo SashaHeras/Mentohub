@@ -258,7 +258,7 @@ namespace Mentohub.Core.Services.Services
             currentUser.AboutMe = userDTO.AboutMe;
             currentUser.UserName = userDTO.Name;
             currentUser.PhoneNumber = userDTO.PhoneNumber;
-
+            
             // Перевірка, чи користувач успадковується від IdentityUser
             // Якщо так, то оновити дату народження
             if (currentUser is IdentityUser)
@@ -394,7 +394,7 @@ namespace Mentohub.Core.Services.Services
             if (!string.IsNullOrEmpty(name)
                 && await _roleManager.FindByNameAsync(name) == null)
             {
-                IdentityResult result = await _roleManager.CreateAsync(new IdentityRole(name));
+                var result = await _roleManager.CreateAsync(new IdentityRole(name));
                 if (result.Succeeded)
                 {
                     return true;
