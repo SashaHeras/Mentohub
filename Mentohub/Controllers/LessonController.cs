@@ -67,5 +67,11 @@ namespace Mentohub.Controllers
                 return Json(new { IsError = true, Message = ex.Message });
             }
         }
+
+        [HttpPost]
+        public JsonResult GetLessonFromCourseItem([FromForm] int courseItemId)
+        {
+            return Json(_lessonService.GetLessonByCourseItem(courseItemId));
+        }
     }
 }
