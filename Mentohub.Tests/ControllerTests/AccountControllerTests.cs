@@ -13,7 +13,7 @@ using Mentohub.Core.AllExceptions;
 using Mentohub.Domain.Data.DTO;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Mentohub.Tests
+namespace Mentohub.Tests.ControllerTests
 {
     public class AccountControllerTests
     {
@@ -44,7 +44,7 @@ namespace Mentohub.Tests
         //[Fact]
         //public async Task Register_Returns_JsonResult_When_ModelState_Is_Valid()
         //{
-            
+
         //    var model = new RegisterDTO()
         //    {
         //        Email="aponurko@gmail.com",
@@ -53,10 +53,10 @@ namespace Mentohub.Tests
         //        ConfirmPassword= "Alla2023_"
         //    };
 
-       
+
         //    var result = await _controller.Register(model) as JsonResult;
 
-          
+
         //    Assert.NotNull(result);
         //    Assert.Equal(200, result.StatusCode);
 
@@ -65,17 +65,17 @@ namespace Mentohub.Tests
         //[Fact]
         //public async Task Login_Returns_JsonResult_When_ModelState_Is_Valid()
         //{
-            
+
         //    var credentials = new LoginDTO()
         //    {
         //        Email="ponurkoalla264@ukr.net",
         //        Password="Alla2023_"
         //    };
 
-           
+
         //    var result = await _controller.LoginAsync(credentials) as JsonResult;
 
-           
+
         //    Assert.NotNull(result);
 
         //}

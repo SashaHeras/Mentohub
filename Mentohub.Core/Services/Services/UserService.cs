@@ -289,7 +289,8 @@ namespace Mentohub.Core.Services.Services
                     FirstName = user.FirstName ?? string.Empty,
                     LastName = user.LastName ?? string.Empty,
                     DateOfBirth = user.DateOfBirth ?? DateTime.Now,
-                    UserRoles = await _userRepository.GetUserRoles(user)
+                    UserRoles = await _userRepository.GetUserRoles(user),
+                    PhoneNumber= user.PhoneNumber ?? string.Empty,
                 };
 
                 return userDTO;
@@ -334,7 +335,6 @@ namespace Mentohub.Core.Services.Services
                 }
 
             }
-
             return false;
         }
         /// <summary>
@@ -365,7 +365,6 @@ namespace Mentohub.Core.Services.Services
             {
                 throw new Exception("No role name to search!");
             }
-
             return await _userRepository.GetAllUsers(roleName);
         }
 
@@ -382,7 +381,6 @@ namespace Mentohub.Core.Services.Services
                 await _roleManager.DeleteAsync(role);
                 return true;
             }
-
             return false;
         }
 

@@ -328,11 +328,11 @@ namespace Mentohub.Core.Services.Services
             var result = CourseMapper.ToDTO(course);
             if(user == null)
             {
-                result.IsBoughtByUser = false;
+                //result.IsBoughtByUser = false;
             }
             else
             {
-                result.IsBoughtByUser = user.UserCourses?.Any(x => x.CourseId == CourseID) ?? false;
+                //result.IsBoughtByUser = user.UserCourses?.Any(x => x.CourseId == CourseID) ?? false;
             }
 
             result.LanguageList = _courseLanguageService.GetLanguagesList();
@@ -365,7 +365,7 @@ namespace Mentohub.Core.Services.Services
                    Name = x.Name
                }).ToList();
 
-            course.CourseElementsList = GetCourseElements(course.Id, true);
+            //course.CourseElementsList = GetCourseElements(course.Id, true);
         }
 
         public List<CourseDTO> MostFamoustList()
@@ -601,6 +601,11 @@ namespace Mentohub.Core.Services.Services
             _courseTagRepository.Add(ct);
 
             return CourseMapper.ToDTO(tag);
+        }
+
+        public List<CourseElementDTO> GetCourseElements(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

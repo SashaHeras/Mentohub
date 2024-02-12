@@ -173,7 +173,7 @@ namespace Mentohub.Core.Services.Services
                         await _mediaService.DeleteFile(lesson.VideoPath);
                     }
 
-                    throw ex;
+                    throw;
                 }
             }
             else
@@ -220,5 +220,7 @@ namespace Mentohub.Core.Services.Services
             _context.Lessons.Remove(lesson);
             _context.CourseItem.Remove(courseItem);
         }
+
+        
     }
 }

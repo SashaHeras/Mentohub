@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Identity;
 using Moq;
 
-namespace Mentohub.Tests
+namespace Mentohub.Tests.ControllerTests
 {
     public class MockSignInManager
     {
         private readonly Mock<SignInManager<CurrentUser>> _mock;
-        
+
         public MockSignInManager(Mock<SignInManager<CurrentUser>> mock)
         {
             _mock = mock;

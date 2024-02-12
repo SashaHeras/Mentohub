@@ -1,6 +1,7 @@
 ﻿using Mentohub.Core.Services.Services;
 using Mentohub.Domain.Data.DTO;
 using Mentohub.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,5 +21,7 @@ namespace Mentohub.Core.Services.Interfaces
         LessonDTO GetLessonByCourseItem(int courseItemId);
 
         Task<LessonDTO> Apply(LessonDTO lesson);
+
+        Task<int> Edit(IFormCollection form, Lesson lesson);
     }
 }

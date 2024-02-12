@@ -15,7 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static MassTransit.ValidationResultExtensions;
 
-namespace Mentohub.Tests
+namespace Mentohub.Tests.ControllerTests
 {
     public class UserControllerTests
     {
@@ -34,7 +34,7 @@ namespace Mentohub.Tests
                 _exceptionMoq.Object,
                 _cRUDMoq.Object,
                 _courseServiceMoq.Object
-            );           
+            );
         }
 
         [Fact]
@@ -70,14 +70,15 @@ namespace Mentohub.Tests
                 FirstName = "DDDDDD",
                 LastName = "NNNNN",
                 AboutMe = "Hello",
-                Name = "chipolino@maildrop.cc",
-                DateOfBirth= new DateTime(),
+                Name = "User2345",
+                DateOfBirth = new DateTime(),
                 UserRoles = null,
-                EncryptedID= "WUAHBQgIRVBLDhQEUxRSRFxESFcKCBdJUllDUVZaA09YEV0C",
-                PhoneNumber="+380501111111",
+                EncryptedID = "WUAHBQgIRVBLDhQEUxRSRFxESFcKCBdJUllDUVZaA09YEV0C",
+                PhoneNumber = "+380501111111",
             };
 
             var result = await _controller.UpdateUser(userDTO) as JsonResult;
+
             var statusCode = result.StatusCode;
             Assert.NotNull(result);
             Assert.Equal(200, statusCode);
@@ -91,10 +92,15 @@ namespace Mentohub.Tests
             Assert.NotNull(result);
             Assert.Equal(200, statusCode);
         }
-        //[Fact]
-        //public async Task AddUserRoles_Returns_JsonResult()
-        //{
-        //    var 
-        //}
+        [Fact]
+        public async Task AddUserRoles_Returns_JsonResult()
+        {
+            var userId = "WUAHBQgIRVBLDhQEUxRSRFxESFcKCBdJUllDUVZaA09YEV0C";
+            var roleAdminId = "eeb6f53c-a9e5-4920-8667-ea02a3a6e38a";
+            var result = await _controller.AddUserRoles(userId, roleAdminId) as JsonResult;
+            var statusCode = result.StatusCode;
+            Assert.NotNull(result);
+            Assert.Equal(200, statusCode);
+        }
     }
 }
