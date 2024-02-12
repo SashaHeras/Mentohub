@@ -234,6 +234,7 @@ namespace Mentohub.Core.Services.Services
                         DateCreation = item.DateCreation,
                         OrderNumber = item.OrderNumber,
                         CourseId = item.CourseId,
+                        ItemID = item.Lesson.Id.ToString(),
                         TypeId = (int)e_ItemType.Lesson,
                         CourseItemId = item.id
                     });
@@ -245,6 +246,7 @@ namespace Mentohub.Core.Services.Services
                         ElementName = item.Test.Name,
                         DateCreation = item.DateCreation,
                         OrderNumber = item.OrderNumber,
+                        ItemID = item.Test.Id.ToString(),
                         CourseId = item.CourseId,
                         TypeId = (int)e_ItemType.Test,
                         CourseItemId = item.id
@@ -360,7 +362,8 @@ namespace Mentohub.Core.Services.Services
                    Name = x.Name
                }).ToList();
 
-            //course.CourseElementsList = GetCourseElements(course.Id, true);
+            course.CourseElementsList = new List<CourseBlockDTO>();
+            course.CourseElementsList = GetCourseElements(course.Id, true);
         }
 
         public List<CourseDTO> MostFamoustList()
@@ -409,6 +412,7 @@ namespace Mentohub.Core.Services.Services
                         {
                             CourseItemId = item.Test.CourseItemId,
                             TypeId = (int)e_ItemType.Test,
+                            ItemID = item.Test.Id.ToString(),
                             CourseId = item.CourseId,
                             DateCreation = item.DateCreation,
                             OrderNumber = item.OrderNumber,
@@ -423,6 +427,7 @@ namespace Mentohub.Core.Services.Services
                         {
                             CourseItemId = item.Lesson.CourseItemId,
                             TypeId = (int)e_ItemType.Lesson,
+                            ItemID = item.Lesson.Id.ToString(),
                             CourseId = item.CourseId,
                             DateCreation = item.DateCreation,
                             OrderNumber = item.OrderNumber,

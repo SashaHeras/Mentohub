@@ -10,6 +10,8 @@ namespace Mentohub.Domain.Data.DTO.CourseDTOs
     {
         public int CourseItemId { get; set; }
 
+        public string ItemID { get; set; }
+
         public int TypeId { get; set; }
 
         public int CourseId { get; set; }
