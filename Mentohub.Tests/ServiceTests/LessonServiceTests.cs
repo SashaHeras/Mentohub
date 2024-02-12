@@ -65,7 +65,6 @@ namespace Mentohub.Tests.ServiceTests
         [Fact]
         public async Task Edit_Returns_Correct_CourseId()
         {
-            // Arrange
             var formFiles = new FormFileCollection();
             formFiles.Add(new FormFile(Stream.Null, 0, 0, "file", "video.mp4"));
             var form = new FormCollection(new Dictionary<string, StringValues>(), formFiles);
@@ -130,3 +129,4 @@ namespace Mentohub.Tests.ServiceTests
     }
 
 }
+
