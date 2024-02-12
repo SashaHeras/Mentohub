@@ -96,7 +96,7 @@ namespace Mentohub.Core.Services.Services
             var block = _courseBlockRepository.GetById(data.CourseBlockID) ?? throw new Exception("Anknown block!");
 
             var sameCourseItems = _courseItemRepository.GetAll()
-                                                       .Where(x => x.CourseId == data.CourseID)
+                                                       .Where(x => x.CourseId == block.CourseID)
                                                        .ToList();
 
             if (test == null)
@@ -104,7 +104,7 @@ namespace Mentohub.Core.Services.Services
                 CourseItem newCourseItem = new()
                 {
                     DateCreation = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc),
-                    CourseId = data.CourseID,
+                    CourseId = block.CourseID,
                     StatusId = (int)e_ItemStatus.OK,
                     OrderNumber = sameCourseItems.Count > 0 ? sameCourseItems.Count + 1 : 1,
                     CourseBlockID = data.CourseBlockID
@@ -128,6 +128,8 @@ namespace Mentohub.Core.Services.Services
                 test.Name = data.Name;
                 _testRepository.Update(test);
             }
+
+            data.CourseID = block.CourseID;
 
             return data;
         }

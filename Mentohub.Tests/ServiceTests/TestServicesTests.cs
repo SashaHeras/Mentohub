@@ -40,10 +40,10 @@ namespace Mentohub.Tests.ServiceTests
                 OrderNumber = 1,
                 IsFewAnswersCorrect = true,
                 Answers = new List<AnswerDTO>
-            {
-                new AnswerDTO { Id = 1, Name = "Answer 1", IsChecked = true },
-                new AnswerDTO { Id = 2, Name = "Answer 2", IsChecked = false }
-            }
+                {
+                    new AnswerDTO { Id = 1, Name = "Answer 1", IsChecked = true },
+                    new AnswerDTO { Id = 2, Name = "Answer 2", IsChecked = false }
+                }
             };
 
             var existingTask = new TestTask

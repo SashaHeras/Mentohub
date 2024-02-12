@@ -23,7 +23,7 @@ namespace Mentohub.Core.Services.Interfaces
 
         Task<CourseDTO> ViewCourse(int CourseID, string UserID);
 
-        List<CourseBlockDTO> GetCourseInfoList(int ID);
+        CourseDTO GetCourseInfo(int ID);
 
         public List<CourseDTO> List(SearchFilterModel filter, out int totalCount);
 
