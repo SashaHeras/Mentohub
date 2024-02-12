@@ -61,16 +61,16 @@ namespace Mentohub.Tests.ControllerTests
         public async Task UpDate_UserProfile_Returns_JsonResult()
         {
             var userId404 = "CE1RBVsMEAZLXkRVBxRSF1BMSA8AWxBJA10UDVQBUhBaQQYO";
-            var userId200 = "05b30034-6b07-4251-a20a-4a5e2ce91d84";
+            var userId200 = "508c3e4e-801c-480f-b653-6f92019314e1";
 
             var userDTO = new UserDTO()
             {
                 Id = userId200,
-                Email = "chipolino@maildrop.cc",
+                Email = "chipolino@maildrop.cc4",
                 FirstName = "DDDDDD",
                 LastName = "NNNNN",
                 AboutMe = "Hello",
-                Name = "User2345",
+                Name = "User23456",
                 DateOfBirth = new DateTime(),
                 UserRoles = null,
                 EncryptedID = "WUAHBQgIRVBLDhQEUxRSRFxESFcKCBdJUllDUVZaA09YEV0C",

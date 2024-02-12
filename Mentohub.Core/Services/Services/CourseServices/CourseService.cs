@@ -20,8 +20,6 @@ namespace Mentohub.Core.Services.Services
 #pragma warning disable 8601
         private readonly ICourseRepository _courseRepository;
         private readonly ICourseItemRepository _courseItemRepository;
-        private readonly ILessonRepository _lessonRepository;
-        private readonly ITestRepository _testRepository;
         private readonly ITagRepository _tagRepository;
         private readonly ICourseTagRepository _courseTagRepository;
         private readonly ISubjectRepository _subjectRepository;
@@ -41,8 +39,7 @@ namespace Mentohub.Core.Services.Services
             ICourseRepository courseRepository,
             ICourseItemRepository courseItemRepository,
             ICommentRepository commentRepository,
-            ILessonRepository lessonRepository,
-            ITestRepository testRepository,
+            //ICourseViewService @object,//
             ITagRepository tagRepository,
             ISubjectRepository subjectRepository,
             ICourseViewService courseViewsService,
@@ -59,9 +56,7 @@ namespace Mentohub.Core.Services.Services
         {
             _courseRepository = courseRepository;
             _courseItemRepository = courseItemRepository;
-            _lessonRepository = lessonRepository;
             _commentRepository = commentRepository;
-            _testRepository = testRepository;
             _courseViewsService = courseViewsService;
             _mediaService = mediaService;
             _courseBlockRepository = courseBlockRepository;
@@ -328,11 +323,11 @@ namespace Mentohub.Core.Services.Services
             var result = CourseMapper.ToDTO(course);
             if(user == null)
             {
-                //result.IsBoughtByUser = false;
+                result.IsBoughtByUser = false;
             }
             else
             {
-                //result.IsBoughtByUser = user.UserCourses?.Any(x => x.CourseId == CourseID) ?? false;
+                result.IsBoughtByUser = user.UserCourses?.Any(x => x.CourseId == CourseID) ?? false;
             }
 
             result.LanguageList = _courseLanguageService.GetLanguagesList();

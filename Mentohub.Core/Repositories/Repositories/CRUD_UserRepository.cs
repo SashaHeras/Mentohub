@@ -1,18 +1,8 @@
 ﻿using Mentohub.Core.Repositories.Interfaces;
 using Mentohub.Domain.Data.DTO;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Mentohub.Domain.Data.Entities;
 using Mentohub.Core.AllExceptions;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 
 namespace Mentohub.Core.Repositories.Repositories
@@ -23,17 +13,13 @@ namespace Mentohub.Core.Repositories.Repositories
         private readonly UserManager<CurrentUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly AllException _exception;
-        private readonly SignInManager<CurrentUser> _signInManager;
-        private readonly ILogger<CRUD_UserRepository> _logger;
+       
 
         public CRUD_UserRepository(UserManager<CurrentUser> userManager, AllException exception,
-            RoleManager<IdentityRole> roleManager, SignInManager<CurrentUser> signInManager,
-            ILogger<CRUD_UserRepository> logger)
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
-            _signInManager = signInManager;
-            _logger = logger;
             _exception = exception;
         }
 
@@ -125,7 +111,7 @@ namespace Mentohub.Core.Repositories.Repositories
             return new List<string>();
         }
         /// <summary>
-        /// 
+        /// отримання ролі по roleId
         /// </summary>
         /// <param name="roleId"></param>
         /// <returns></returns>
@@ -133,11 +119,19 @@ namespace Mentohub.Core.Repositories.Repositories
         {
             return await _roleManager.FindByIdAsync(roleId);
         }
+        /// <summary>
+        /// отримання всіх ролей
+        /// </summary>
+        /// <returns></returns>
         public Task<List<IdentityRole>> GetAllRoles()
         {
             return Task.FromResult(_roleManager.Roles.ToList());
         }
-        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task<bool> Login(LoginDTO model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
