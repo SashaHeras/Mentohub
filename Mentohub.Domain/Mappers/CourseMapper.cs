@@ -23,6 +23,7 @@ namespace Mentohub.Domain.Mappers
                 Description = course.Description,
                 Price = course.Price,
                 CourseSubjectId = course.CourseSubjectId,
+                AuthorEncryptedId = MentoShyfr.Encrypt(course.AuthorId.ToString()),
                 LanguageId = course.LanguageID ?? 0,
                 LastEdittingDate = course.LastEdittingDate,
                 Comments = course.Comments.Select(x => ToDTO(x)).ToList(),

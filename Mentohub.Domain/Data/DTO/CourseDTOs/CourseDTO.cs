@@ -34,6 +34,7 @@ namespace Mentohub.Domain.Data.DTO.CourseDTOs
         public IFormFile PreviewVideo { get; set; }
 
         public string AuthorId { get; set; }
+        public string AuthorEncryptedId { get; set; }
 
         public string AuthorName { get; set; }
 
